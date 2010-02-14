@@ -1,0 +1,12 @@
+<SOAPpy.Types.structType multiRef at 31970528>: {
+	'comment': '', 
+	'startDate': (2010, 1, 26, 10, 17, 45.433), 
+	'updateAuthor': 'dmaslennikov', 
+	'author': 'dmaslennikov', 
+	'created': (2010, 1, 26, 10, 17, 45.433), 
+	'timeSpentInSeconds': 28800L, 
+	'groupLevel': None, 
+	'updated': (2010, 1, 26, 10, 17, 45.433),
+	'roleLevelId': None, 
+	'timeSpent': '1 day', 
+	'id': '13552'}

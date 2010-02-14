@@ -1,0 +1,3 @@
+{chart:type=line|width=500|height=320|xLabel=Date|yLabel=Issues #|dataOrientation=vertical|rangeAxisLowerBound=0|domainaxisrotateticklabel=false|colors=#EB6A33,#78BC13}
+##PHASEBURNCHART##
+{chart}
