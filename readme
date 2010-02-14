@@ -1,2 +1,5 @@
 Python utility to gather info from jira (by filters), store it locally and build bar-charts and burn-down diagrams on it's base.
 The other part is used to automatically form daily reports on wiki on te base of git commits and jira worklogs per team member.
+
+jira_cli and confluence_cli are used for interaction with jira & wiki.
+Jira SOAP is utilized for gathering worklogs by JQL request.
