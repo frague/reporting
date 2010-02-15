@@ -3,10 +3,11 @@ import re
 import sys
 import yaml
 import urllib
+import SOAPpy
+import getpass
 import datetime
 import subprocess
 from datetime import timedelta
-import SOAPpy, getpass, datetime
 	
 statuses = ["", "Open", "", "In progress", "Reopened", "Resolved", "Closed"]
 statuses_order = ["Closed", "Resolved", "In progress", "Reopened", "Open" ]
@@ -24,6 +25,23 @@ lastWorkday = yesterday
 while (weekends.match(lastWorkday.strftime("%a"))):
 	lastWorkday = lastWorkday - timedelta(days = 1)
 
+
+# Checks if sub-set exists and adds new value to it
+def AppendSubSet(set, key, value):
+	if (set.has_key(key)):
+		set[key].append(value)
+	else:
+		set[key] = [value]
+
+# Date methods
+# Makes datetime object from set of its components
+def DateFromSet(set):
+	return datetime.datetime(set[0], set[1], set[2], set[3], set[4])
+
+# Returns datetime object formatted for printing
+def PrintableDate(date):
+	return date.strftime("%d/%m/%Y %H:%M")
+	
 # File operations
 def ReadFile(file_name):
 	result = ""
@@ -87,15 +105,17 @@ def GetJiraFilterData(filter_name):
 	return status
 		
 
-
+# Reads template from filesystem
 def GetTemplate(template_name):
 	return ReadFile("conf/%s.template"%template_name)
 
+# Fills template by values from given dictionary
 def FillTemplate(template, values):
 	for chunk in values.keys():
 		template = template.replace(chunk, values[chunk])
 	return template
 
+# Retrieves data from jira and appends storage file with it
 def GetAndSaveJiraFilteredData(filter_name):
 	status = GetJiraFilterData(filter_name)
 	return SaveUpdates(filter_name, status)
@@ -184,7 +204,7 @@ def BindLogs(key, source, title):
 		co = "-- " + "\n-- ".join([item for item in source[key]])
 
 	if len(co) > 0:
-		co = "*%s*\n%s" % (title, co)
+		co = "*%s:*\n%s" % (title, co)
 	return co
 
 
@@ -196,10 +216,10 @@ def BindTeamLogs(team_name, teams, commits, worklog, personTemplate):
 		half = (len(teams[team_name]) / 2)
 
 		# Adding commits
-		co = BindLogs(email, commits, "Commits")
+		co = BindLogs(email, commits, "git commits")
 
 		# Adding worklogs
-		wl = BindLogs(teams[team_name][email], worklog, "jira worklogs")
+		wl = BindLogs(teams[team_name][email], worklog, "JIRA worklogs")
 
 		result += FillTemplate(personTemplate, {"##PERSON##": teams[team_name][email], "##PREVIOUS##": "", "##TODAY##": "", "##COMMITS##": co, "##WORKLOGS##": wl})
 		if divide and i >= half:
@@ -225,22 +245,13 @@ def InitJiraSOAP():
 	jiraAuth = soap.login(jirauser, passwd)
 
 
-def AppendSubSet(set, key, value):
-	if (set.has_key(key)):
-		set[key].append(value)
-	else:
-		set[key] = [value]
-
-def DateFromSet(set):
-	return datetime.date(set[0], set[1], set[2])
-	
 def GetWorkLogs(fromDate, tillDate):
 	global soap, jiraAuth
 
 	if (jiraAuth == None):
 		InitJiraSOAP()
 
-	## Getting Issues by Jql filter
+	# Getting Issues by Jql filter
 	updatedIssues = {}
 	issues = soap.getIssuesFromJqlSearch(jiraAuth, "project = TORS AND updatedDate >= '%s 00:00' ORDER BY updated DESC" % fromDate.strftime("%Y/%m/%d"), 100)
 	for i in issues:
@@ -251,11 +262,11 @@ def GetWorkLogs(fromDate, tillDate):
 		print "%s: \"%s\":" % (issueKey, updatedIssues[issueKey])
 		issues = soap.getWorklogs(jiraAuth, issueKey)
 		for i in issues:
-			startDate = DateFromSet(i["startDate"])
-			if startDate >= fromDate and startDate < tillDate:
+			# + 3 hours for England
+			startDate = DateFromSet(i["startDate"]) + timedelta(hours = 3)
+			if startDate.date() >= fromDate and startDate.date() < tillDate:
 				value = "[%s: %s|%s@issues] %s (%s)" % (issueKey, updatedIssues[issueKey], issueKey, i["comment"], i["timeSpent"])
-#				value = "[%s|%s@issues] %s (%s)" % (issueKey, issueKey, i["comment"], i["timeSpent"])
 				AppendSubSet(workLogs, i["author"], value)
-				print " - %s: %s (%s)" % (i["author"], i["comment"], i["timeSpent"])
+				print " + %s: %s (%s)" % (i["author"], i["comment"], i["timeSpent"])
 
 	return workLogs

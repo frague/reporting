@@ -2,7 +2,7 @@ from rabbithole import *
 
 currentSprint = 5;
 sprintEnd = datetime.date(2010, 02, 12)
-phaseEnd = datetime.date(2010, 02, 26)
+phaseEnd = datetime.date(2010, 03, 5)
 
 
 
@@ -30,6 +30,13 @@ total_data = GetAndSaveJiraFilteredData("ProductBacklog")
 
 total_burndown = MakeWikiBurndownChart(total_data, phaseEnd)
 page = FillTemplate(page, {"##TOTALBURNCHART##": total_burndown, "##TOTALBURNTITLE##": "Phase 2.5 Burndown diagram"})
+
+# Total progress (Full)
+#  Burndown
+total_full_data = GetAndSaveJiraFilteredData("ProductBacklogWithSubtasks")
+
+total_full_burndown = MakeWikiBurndownChart(total_full_data, phaseEnd)
+page = FillTemplate(page, {"##TOTALBURNCHARTFULL##": total_full_burndown, "##TOTALBURNFULLTITLE##": "Phase 2.5 Burndown diagram (with subtasks)"})
 
 
 WriteFile("temp.tmp", page)

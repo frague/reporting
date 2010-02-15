@@ -6,7 +6,8 @@ teams = yaml.load(ReadFile("conf/teams.yaml"))
 
 ######################################################################################
 # Git commits
-print "## Fetching git commits:"
+
+print "-- Fetching git commits: -----------------------------------------------"
 
 # Fetch teammembers repositories
 for team in teams.keys():
@@ -20,7 +21,7 @@ text = GetStdoutOf("gitlog.bat", "%s %s" % (lastWorkday.strftime("%Y-%m-%d"), to
 
 ######################################################################################
 # Jira worklogs
-print "## Fetching jira worklogs:"
+print "\n-- Fetching jira worklogs: ---------------------------------------------"
 
 workLogs = GetWorkLogs(yesterday, today) 
 

@@ -19,3 +19,6 @@
 ##TOTALBURNCHART##
 {chart}
 
+{chart:type=line|width=720|height=400|xLabel=Date|yLabel=Issues #|title=##TOTALBURNFULLTITLE##:|categoryLabelPosition=down45|dataOrientation=vertical|rangeAxisLowerBound=0|domainaxisrotateticklabel=false|colors=#EB6A33,#78BC13}
+##TOTALBURNCHARTFULL##
+{chart}
