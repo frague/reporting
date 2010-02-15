@@ -23,7 +23,7 @@ text = GetStdoutOf("gitlog.bat", "%s %s" % (lastWorkday.strftime("%Y-%m-%d"), to
 # Jira worklogs
 print "\n-- Fetching jira worklogs: ---------------------------------------------"
 
-workLogs = GetWorkLogs(yesterday, today) 
+workLogs = GetWorkLogs(lastWorkday, today) 
 
 
 # Populate template with received values
