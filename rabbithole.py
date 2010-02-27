@@ -134,7 +134,7 @@ def MakeWikiBarChart(data):
 		 		result += " 0 |"
 	return result
 
-# Makes Wiki-syntax burndown markup for given data
+# Makes Wiki-syntax line (point) burndown markup for given data
 def MakeWikiBurndownLine(data, max_tasks, max_days=0):
 	max_days -= 1
 	result = ""
@@ -164,7 +164,7 @@ def MakeWikiBurndownChart(data, deadline):
 	flat = {};
 	days = 0;
 	while (date <= deadline):
-		if (not weekends.match(date.strftime("%a")) or date == deadline):
+		if (not weekends.match(date.strftime("%a")) or date == deadline or data.has_key(date)):
 			flat[date] = {"Closed": 0}
 			days += 1
 		date = date + timedelta(days = 1)
@@ -265,7 +265,7 @@ def GetWorkLogs(fromDate, tillDate):
 			# + 3 hours for England
 			startDate = DateFromSet(i["startDate"]) + timedelta(hours = 3)
 			if startDate.date() >= fromDate and startDate.date() < tillDate:
-				value = "[%s: %s|%s@issues] %s (%s)" % (issueKey, updatedIssues[issueKey], issueKey, i["comment"], i["timeSpent"])
+				value = "[%s|%s@issues] (%s) %s - %s" % (issueKey, issueKey, updatedIssues[issueKey], i["comment"], i["timeSpent"])
 				AppendSubSet(workLogs, i["author"], value)
 				print " + %s: %s (%s)" % (i["author"], i["comment"], i["timeSpent"])
 
