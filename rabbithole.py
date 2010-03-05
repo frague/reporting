@@ -265,8 +265,8 @@ def GetWorkLogs(fromDate, tillDate):
 			# + 3 hours for England
 			startDate = DateFromSet(i["startDate"]) + timedelta(hours = 3)
 			if startDate.date() >= fromDate and startDate.date() < tillDate:
-				value = "[%s|%s@issues] (%s) %s - %s" % (issueKey, issueKey, updatedIssues[issueKey], i["comment"], i["timeSpent"])
+				value = "[%s@issues] (%s) %s - %s" % (issueKey, updatedIssues[issueKey], i["comment"].strip(" \n\r"), i["timeSpent"])
 				AppendSubSet(workLogs, i["author"], value)
-				print " + %s: %s (%s)" % (i["author"], i["comment"], i["timeSpent"])
+				print " + %s: %s (%s)" % (i["author"], i["comment"].strip(" \n\r"), i["timeSpent"])
 
 	return workLogs
