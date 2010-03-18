@@ -1,7 +1,7 @@
 from rabbithole import *
 
-currentSprint = "8-9";
-sprintEnd = datetime.date(2010, 3, 12)
+currentSprint = "10";
+sprintEnd = datetime.date(2010, 3, 19)
 phaseEnd = datetime.date(2010, 3, 26)
 
 
