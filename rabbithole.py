@@ -209,7 +209,7 @@ def BindLogs(key, source, title):
 
 
 def BindTeamLogs(team_name, teams, commits, worklog, personTemplate):
-	result = "h3. %s Team\n{section}\n{column:width=50%%}\n" % team_name
+	result = "h3. %s Team\n{section}\n{column:width=49%%}\n" % team_name
 	i = 1
 	divide = True
 	for email in teams[team_name]:
@@ -223,7 +223,8 @@ def BindTeamLogs(team_name, teams, commits, worklog, personTemplate):
 
 		result += FillTemplate(personTemplate, {"##PERSON##": teams[team_name][email], "##PREVIOUS##": "", "##TODAY##": "", "##COMMITS##": co, "##WORKLOGS##": wl})
 		if divide and i >= half:
-			result += "\n{column}\n{column:width=50%}\n"
+			result += "\n{column}\n{column:width=2%}\n"
+			result += "\n{column}\n{column:width=49%}\n"
 			divide = False
 		i += 1
 
