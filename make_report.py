@@ -27,7 +27,7 @@ workLogs = GetWorkLogs(lastWorkday, today)
 
 
 # Populate template with received values
-page = FillTemplate(GetTemplate("report"), {"##SARATOV##": BindTeamLogs("Saratov", teams, commits, workLogs, personTemplate), "##TODAY##": today.strftime("%Y-%m-%d")})
+page = FillTemplate(GetTemplate("report"), {"##SARATOV##": BindTeamLogs("Saratov", teams, commits, workLogs, personTemplate), "##US##": BindTeamLogs("US", teams, commits, workLogs, personTemplate), "##TODAY##": today.strftime("%Y-%m-%d")})
 
 
 
