@@ -9,13 +9,31 @@ import datetime
 import subprocess
 from datetime import timedelta
 	
-statuses = ["", "Open", "", "In progress", "Reopened", "Resolved", "Closed"]
-statuses_order = ["Closed", "Resolved", "In progress", "Reopened", "Open" ]
+#statuses = ["", "Open", "", "In progress", "Reopened", "Resolved", "Closed"]
+#statuses_order = ["Closed", "Resolved", "In progress", "Reopened", "Open" ]
+
+
+# File operations
+def ReadFile(file_name):
+	result = ""
+	if os.path.exists(file_name):
+		rf = file(file_name, "r")
+		result = rf.read()
+		rf.close()
+	return result
+
+def WriteFile(file_name, contents):
+	wf = file(file_name, "w")
+	wf.write(contents)
+	wf.close()
+
+# Reading config
+config = yaml.load(ReadFile("conf/rabbithole.yaml"))
 
 isNumber = re.compile("^[0-9]+$")
 reportLine = re.compile("^[^,]+(, [^,]+){8}$")
 weekends = re.compile("(Sat|Sun)")
-tors = re.compile("\[{0,1}TORS-([0-9]+)\]{0,1} *", re.IGNORECASE)
+project_issue = re.compile("\[{0,1}%s-([0-9]+)\]{0,1} *" % config["project_abbr"], re.IGNORECASE)
 
 jiraAuth = None
 
@@ -24,6 +42,7 @@ yesterday = today - timedelta(days = 1)
 lastWorkday = yesterday
 while (weekends.match(lastWorkday.strftime("%a"))):
 	lastWorkday = lastWorkday - timedelta(days = 1)
+
 
 
 # Checks if sub-set exists and adds new value to it
@@ -42,25 +61,10 @@ def DateFromSet(set):
 def PrintableDate(date):
 	return date.strftime("%d/%m/%Y %H:%M")
 	
-# File operations
-def ReadFile(file_name):
-	result = ""
-	if os.path.exists(file_name):
-		rf = file(file_name, "r")
-		result = rf.read()
-		rf.close()
-	return result
-
-def WriteFile(file_name, contents):
-	wf = file(file_name, "w")
-	wf.write(contents)
-	wf.close()
-
 # Making parameters line w/ login & password
-def MakeParamsWithLogin(add_params):
-	args = yaml.load(ReadFile("conf/rabbithole.yaml"))
-	args.update(add_params)
-	return MakeParams(args)
+def MakeParamsWithLogin(params, add_params):
+	params.update(add_params)
+	return MakeParams(params)
 
 # Making parameters line
 def MakeParams(params):
@@ -72,16 +76,14 @@ def GetStdoutOf(process, params):
 	return p.read()
 
 # Getting single line from Jira or Wiki
-def GetPage(page, add_params):
-	return GetStdoutOf(page, MakeParamsWithLogin(add_params))
+def GetPage(page, params, add_params):
+	return GetStdoutOf(page, MakeParamsWithLogin(params, add_params))
 
 def GetWiki(add_params = {}):
-	add_params["server"] = "https://wiki.griddynamics.net"
-	return GetPage("confluence.bat", add_params)
+	return GetPage("confluence.bat", config["wiki"], add_params)
 
 def GetJira(add_params = {}):
-	add_params["server"] = "https://issues.griddynamics.net"
-	return GetPage("jira.bat", add_params)
+	return GetPage("jira.bat", config["jira"], add_params)
 
 # Update cache file with received data
 # Returns updated dictionary
@@ -99,15 +101,15 @@ def GetJiraFilterData(filter_name):
 		[Key, Id, Project, CurrentStatus, Priority, Assignee, Reporter, Created, DateDue] = line.split(", ")
 		if isNumber.match(CurrentStatus):
 			try:
-				status[statuses[int(CurrentStatus)]] += 1
+				status[config["statuses"][int(CurrentStatus)]] += 1
 			except:
-				status[statuses[int(CurrentStatus)]] = 1
+				status[config["statuses"][int(CurrentStatus)]] = 1
 	return status
 		
 
 # Reads template from filesystem
 def GetTemplate(template_name):
-	return ReadFile("conf/%s.template"%template_name)
+	return ReadFile("conf/%s.template" % template_name)
 
 # Fills template by values from given dictionary
 def FillTemplate(template, values):
@@ -125,7 +127,7 @@ def MakeWikiBarChart(data):
 	dates = data.keys()
 	dates.sort()
 	result = "|| || %s ||" % " || ".join(date.strftime("%d/%m") for date in dates)
-	for status in statuses_order:
+	for status in config["statuses_order"]:
 	 	result += "\n| %s | " % status
 	 	for date in dates:
 	 		if data[date].has_key(status):
@@ -189,7 +191,7 @@ def AddCommit(line, commits):
 	if (commitDate[:10] != authorDate[:10]):
 		return
 
-	commit = tors.sub("[TORS-\\1@issues] ", commit)
+	commit = project_issue.sub("[%s-\\1@issues] " % config["project_abbr"], commit)
 
 	if (commits.has_key(email)):
 		commits[email].append(commit)
@@ -201,10 +203,10 @@ def AddCommit(line, commits):
 def BindLogs(key, source, title):
 	co = ""
 	if source.has_key(key):
-		co = "-- " + "\n-- ".join([item for item in source[key]])
+		co = "\n-- ".join([item for item in source[key]])
 
 	if len(co) > 0:
-		co = "*%s:*\n%s" % (title, co)
+		co = "\n*%s:*\n-- %s" % (title, co)
 	return co
 
 
@@ -219,7 +221,7 @@ def BindTeamLogs(team_name, teams, commits, worklog, personTemplate):
 		co = BindLogs(email, commits, "git commits")
 
 		# Adding worklogs
-		wl = BindLogs(teams[team_name][email], worklog, "JIRA worklogs")
+		wl = BindLogs(teams[team_name][email], worklog, "jira worklogs")
 
 		result += FillTemplate(personTemplate, {"##PERSON##": teams[team_name][email], "##PREVIOUS##": "", "##TODAY##": "", "##COMMITS##": co, "##WORKLOGS##": wl})
 		if divide and i >= half:
@@ -237,13 +239,8 @@ def BindTeamLogs(team_name, teams, commits, worklog, personTemplate):
 def InitJiraSOAP():
 	global soap, jiraAuth
 
-	soap = SOAPpy.WSDL.Proxy('https://issues.griddynamics.net/rpc/soap/jirasoapservice-v2?wsdl')
- 
-	args = yaml.load(ReadFile("conf/rabbithole.yaml"))
-	jirauser = args["user"]
-	passwd = args["password"]
-
-	jiraAuth = soap.login(jirauser, passwd)
+	soap = SOAPpy.WSDL.Proxy(config["jira_soap"])
+	jiraAuth = soap.login(config["jira"]["user"], config["jira"]["password"])
 
 
 def GetWorkLogs(fromDate, tillDate):
@@ -254,7 +251,7 @@ def GetWorkLogs(fromDate, tillDate):
 
 	# Getting Issues by Jql filter
 	updatedIssues = {}
-	issues = soap.getIssuesFromJqlSearch(jiraAuth, "project = TORS AND updatedDate >= '%s 00:00' ORDER BY updated DESC" % fromDate.strftime("%Y/%m/%d"), 100)
+	issues = soap.getIssuesFromJqlSearch(jiraAuth, "project = %s AND updatedDate >= '%s 00:00' ORDER BY updated DESC" % (config["project_abbr"], fromDate.strftime("%Y/%m/%d")), 100)
 	for i in issues:
 		updatedIssues[i["key"]] = i["summary"]
 

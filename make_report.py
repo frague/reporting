@@ -33,7 +33,7 @@ page = FillTemplate(GetTemplate("report"), {"##SARATOV##": BindTeamLogs("Saratov
 
 WriteFile("temp1.tmp", page)
 #GetWiki({"action": "storePage", "space": "~nbogdanov", "title": "gitlog + %s report template" % today, "file": "temp1.tmp", "parent": "BigRock Reporting automation"})
-GetWiki({"action": "storeNews", "space": "ToRS", "title": "%s Daily Report" % today.strftime("%Y.%m.%d"), "file": "temp1.tmp"})
-os.remove("temp1.tmp")
+#GetWiki({"action": "storeNews", "space": "ToRS", "title": "%s Daily Report" % today.strftime("%Y.%m.%d"), "file": "temp1.tmp"})
+#os.remove("temp1.tmp")
 
 print "Done"
