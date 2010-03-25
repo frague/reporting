@@ -1,3 +1,6 @@
+import warnings
+warnings.simplefilter("ignore", DeprecationWarning)
+
 import os
 import re
 import sys
@@ -7,10 +10,9 @@ import SOAPpy
 import getpass
 import datetime
 import subprocess
+from jabber import *
 from datetime import timedelta
 	
-#statuses = ["", "Open", "", "In progress", "Reopened", "Resolved", "Closed"]
-#statuses_order = ["Closed", "Resolved", "In progress", "Reopened", "Open" ]
 
 
 # File operations
@@ -246,6 +248,8 @@ def InitJiraSOAP():
 def GetWorkLogs(fromDate, tillDate):
 	global soap, jiraAuth
 
+	found = {}
+
 	if (jiraAuth == None):
 		InitJiraSOAP()
 
@@ -266,5 +270,15 @@ def GetWorkLogs(fromDate, tillDate):
 				value = "[%s@issues] (%s) %s - %s" % (issueKey, updatedIssues[issueKey], i["comment"].strip(" \n\r"), i["timeSpent"])
 				AppendSubSet(workLogs, i["author"], value)
 				print " + %s: %s (%s)" % (i["author"], i["comment"].strip(" \n\r"), i["timeSpent"])
+				found[i["author"]] = True
+
+	if (len(config["notified"]) > 0):
+		jab = Jabber()
+
+		for login in config["notified"].keys():
+			if not found.has_key(login):
+				jab.Message(config["notified"][login], "Please fill jira worklog for %s" % PrintableDate(fromDate))
+
+		jab.Disconnect()
 
 	return workLogs
