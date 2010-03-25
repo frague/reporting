@@ -1,3 +1,6 @@
+import warnings
+warnings.simplefilter("ignore", DeprecationWarning)
+
 import os
 import re
 import sys
@@ -9,8 +12,6 @@ import datetime
 import subprocess
 from datetime import timedelta
 	
-#statuses = ["", "Open", "", "In progress", "Reopened", "Resolved", "Closed"]
-#statuses_order = ["Closed", "Resolved", "In progress", "Reopened", "Open" ]
 
 
 # File operations
