@@ -274,11 +274,11 @@ def GetWorkLogs(fromDate, tillDate):
 
 	if (len(config["notified"]) > 0):
 		jab = Jabber()
-		print "\n\nJabber notifications bout missing jira worklogs:"
+		print "\nJabber notifications about missing jira worklogs:"
 		for login in config["notified"].keys():
 			if not found.has_key(login):
 				jab.Message(config["notified"][login], "Please fill jira worklog for %s" % PrintableDate(fromDate))
-				print "- %s" % login
+				print " - %s" % login
 
 		jab.Disconnect()
 
