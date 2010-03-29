@@ -10,6 +10,7 @@ import SOAPpy
 import getpass
 import datetime
 import subprocess
+from skype import *
 from jabber import *
 from datetime import timedelta
 	
@@ -61,7 +62,8 @@ def DateFromSet(set):
 
 # Returns datetime object formatted for printing
 def PrintableDate(date):
-	return date.strftime("%d/%m/%Y %H:%M")
+	return date.strftime("%B, %d (%A)")
+	#return date.strftime("%d/%m/%Y %H:%M")
 	
 # Making parameters line w/ login & password
 def MakeParamsWithLogin(params, add_params):
@@ -194,13 +196,8 @@ def AddCommit(line, commits):
 		return
 
 	commit = project_issue.sub("[%s-\\1@issues] " % config["project_abbr"], commit)
-
-	if (commits.has_key(email)):
-		commits[email].append(commit)
-	else:
-		commits[email] = [commit]
-
-	print " - %s: %s" % (email, commit)
+	AppendSubSet(commits, email, commit)
+	print " + %s: %s" % (email, commit)
 
 def BindLogs(key, source, title):
 	co = ""
@@ -216,16 +213,16 @@ def BindTeamLogs(team_name, teams, commits, worklog, personTemplate):
 	result = "h3. %s Team\n{section}\n{column:width=49%%}\n" % team_name
 	i = 1
 	divide = True
-	for email in teams[team_name]:
+	for user in teams[team_name]:
 		half = (len(teams[team_name]) / 2)
 
 		# Adding commits
-		co = BindLogs(email, commits, "git commits")
+		co = BindLogs(config["emails"][user], commits, "git commits")
 
 		# Adding worklogs
-		wl = BindLogs(teams[team_name][email], worklog, "jira worklogs")
+		wl = BindLogs(user, worklog, "jira worklogs")
 
-		result += FillTemplate(personTemplate, {"##PERSON##": teams[team_name][email], "##PREVIOUS##": "", "##TODAY##": "", "##COMMITS##": co, "##WORKLOGS##": wl})
+		result += FillTemplate(personTemplate, {"##PERSON##": user, "##PREVIOUS##": "", "##TODAY##": "", "##COMMITS##": co, "##WORKLOGS##": wl})
 		if divide and i >= half:
 			result += "\n{column}\n{column:width=2%}\n"
 			result += "\n{column}\n{column:width=49%}\n"
@@ -248,7 +245,7 @@ def InitJiraSOAP():
 def GetWorkLogs(fromDate, tillDate):
 	global soap, jiraAuth
 
-	found = {}
+	#found = {}
 
 	if (jiraAuth == None):
 		InitJiraSOAP()
@@ -270,16 +267,33 @@ def GetWorkLogs(fromDate, tillDate):
 				value = "[%s@issues] (%s) %s - %s" % (issueKey, updatedIssues[issueKey], i["comment"].strip(" \n\r"), i["timeSpent"])
 				AppendSubSet(workLogs, i["author"], value)
 				print " + %s: %s (%s)" % (i["author"], i["comment"].strip(" \n\r"), i["timeSpent"])
-				found[i["author"]] = True
-
-	if (len(config["notified"]) > 0):
-		jab = Jabber()
-		print "\nJabber notifications about missing jira worklogs:"
-		for login in config["notified"].keys():
-			if not found.has_key(login):
-				jab.Message(config["notified"][login], "Please fill jira worklog for %s" % PrintableDate(fromDate))
-				print " - %s" % login
-
-		jab.Disconnect()
+				#found[i["author"]] = True
 
 	return workLogs
+
+
+#####################################################################################
+# Worklog notifications
+
+def RequestWorklogs(fromDate, worklogs, notifiee, engine, commits):
+	if (len(notifiee) > 0):
+
+		notification = GetTemplate("notification")
+		date = PrintableDate(fromDate)
+
+		#print commits
+
+		print "\nSending %s notifications about missing jira worklogs for %s:" % (engine.Name, date)
+
+		for login in notifiee.keys():
+			email = config["emails"][login]
+			if not worklogs.has_key(login):
+				commit = "None"
+				if commits.has_key(email):
+					commit = "\n- " + "\n- ".join(commits[email])
+
+				print " - %s" % login
+				engine.SendMessage(notifiee[login], FillTemplate(notification, {"##DATE##": date, "##COMMITS##": commit}))
+
+		engine.Disconnect()
+

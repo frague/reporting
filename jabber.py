@@ -8,7 +8,7 @@ from xmpp import *
 ## Handlers
 def iqHandler(conn, iq_node):
     # Handler for processing some "get" query from custom namespace
-    reply=iq_node.buildReply('result')
+    reply = iq_node.buildReply('result')
     # ... put some content into reply node
     conn.send(reply)
     raise NodeProcessed  # This stanza is fully processed
@@ -20,6 +20,7 @@ def messageHandler(conn, mess_node): pass
 	
 class Jabber:
 	client = None
+	Name = "Jabber"
 
 	def __init__(self):
 		# Connecting to specified IP address.
@@ -49,7 +50,7 @@ class Jabber:
 		self.client.Process(1)
 
 	## Sends message
-	def Message(self, to, text):
+	def SendMessage(self, to, text):
 		# If connection is brocken - restore it
 		if not self.client.isConnected(): 
 			self.client.reconnectAndReauth()

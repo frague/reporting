@@ -11,7 +11,7 @@ print "-- Fetching git commits: -----------------------------------------------"
 
 # Fetch teammembers repositories
 for team in teams.keys():
-	[GetStdoutOf("fetchrep.bat", "%s" % rep) for rep in teams[team].values()]
+	[GetStdoutOf("fetchrep.bat", "%s" % rep) for rep in teams[team]]
 
 # Getting log
 text = GetStdoutOf("gitlog.bat", "%s %s" % (lastWorkday.strftime("%Y-%m-%d"), today.strftime("%Y-%m-%d")))
@@ -21,14 +21,16 @@ text = GetStdoutOf("gitlog.bat", "%s %s" % (lastWorkday.strftime("%Y-%m-%d"), to
 
 ######################################################################################
 # Jira worklogs
-print "\n-- Fetching jira worklogs: ---------------------------------------------"
 
+print "\n-- Fetching jira worklogs: ---------------------------------------------"
 workLogs = GetWorkLogs(lastWorkday, today) 
 
+# Notify guys who forgot to fill worklog via give engine
+print "\n-- Sending IM notifications: -------------------------------------------"
+RequestWorklogs(lastWorkday, workLogs, config["notified_skype"], Skype(), commits)
 
 # Populate template with received values
 page = FillTemplate(GetTemplate("report"), {"##SARATOV##": BindTeamLogs("Saratov", teams, commits, workLogs, personTemplate), "##US##": BindTeamLogs("US", teams, commits, workLogs, personTemplate), "##TODAY##": today.strftime("%Y-%m-%d")})
-
 
 
 WriteFile("temp1.tmp", page)
