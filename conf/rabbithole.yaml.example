@@ -1,0 +1,18 @@
+---
+phase: "2.5"
+currentSprint: "11"
+sprintEnd: 2010-04-02
+phaseEnd: 2010-04-02
+personal_space: "~space_name"
+parent_page: "BigRock Reporting automation"
+emails: {ivanov: ivanov@yourcompany.com, petrov: petrov@yourcompany.com, sidorov: sidorov@yourcompany.com}
+jira: {user: "vivanov", password: "verysecret123", server: "https://issues.yourcompany.com"}
+wiki: {user: "vpetrov", password: "anothersecret456", server: "https://wiki.yourcompany.com"}
+jira_soap: "https://issues.yourcompany.com/rpc/soap/jirasoapservice-v2?wsdl"
+project_abbr: "TORS"
+statuses:  ["", "Open", "", "In progress", "Reopened", "Resolved", "Closed"]
+statuses_order: ["Closed", "Resolved", "In progress", "Reopened", "Open" ]
+notified_jabber: {viavanov: "ivanov@yourcompany.com"}
+notified_skype: {apetrov: "aleksei_petrov"}
+
+
