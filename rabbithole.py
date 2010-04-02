@@ -37,6 +37,7 @@ isNumber = re.compile("^[0-9]+$")
 reportLine = re.compile("^[^,]+(, [^,]+){8}$")
 weekends = re.compile("(Sat|Sun)")
 project_issue = re.compile("\[{0,1}%s-([0-9]+)\]{0,1} *" % config["project_abbr"], re.IGNORECASE)
+ignore_key = re.compile("^--ignore=", re.IGNORECASE)
 
 jiraAuth = None
 
@@ -275,7 +276,7 @@ def GetWorkLogs(fromDate, tillDate):
 #####################################################################################
 # Worklog notifications
 
-def RequestWorklogs(fromDate, worklogs, notifiee, engine, commits):
+def RequestWorklogs(fromDate, worklogs, notifiee, engine, commits, ignore = []):
 	if (len(notifiee) > 0):
 
 		notification = GetTemplate("notification")
@@ -286,14 +287,17 @@ def RequestWorklogs(fromDate, worklogs, notifiee, engine, commits):
 		print "\nSending %s notifications about missing jira worklogs for %s:" % (engine.Name, date)
 
 		for login in notifiee.keys():
-			email = config["emails"][login]
-			if not worklogs.has_key(login):
-				commit = "None"
-				if commits.has_key(email):
-					commit = "\n- " + "\n- ".join(commits[email])
+			if not login in ignore:
+				email = config["emails"][login]
+				if not worklogs.has_key(login):
+					commit = "None"
+					if commits.has_key(email):
+						commit = "\n- " + "\n- ".join(commits[email])
 
-				print " - %s" % login
-				engine.SendMessage(notifiee[login], FillTemplate(notification, {"##DATE##": date, "##COMMITS##": commit}))
+					print " - %s" % login
+#					engine.SendMessage(notifiee[login], FillTemplate(notification, {"##DATE##": date, "##COMMITS##": commit}))
+			else:
+				print " - %s (ignored)" % login
 
 		engine.Disconnect()
 

@@ -4,7 +4,13 @@ commits = {}
 personTemplate = GetTemplate("person")
 teams = yaml.load(ReadFile("conf/teams.yaml"))
 
-notify = "-notify" in sys.argv
+# Getting command line parameters
+notify = "--notify" in sys.argv
+ignore = []
+for key in sys.argv:
+	if ignore_key.match(key):
+		ignore = ignore_key.sub("", key).split(",")
+
 
 ######################################################################################
 # Git commits
@@ -29,7 +35,7 @@ workLogs = GetWorkLogs(lastWorkday, today)
 if notify:
 	# Notify guys who forgot to fill worklog via give engine
 	print "\n-- Sending IM notifications: -------------------------------------------"
-	RequestWorklogs(lastWorkday, workLogs, config["notified_skype"], Skype(), commits)
+	RequestWorklogs(lastWorkday, workLogs, config["notified_skype"], Skype(), commits, ignore)
 else:
 	# Populate template with received values
 	page = FillTemplate(GetTemplate("report"), {"##SARATOV##": BindTeamLogs("Saratov", teams, commits, workLogs, personTemplate), "##US##": BindTeamLogs("US", teams, commits, workLogs, personTemplate), "##TODAY##": today.strftime("%Y-%m-%d")})
