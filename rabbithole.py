@@ -295,7 +295,7 @@ def RequestWorklogs(fromDate, worklogs, notifiee, engine, commits, ignore = []):
 						commit = "\n- " + "\n- ".join(commits[email])
 
 					print " - %s" % login
-#					engine.SendMessage(notifiee[login], FillTemplate(notification, {"##DATE##": date, "##COMMITS##": commit}))
+					engine.SendMessage(notifiee[login], FillTemplate(notification, {"##DATE##": date, "##COMMITS##": commit}))
 			else:
 				print " - %s (ignored)" % login
 
