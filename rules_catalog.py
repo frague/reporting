@@ -8,6 +8,7 @@ types = {"provider": "Provider", "template": "Template", "aggregation": "Aggrega
 typeTemplate = GetTemplate("rule_type")
 lineTemplate = GetTemplate("rule_line")
 emptySpaces = re.compile("[ \t\n\r]+")
+prd = re.compile("PRD: (\d(\.\d+)+)")
 
 result = {}
 
@@ -32,9 +33,10 @@ def ProcessRule(file):
 	tags = context.xpathEval("//tag")
 
 	comment = ""
-	comments = context.xpathEval("//comment")
-	if len(comments) > 0:
-		comment = comments[0].content
+	match = prd.search(description)
+	if match:
+		comment = match.group(1)
+	description = prd.sub("", description)
 
 	AppendSubSet(result, type, FillTemplate(lineTemplate, {"##NAME##": name, "##DESCRIPTION##": description, "##GOAL##": ProcessTags(tags), "##PRD##": comment}))
 
