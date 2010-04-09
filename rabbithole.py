@@ -93,7 +93,7 @@ def GetJira(add_params = {}):
 # Update cache file with received data
 # Returns updated dictionary
 def SaveUpdates(filter_name, status):
-	name = "conf/" + filter_name + ".status"
+	name = "cache/%s.yaml" % filter_name
 	existing = yaml.load(ReadFile(name)) or {}
 	existing.update({datetime.date.today(): status})
 	WriteFile(name, yaml.dump(existing))
@@ -114,7 +114,7 @@ def GetJiraFilterData(filter_name):
 
 # Reads template from filesystem
 def GetTemplate(template_name):
-	return ReadFile("conf/%s.template" % template_name)
+	return ReadFile("templates/%s" % template_name)
 
 # Fills template by values from given dictionary
 def FillTemplate(template, values):
