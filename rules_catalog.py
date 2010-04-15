@@ -16,6 +16,8 @@ def ProcessTags(tags):
 	return ", ".join([tag.content.replace("*", "\\*") for tag in tags])
 
 def ProcessRule(file):
+	mtime = time.strftime("%Y-%m-%d,&nbsp;%H:%M", time.localtime(os.path.getmtime(file)))
+ 
 	doc = libxml2.parseFile(file)
 	context = doc.xpathNewContext()
 
@@ -38,7 +40,7 @@ def ProcessRule(file):
 		comment = match.group(1)
 	description = prd.sub("", description)
 
-	AppendSubSet(result, type, FillTemplate(lineTemplate, {"##NAME##": name, "##DESCRIPTION##": description, "##GOAL##": ProcessTags(tags), "##PRD##": comment}))
+	AppendSubSet(result, type, FillTemplate(lineTemplate, {"##NAME##": name, "##DESCRIPTION##": description, "##GOAL##": ProcessTags(tags), "##PRD##": comment, "##UPDATED##": mtime, "##URI##": os.path.basename(file)}))
 
 
 [ProcessRule(file) for file in glob.glob(os.path.join(path, "*.*"))]

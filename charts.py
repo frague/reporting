@@ -6,12 +6,12 @@ from rabbithole import *
 print "-- Updating progress charts: -------------------------------------------"
 print "Reading templates"
 
-page = GetTemplate("progress")
+page = GetTemplate("ch_progress")
 sprint = GetTemplate("single_burndown")
 
 # Phase Graphs
 print "Sprint: reading data form jira, updating stored data"
-phase_data = GetAndSaveJiraFilteredData("phase%ssprint%s" % (config["phase"], config["currentSprint"]))
+phase_data = GetAndSaveJiraFilteredData("%s" % config["phase"])
 
 #  Barchart
 print "Sprint: building barcharts and burn-down diagrams"
@@ -25,7 +25,7 @@ sprint = FillTemplate(sprint, {"##PHASEBURNCHART##": phase_burndown, "##PHASEBUR
 
 # Total progress
 #  Burndown
-print "Phase: reading data form jira, updating stored data"
+'''print "Phase: reading data form jira, updating stored data"
 total_data = GetAndSaveJiraFilteredData("ProductBacklog")
 
 print "Phase: building barcharts and burn-down diagrams"
@@ -39,7 +39,7 @@ total_full_data = GetAndSaveJiraFilteredData("ProductBacklogWithSubtasks")
 
 print "Phase (full): building barcharts and burn-down diagrams"
 total_full_burndown = MakeWikiBurndownChart(total_full_data, config["phaseEnd"])
-page = FillTemplate(page, {"##TOTALBURNCHARTFULL##": total_full_burndown, "##TOTALBURNFULLTITLE##": "Phase %s Burndown diagram (with subtasks)" % config["phase"]})
+page = FillTemplate(page, {"##TOTALBURNCHARTFULL##": total_full_burndown, "##TOTALBURNFULLTITLE##": "Phase %s Burndown diagram (with subtasks)" % config["phase"]})'''
 
 
 print "Publishing to wiki"

@@ -1,0 +1,964 @@
+FindServer						
+TC_002	Verify that getEntities-DC1 gives the list of DC.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct list of DC should be given as output.	P1	20m	
+TC_003	Verify that getEntities-DC1 gives no Result when there is no DC.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2	10m	what does it mean? Wrong dc name? Empty list? No dc in model?
+TC_004	Verify that getEntities-Room1 gives the List of Rooms in a DC.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct list of Rooms in DC should be given as output.	P1	20m	
+TC_005	Verify that getEntities-Room1 gives no Result when there is no Room in a DC.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2	10m	
+TC_006	Verify that getEntities-Row1 gives the List of Rows in a Room	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct List of Rows in this DC should be given as output.	P1	20m	
+TC_007	Verify that getEntities-Row1 gives no Result when there is no Row in a Room.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2	10m	
+TC_008	Verify that getEntities-Rack1 gives the List of Racks in a Row	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct List of Racks in this DC should be given as output.	P1	20m	
+TC_009	Verify that getEntities-Rack1 gives no Result when there is no Rack in a Row.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2	10m	
+TC_010	Verify that getEntities-Pod1 gives the List of Pods.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct List of Pods in this DC should be given as output.	P1	20m	
+TC_011	Verify that getEntities-Pod1 gives no Result when there is no Pod in the DC.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2	10m	
+TC_012	Verify that getEntities-BridgeGroups1 gives the List of BridgeGroups	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct List of Bridge Group   should be given as output.	P1	20m	
+TC_013	Verify that getEntities-BridgeGroups1 gives no Result when there is no BridgeGroup in the DC.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2	10m	
+TC_014	Verify that getEntities-Vlan gives the List of Vlans	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct List of Vlan  should be given as output.	P1	20m	
+TC_015	Verify that getEntities-Vlan gives no Result when there is no Vlan in the DC.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2	10m	
+TC_016	Verify that getEntities-BUOwner gives the List of BU Owner	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct List of BUOwner  should be given as output.	P1	20m	
+TC_017	Verify that getEntities-BUOwner gives no Result when there is no BUOwner.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2	10m	?
+TC_018	Verify that getEntities-Function1 gives the List of Functions	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct List of Functions should be given as output.	P1	20m	
+TC_019	Verify that getEntities-Function1 gives no Result when there is no Function.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2	10m	
+TC_020	"Verify that findResource-DC-Rack1 Inspect available Racks in a Data
+Center (DC) and ensure findResource
+API finds the Racks in the DC"	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct Rack should be part of filtered results	P1		What is correct rack? Should it be filtered by power, ru, ports etc?
+TC_021	"Verify that findResource-DC-Rack1 Inspect available Racks in a Data
+Center (DC) and ensure findResource
+API finds the Racks in the same DC"	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct Rack should be part of filtered results	P1		What is the difference with tc_020?
+TC_022	"Verify that findResource-DC-Rack1 gives no result when there is no available Rack in a Data
+Center (DC)."	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2		What is available rack?
+TC_023	"Verify that findResource-Room-
+Rack1 Inspect available Racks in a Room and ensure findResource API
+finds the Racks in the Room"	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct Rack should be part of filtered results	P1		?
+TC_024	"Verify that findResource-Room-
+Rack1 Inspect available Racks in a Room and ensure findResource API
+finds the Racks in same Room"	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct Rack should be part of filtered results	P1		?
+TC_025	"Verify that findResource-Room-
+Rack1 gives no result when there is no available Rack in a Room."	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2		?
+TC_026	"Verify that findResource-Row-
+Rack1 findResource-Row- Rack1 Inspect available Racks in a Row and ensure findResource API finds the Racks in the Row"	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct Rack should be part of filtered results	P1		?
+TC_027	"Verify that findResource-Row-
+Rack1 findResource-Row- Rack1 Inspect available Racks in a Row and ensure findResource API finds the Racks in the same Row"	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct Rack should be part of filtered results	P1		?
+TC_028	"Verify that findResource-Room-Row-
+Rack1 gives no result when there is no available Rack in a Room."	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2		Why room and row?
+TC_029	"Verify that findStandByResource-
+DC-Rack1 Inspect available standBy Rack Servers in a Data Center (DC) and ensure findStandByResource API finds the Rack Servers in the DC"	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct Rack Server should be part of filtered results	P1		Same as tc_021? Obsolete API?
+TC_030	"Verify that findStandByResource-
+DC-Rack1 Inspect available standBy Rack Servers in a Data Center (DC) and ensure findStandByResource API finds the Rack Servers in the same DC"	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct Rack Server should be part of filtered results	P1		?
+TC_031	"Verify that findStandByResource-
+DC-Rack1 gives no result when there is no available Rack in a Room."	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2		?
+TC_032	Verify findStandByResource-Room-Rack1 Inspect available standBy Rack Servers in a Room and ensure findStandByResource API finds the RackServers in the Room	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct Rack Server should be part of filtered results	P1		?
+TC_033	Verify findStandByResource-Room-Rack1 Inspect available standBy Rack Servers in a Room and ensure findStandByResource API finds the RackServers in the same Room	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct Rack Server should be part of filtered results	P1		?
+TC_034	Verify that findStandByResource-Room-Rack1 gives no result when there is no available Rack in a Room.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2		?
+TC_035	Verify that findStandByResource-Row-Rack1 Inspect available standBy Rack Servers in a Row and ensure findStandByResource API finds the Rack Servers in the Row	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct Rack Server should be part of filtered results	P1		?
+TC_036	Verify that findStandByResource-Row-Rack1 Inspect available standBy Rack Servers in a Row and ensure findStandByResource API finds the Rack Servers in the same Row	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct Rack Server should be part of filtered results	P1		?
+TC_037	Verify that findStandByResource-Row-Rack1 gives no result when there is no available Rack in a Room.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2		?
+FindBlade						Should we add testcases for find ports also?
+TC_038	Verify that getEntities-DC1 gives the list of DC.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct list of DC should be given as output.	P1		duplicate
+TC_039	Verify that getEntities-DC1 gives no Result when there is no DC.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2		duplicate
+TC_040	Verify that getEntities-Room1 gives the List of Rooms in a DC.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct list of Rooms in DC should be given as output.	P1		duplicate
+TC_041	Verify that getEntities-Room1 gives no Result when there is no Room in a DC.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2		duplicate
+TC_042	Verify that getEntities-Row1 gives the List of Rows in a Room	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct List of Rows in this DC should be given as output.	P1		duplicate
+TC_043	Verify that getEntities-Row1 gives no Result when there is no Row in a Room.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2		duplicate
+TC_044	Verify that getEntities-Rack1 gives the List of Racks in a Row	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct List of Racks in this DC should be given as output.	P1		duplicate
+TC_045	Verify that getEntities-Rack1 gives no Result when there is no Rack in a Row.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2		duplicate
+TC_046	Verify that getEntities-Pod1 gives the List of Pods.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct List of Pods in this DC should be given as output.	P1		duplicate
+TC_047	Verify that getEntities-Pod1 gives no Result when there is no Pod in the DC.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2		duplicate
+TC_048	Verify that getEntities-BridgeGroups1 gives the List of BridgeGroups	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct List of Bridge Group   should be given as output.	P1		duplicate
+TC_049	Verify that getEntities-BridgeGroups1 gives no Result when there is no BridgeGroup in the DC.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2		duplicate
+TC_050	Verify that getEntities-Vlan gives the List of Vlans	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct List of Vlan  should be given as output.	P1		duplicate
+TC_051	Verify that getEntities-Vlan gives no Result when there is no Vlan in the DC.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2		duplicate
+TC_052	Verify that getEntities-BUOwner gives the List of BU Owner	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct List of BUOwner  should be given as output.	P1		duplicate
+TC_053	Verify that getEntities-BUOwner gives no Result when there is no BUOwner.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2		duplicate
+TC_054	Verify that getEntities-Function1 gives the List of Functions	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct List of Functions should be given as output.	P1		duplicate
+TC_055	Verify that getEntities-Function1 gives no Result when there is no Function.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2		duplicate
+TC_056	"Verify that findResource-DC-Slot1 Inspect available Slots in a DC and
+ensure findResourceAPI finds the Slots in the DC"	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct Slot should be part of filtered results	P1		?
+TC_057	"Verify that findResource-DC-Slot1 Inspect available Slots in a DC and
+ensure findResourceAPI finds the Slots in the same DC"	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct Slot should be part of filtered results	P1		?
+TC_058	Verify that findResource-DC-Slot1 gives no result when there is no available slot in a DataCenter (DC).	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2		?
+TC_059	"Verify that findResource-Room-
+Slot1 Inspect available Slots in a Room and ensure findResource
+API finds the Slots in the Room"	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct Slot should be part of filtered results	P1		?
+TC_060	"Verify that findResource-Room-
+Slot1 Inspect available Slots in a Room and ensure findResource
+API finds the Slots in the same Room"	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct Slot should be part of filtered results	P1		?
+TC_061	"Verify that findResource-Room-
+Slot1 gives no result when there is no available slot in a Room."	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2		?
+TC_062	"Verify that findResource-Row-Slot1 Inspect available Slots in a Row and
+ensure findResource API finds the Slots in the Row"	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct Slot should be part of filtered results	P1		?
+TC_063	"Verify that findResource-Row-Slot1 Inspect available Slots in a Row and
+ensure findResource API finds the Slots in the same Row"	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct Slot should be part of filtered results	P1		?
+TC_064	Verify that findResource-Row-Slot1 gives no result when there is no available slot in a Row.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P1		?
+TC_065	"Verify that findResource-Rack-Slot1 Inspect available Slots in a Rack and
+ensure findResource API finds the Slots in the Rack"	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct Slot should be part of filtered results	P1		?
+TC_066	"Verify that findResource-Rack-Slot1 Inspect available Slots in a Rack and
+ensure findResource API finds the Slots in the same Rack"	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct Slot should be part of filtered results	P1		?
+TC_067	Verify that findResource-Rack-Slot1 gives no result when there is no available slot in a Rack.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2		?
+TC_068	"Verify that findStandByResource-
+DC-Slot1 Inspect available standBy 
+Blade Servers in a DataCenter (DC)
+ and ensure findStandByResource
+API finds the BladeServers in the DC"	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	Correct Blade Server should be part of filtered results	P1		--
+TC_069	"Verify that findStandByResource-
+DC-Slot1 Inspect available standBy 
+Blade Servers in a DataCenter (DC)
+ and ensure findStandByResource
+API finds the BladeServers in the same DC"	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	Correct Blade Server should be part of filtered results	P1		--
+TC_070	"Verify that findStandByResource-
+DC-Slot1gives no result when there is no available BladeServers in a DC."	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2		--
+TC_071	"Verify that findStandByResource-
+Room-Slot1 Inspect available standBy 
+BladeServers in a Room and ensure
+findStandByResource API finds the 
+Blade Servers in the Room"	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	Correct Blade Server should be part of filtered results	P1		--
+TC_072	"Verify that findStandByResource-
+Room-Slot1 Inspect available standBy 
+BladeServers in a Room and ensure
+findStandByResource API finds the 
+Blade Servers in the same Room"	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	Correct Blade Server should be part of filtered results	P1		--
+TC_073	"Verify that findStandByResource-
+Room-Slot1 gives no result when there is no available BladeServers in a Room."	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2		--
+TC_074	"Verify that findStandByResource-
+Row-Slot1 Inspect available standBy Blade Servers in a Row and ensure
+findStandByResource API finds the Blade Servers in the Row"	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	Correct Blade Server should be part of filtered results	P1		--
+TC_075	"Verify that findStandByResource-
+Row-Slot1 Inspect available standBy Blade Servers in a Row and ensure
+findStandByResource API finds the Blade Servers in the same Row"	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	Correct Blade Server should be part of filtered results	P1		--
+TC_076	"Verify that findStandByResource-
+Row-Slot1 gives no result when there is no available BladeServers in a Row."	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2		--
+PlaceServer						
+TC_077	Verify that getEntities-DC1 gives the list of DC.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct list of DC should be given as output.	P1		duplicate
+TC_078	Verify that getEntities-DC1 gives no Result when there is no DC.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2		duplicate
+TC_079	Verify that getEntities-Room1 gives the List of Rooms in a DC.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct list of Rooms in DC should be given as output.	P1		duplicate
+TC_080	Verify that getEntities-Room1 gives no Result when there is no Room in a DC.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2		duplicate
+TC_081	Verify that getEntities-Row1 gives the List of Rows in a Room	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct List of Rows in this DC should be given as output.	P1		duplicate
+TC_082	Verify that getEntities-Row1 gives no Result when there is no Row in a Room.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2		duplicate
+TC_083	Verify that getEntities-Rack1 gives the List of Racks in a Row	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct List of Racks in this DC should be given as output.	P1		duplicate
+TC_084	Verify that getEntities-Rack1 gives no Result when there is no Rack in a Row.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2		duplicate
+TC_085	Verify that getEntities-Pod1 gives the List of Pods.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct List of Pods in this DC should be given as output.	P1		duplicate
+TC_086	Verify that getEntities-Pod1 gives no Result when there is no Pod in the DC.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2		duplicate
+TC_087	Verify that getEntities-BridgeGroups1 gives the List of BridgeGroups	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct List of Bridge Group   should be given as output.	P1		duplicate
+TC_088	Verify that getEntities-BridgeGroups1 gives no Result when there is no BridgeGroup in the DC.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2		duplicate
+TC_089	Verify that getEntities-Vlan gives the List of Vlans	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct List of Vlan  should be given as output.	P1		duplicate
+TC_090	Verify that getEntities-Vlan gives no Result when there is no Vlan in the DC.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2		duplicate
+TC_091	Verify that getEntities-BUOwner gives the List of BU Owner	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct List of BUOwner  should be given as output.	P1		duplicate
+TC_092	Verify that getEntities-BUOwner gives no Result when there is no BUOwner.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2		duplicate
+TC_093	Verify that getEntities-Function1 gives the List of Functions	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct List of Functions should be given as output.	P1		duplicate
+TC_094	Verify that getEntities-Function1 gives no Result when there is no Function.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2		duplicate
+TC_095	"Verify that findResource-DC-Rack1 Inspect available Racks in a Data
+Center (DC) and ensure findResource
+API finds the Racks in the DC"	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct Rack should be part of filtered results	P1		Should be filtering by power, ru etc switched off?
+TC_096	"Verify that findResource-DC-Rack1 Inspect available Racks in a Data
+Center (DC) and ensure findResource
+API finds the Racks in the same DC"	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct Rack should be part of filtered results	P1		?
+TC_097	"Verify that findResource-DC-Rack1 gives no result when there is no available Rack in a Data
+Center (DC)."	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2		?
+TC_098	"Verify that findResource-Room-
+Rack1 Inspect available Racks in a Room and ensure findResource API
+finds the Racks in the Room"	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct Rack should be part of filtered results	P1		?
+TC_099	"Verify that findResource-Room-
+Rack1 Inspect available Racks in a Room and ensure findResource API
+finds the Racks in same Room"	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct Rack should be part of filtered results	P1		?
+TC_100	"Verify that findResource-Room-
+Rack1 gives no result when there is no available Rack in a Room."	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2		?
+TC_101	"Verify that findResource-Row-
+Rack1 findResource-Row- Rack1 Inspect available Racks in a Row and ensure findResource API finds the Racks in the Row"	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct Rack should be part of filtered results	P1		?
+TC_102	"Verify that findResource-Row-
+Rack1 findResource-Row- Rack1 Inspect available Racks in a Row and ensure findResource API finds the Racks in the same Row"	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct Rack should be part of filtered results	P1		?
+TC_103	"Verify that findResource-Room-Row-
+Rack1 gives no result when there is no available Rack in a Room."	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2		?
+TC_104	"Verify that findStandByResource-
+DC-Rack1 Inspect available standBy Rack Servers in a Data Center (DC) and ensure findStandByResource API finds the Rack Servers in the DC"	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct Rack Server should be part of filtered results	P1		--
+TC_105	"Verify that findStandByResource-
+DC-Rack1 Inspect available standBy Rack Servers in a Data Center (DC) and ensure findStandByResource API finds the Rack Servers in the same DC"	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct Rack Server should be part of filtered results	P1		--
+TC_106	"Verify that findStandByResource-
+DC-Rack1 gives no result when there is no available Rack in a Room."	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2		--
+TC_107	Verify findStandByResource-Room-Rack1 Inspect available standBy Rack Servers in a Room and ensure findStandByResource API finds the RackServers in the Room	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct Rack Server should be part of filtered results	P1		--
+TC_108	Verify findStandByResource-Room-Rack1 Inspect available standBy Rack Servers in a Room and ensure findStandByResource API finds the RackServers in the same Room	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct Rack Server should be part of filtered results	P1		--
+TC_109	Verify that findStandByResource-Room-Rack1 gives no result when there is no available Rack in a Room.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2		--
+TC_110	Verify that findStandByResource-Row-Rack1 Inspect available standBy Rack Servers in a Row and ensure findStandByResource API finds the Rack Servers in the Row	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct Rack Server should be part of filtered results	P1		--
+TC_111	Verify that findStandByResource-Row-Rack1 Inspect available standBy Rack Servers in a Row and ensure findStandByResource API finds the Rack Servers in the same Row	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct Rack Server should be part of filtered results	P1		--
+TC_112	Verify that findStandByResource-Row-Rack1 gives no result when there is no available Rack in a Room.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2		--
+TC_113	Verify that AvailableRackRU Find racks with available RU 	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	"The Racks with available RU should be the result.
+(Note: It is Calculated as RU capacity minus the sum of RU of attached servers) "	P1	30m	Is it for findResource only?
+TC_114	Verify that AvailableRackRU gives no result when there are no racks with available RU 	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2	10m	
+TC_115	Verify that AvailablSlots Find racks with available slots	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	"The Racks with available slots should be the result.
+(Note: it is Calculated as slot capacity minus the number of attached blades) "	P1		Why slots for server?
+TC_116	Verify that AvailableSlots gives no result when there are no rackswith available slots	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2		--
+TC_117	Verify PlacePorts  find available ports for ToRS	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The available ports for TORS should be the result.	P1	90m	Estimate depends on the model complexity
+TC_118	Verify that PlacePorts gives no result when there are no ports available for TORS.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2	10m	
+TC_119	Verify PlacePatchedPorts  find available ports for Non ToRS.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The available ports for Non TORS should be the result.	P1	90m	
+TC_120	Verify that PlacePatchedPorts gives no result when there are no ports available for Non TORS.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2	10m	
+TC_121	Verify that PlaceSAN checks if  the allocated model can be connected to ports with type SAN. 	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	Proper result should be thrown if  the allocated model can be connected to ports with type SAN. 	P1	40m	Need testcase when SAN is not needed
+TC_122	Verify that PlaceSAN  gives no result when no attached model can be connected to ports with type SAN. 	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2	10m	
+TC_123	Verify that PlaceServerRU Filter Racks with available rusize. 	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	"Racks with available rusize should be the result.
+(Note: Available rusize is the difference between ru needed for placed server and the ru already used in Rack)"	P1	20m	Is it for recommendResource only? Duplicates tc_113?
+TC_124	Verify that PlaceServerRU gives no result when there are no Racks with available rusize.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2	10m	
+TC_125	Verify that PlaceServerPower Filter Racks with available power	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	"Racks with available power should be filtered.
+(Note: Available power is the difference between power needed for placed serve and the power already used in Rack)"	P1	20m	
+TC_126	Verify that PlaceServerPower gives no result when there are no Racks with available power.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2	10m	
+TC_127	Verify failuredomaincheck rule	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	% of (Servers Currently Connected (In Production + Allocated) to a specific switch + Target Server to be connected to a given switch) for a Given Pool i.e. Function should be less than a Pre-Defined Threshold.	P1	240m	
+TC_128	"Verify that the pre-defined threshold
+is configurable based on the  Pool i.e. function size."	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	"The pre-defined threshold
+should be configurable based on
+ the  Pool i.e. function size."	P1	60m	
+TC_129	"Verify the (Power Draw (in Watts) for
+ Target Server) and (Total PowerDraw
+(in Watts) for All Servers Contained 
+in a given Rack) is less than Allocated
+ Power for the Selected Rack."	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	"The (Power Draw (in Watts) for
+ Target Server) and (Total PowerDraw (in Watts) for All Servers Contained in a given Rack) should be less than AllocatedPower for the 
+Selected Rack."	P1		duplicates tc_125?
+TC_130	"Verify the (Power Draw (in Watts) for
+ Target Server) and (Total PowerDraw
+(in Watts) for All Servers Contained 
+in a given Rack) is greater than Allocated Power for the Selected Rack."	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	User should not be able to proceed.	P2		duplicates tc_126?
+TC_131	Verify the (Size (in RU) for Target Server) + (Total Size (in RU) for All Servers Contained in a given Rack) is less than Allocated RU for the Selected Rack	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The (Size (in RU) for Target Server) + (Total Size (in RU) for All Servers Contained in a given Rack) should be less than Allocated RU for the Selected Rack	P1		duplicates tc_123
+TC_132	Verify the (Size (in RU) for Target Server) + (Total Size (in RU) for All Servers Contained in a given Rack) is greater than Allocated RU for the Selected Rack	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	User should not be able to proceed.	P2		duplicates tc_124
+TC_133	Verify that PlaceServerCircuit Search PowerStrips with ElectricalCircuit connected to Rack	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	PowerStrips with ElectricalCircuit connected to Rack should be the result.	P1	60m	Should we return PowerStrip in candidate? Should be split in SLC and other dcs
+TC_134	Verify that PlaceServerCircuit gives no result when there are no Racks connected to  PowerStrips with ElectricalCircuit.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2	10m	In SLC only
+TC_135	Verify filter attributes for compatibility constrainst supported for server target based on Physical Hardware constraints:	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	"Following filter attributes should be supported:
+Model ie Hardware,Manufacturer
+CPU type,
+CPU Count
+memory Size
+ memory Count
+hard disk count
+nominal disk space
+power draw ( in watts)
+Size (In RU)
+ receptacle type
+ receptacle quantity
+Voltage
+Interface type (Ethernet,Serial, SAN)
+Interface speed (bps)
+duplex
+mediatype (Copper {Cat6, Cat5, Wireless}, Fiber)
+connectortype (RJ45)
+wiring plant type
+needs patched ports (Yes/No)
+network distribution
+
+"	P1		Not a testcase. Needs to be splitted in small meaningful testcases.
+TC_136	Verify filter attributes for compatibility constrainst supported for server target based on Networkconstraints:	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	"Following filter attributes should be supported:
+Pod
+Vlan
+Bridgegroup
+Switchtype
+Phase
+"	P1		Not a testcase
+TC_137	Verify failuredomaincheck rule	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	% of (Servers Currently Connected (In Production + Allocated) to a specific switch + Target Server to be connected to a given switch) for a Given Pool i.e. Function should be less than a Pre-Defined Threshold.	P1		duplicates tc_127
+TC_138	"Verify that the pre-defined threshold
+is configurable based on the  Pool i.e. function size."	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	"The pre-defined threshold
+should be configurable based on
+ the  Pool i.e. function size."	P1		duplicates tc_128
+PlaceBlade						
+TC_139	Verify that getEntities-DC1 gives the list of DC.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct list of DC should be given as output.	P1		duplicate
+TC_140	Verify that getEntities-DC1 gives no Result when there is no DC.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2		duplicate
+TC_141	Verify that getEntities-Room1 gives the List of Rooms in a DC.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct list of Rooms in DC should be given as output.	P1		duplicate
+TC_142	Verify that getEntities-Room1 gives no Result when there is no Room in a DC.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2		duplicate
+TC_143	Verify that getEntities-Row1 gives the List of Rows in a Room	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct List of Rows in this DC should be given as output.	P1		duplicate
+TC_144	Verify that getEntities-Row1 gives no Result when there is no Row in a Room.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2		duplicate
+TC_145	Verify that getEntities-Rack1 gives the List of Racks in a Row	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct List of Racks in this DC should be given as output.	P1		duplicate
+TC_146	Verify that getEntities-Rack1 gives no Result when there is no Rack in a Row.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2		duplicate
+TC_147	Verify that getEntities-Pod1 gives the List of Pods.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct List of Pods in this DC should be given as output.	P1		duplicate
+TC_148	Verify that getEntities-Pod1 gives no Result when there is no Pod in the DC.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2		duplicate
+TC_149	Verify that getEntities-BridgeGroups1 gives the List of BridgeGroups	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct List of Bridge Group   should be given as output.	P1		duplicate
+TC_150	Verify that getEntities-BridgeGroups1 gives no Result when there is no BridgeGroup in the DC.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2		duplicate
+TC_151	Verify that getEntities-Vlan gives the List of Vlans	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct List of Vlan  should be given as output.	P1		duplicate
+TC_152	Verify that getEntities-Vlan gives no Result when there is no Vlan in the DC.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2		duplicate
+TC_153	Verify that getEntities-BUOwner gives the List of BU Owner	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct List of BUOwner  should be given as output.	P1		duplicate
+TC_154	Verify that getEntities-BUOwner gives no Result when there is no BUOwner.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2		duplicate
+TC_155	Verify that getEntities-Function1 gives the List of Functions	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct List of Functions should be given as output.	P1		duplicate
+TC_156	Verify that getEntities-Function1 gives no Result when there is no Function.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2		duplicate
+TC_157	"Verify that findResource-Rack-Slot1 Inspect available Slots in a Rack and
+ensure findResource API finds the Slots in the Rack"	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct Slot should be part of filtered results	P1		?
+TC_158	"Verify that findResource-Rack-Slot1 Inspect available Slots in a Rack and
+ensure findResource API finds the Slots in the same Rack"	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The Correct Slot should be part of filtered results	P1		different from tc_157?
+TC_159	Verify that findResource-Rack-Slot1 gives no result when there is no available slot in a Rack.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2		?
+TC_160	"Verify that findStandByResource-
+DC-Slot1 Inspect available standBy 
+Blade Servers in a DataCenter (DC)
+ and ensure findStandByResource
+API finds the BladeServers in the DC"	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	Correct Blade Server should be part of filtered results	P1		?
+TC_161	"Verify that findStandByResource-
+DC-Slot1 Inspect available standBy 
+Blade Servers in a DataCenter (DC)
+ and ensure findStandByResource
+API finds the BladeServers in the same DC"	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	Correct Blade Server should be part of filtered results	P1		?
+TC_162	"Verify that findStandByResource-
+DC-Slot1gives no result when there is no available BladeServers in a DC."	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2		?
+TC_163	"Verify that findStandByResource-
+Room-Slot1 Inspect available standBy 
+BladeServers in a Room and ensure
+findStandByResource API finds the 
+Blade Servers in the Room"	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	Correct Blade Server should be part of filtered results	P1		?
+TC_164	"Verify that findStandByResource-
+Room-Slot1 Inspect available standBy 
+BladeServers in a Room and ensure
+findStandByResource API finds the 
+Blade Servers in the same Room"	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	Correct Blade Server should be part of filtered results	P1		?
+TC_165	"Verify that findStandByResource-
+Room-Slot1 gives no result when there is no available BladeServers in a Room."	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2		?
+TC_166	"Verify that findStandByResource-
+Row-Slot1 Inspect available standBy Blade Servers in a Row and ensure
+findStandByResource API finds the Blade Servers in the Row"	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	Correct Blade Server should be part of filtered results	P1		?
+TC_167	"Verify that findStandByResource-
+Row-Slot1 Inspect available standBy Blade Servers in a Row and ensure
+findStandByResource API finds the Blade Servers in the same Row"	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	Correct Blade Server should be part of filtered results	P1		?
+TC_168	"Verify that findStandByResource-
+Row-Slot1 gives no result when there is no available BladeServers in a Row."	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2		?
+TC_169	Verify that AvailableRackRU Find racks with available RU 	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	"The Racks with available RU should be the result.
+(Note: It is Calculated as RU capacity minus the sum of RU of attached servers) "	P1		?
+TC_170	Verify that AvailableRackRU gives no result when there are no racks with available RU 	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2		?
+TC_171	Verify that AvailablSlots Find racks with available slots	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	"The Racks with available slots should be the result.
+(Note: it is Calculated as slot capacity minus the number of attached blades) "	P1	20m	Should we return racks when placing blades?
+TC_172	Verify that AvailableSlots gives no result when there are no rackswith available slots	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2	10m	
+TC_173	Verify PlacePorts  find available ports for ToRS	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The available ports for TORS should be the result.	P1	50m	
+TC_174	Verify that PlacePorts gives no result when there are no ports available for TORS.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2	10m	
+TC_175	Verify PlacePatchedPorts  find available ports for Non ToRS.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	The available ports for Non TORS should be the result.	P1	50m	Need testcase for permanently cabled slots
+TC_176	Verify that PlacePatchedPorts gives no result when there are no ports available for Non TORS.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2	10m	
+TC_177	Verify that PlaceSAN checks if  the allocated model can be connected to ports with type SAN. 	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	Proper result should be thrown if  the allocated model can be connected to ports with type SAN. 	P1	10m	
+TC_178	Verify that PlaceSAN  gives no result when no attached model can be connected to ports with type SAN. 	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2	10m	
+TC_179	Verify that PlaceServerRU Filter Racks with available rusize. 	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	"Racks with available rusize should be the result.
+(Note: Available rusize is the difference between ru needed for placed server and the ru already used in Rack)"	P1		duplicate
+TC_180	Verify that PlaceServerRU gives no result when there are no Racks with available rusize.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2		
+TC_181	Verify that PlaceServerPower Filter Racks with available power	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	"Racks with available power should be filtered.
+(Note: Available power is the difference between power needed for placed serve and the power already used in Rack)"	P1		duplicate
+TC_182	Verify that PlaceServerPower gives no result when there are no Racks with available power.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2		duplicate
+TC_183	Verify that PlaceServerCircuit Search PowerStrips with ElectricalCircuit connected to Rack	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	PowerStrips with ElectricalCircuit connected to Rack should be the result.	P1		
+TC_184	Verify that PlaceServerCircuit gives no result when there are no Racks connected to  PowerStrips with ElectricalCircuit.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2		
+TC_185	Verify failuredomaincheck rule	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	% of (Servers Currently Connected (In Production + Allocated) to a specific Chassis + Target Server to be connected to a given Chassis) for a Given Pool i.e. Function should be less than a Pre-Defined Threshold.	P1	240m	
+TC_186	"Verify that the pre-defined threshold
+is configurable based on the  Pool i.e. function size."	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	"The pre-defined threshold
+should be configurable based on
+ the  Pool i.e. function size."	P1	60m	
+TC_187	Verify that for target Server the  no. of Available Chassis Slots is more than 1  for a Selected Rack.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	"For target Server the  no. of 
+Available Chassis Slots is more 
+than 1  for a Selected Rack."	P1	30m	"should be >=1
+Assumption: we return racks from findResource"
+TC_188	Verify that for target Server the  no. of Available Chassis Slots is less than 1  for a Selected Rack.	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	User should not be able to proceed.	P2	10m	
+TC_189	"Verify the (Power Draw (in Watts) for
+ Target Server) and (Total PowerDraw
+(in Watts) for All Servers Contained 
+in a given Rack) is less than Allocated
+ Power for the Selected Rack."	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	"The (Power Draw (in Watts) for
+ Target Server) and (Total PowerDraw (in Watts) for All Servers Contained in a given Rack) should be less than AllocatedPower for the 
+Selected Rack."	P1		NA for blades
+TC_190	"Verify the (Power Draw (in Watts) for
+ Target Server) and (Total PowerDraw
+(in Watts) for All Servers Contained 
+in a given Rack) is more than Allocated Power for the Selected Rack."	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	User should not be able to proceed.	P2		NA?
+TC_191	"Verify PlaceBladeChassis find 
+available Chassis for Blades"	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	"The available chassis should be 
+given as the result
+(Note:Available Chassis is a Chassis witch has one or more than available Slots)"	P1	20m	Should we return chassis also?
+TC_192	Verify PlaceBladeChassis gives no result when there is no available Chassis for Blades	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	No result should be found.	P2	10m	?
+TC_193	Verify filter attributes for compatibility constrainst supported for server target based on Physical Hardware constraints:	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	"Following filter attributes should be supported:
+Model ie Hardware,Manufacturer
+CPU type,
+CPU Count
+memory Size
+ memory Count
+hard disk count
+nominal disk space
+power draw ( in watts)
+Size (In RU)
+ receptacle type
+ receptacle quantity
+Voltage
+Interface type (Ethernet,Serial, SAN)
+Interface speed (bps)
+duplex
+mediatype (Copper {Cat6, Cat5, Wireless}, Fiber)
+connectortype (RJ45)
+wiring plant type
+needs patched ports (Yes/No)
+network distribution
+Chassis type Blade
+
+"	P1		Not a testcase
+TC_194	Verify filter attributes for compatibility constrainst supported for server target based on Networkconstraints:	"1. Login to the tool with valid user credentials.
+2. Enter the required inputs in the API.
+3. Hit the API
+4. Check the output"	"Following filter attributes should be supported:
+Pod
+Vlan
+Bridgegroup
+Switchtype
+Phase"	P1		Not a testcase

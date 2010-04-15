@@ -65,6 +65,10 @@ def DateFromSet(set):
 def PrintableDate(date):
 	return date.strftime("%B, %d (%A)")
 	#return date.strftime("%d/%m/%Y %H:%M")
+
+# Returns datetime object formatted for printing
+def PrintableDateTime(date):
+	return date.strftime("%Y-%m-%d, %H:%M")
 	
 # Making parameters line w/ login & password
 def MakeParamsWithLogin(params, add_params):
