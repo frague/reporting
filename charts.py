@@ -21,7 +21,7 @@ page = FillTemplate(page, {"##PHASECHART##": phase_bars, "##PHASETITLE##": "Spri
 #  Burndown
 phase_burndown = MakeWikiBurndownChart(phase_data, config["sprintEnd"])
 page = FillTemplate(page, {"##PHASEBURNCHART##": phase_burndown, "##PHASEBURNTITLE##": "Sprint Burndown diagram"})
-sprint = FillTemplate(sprint, {"##PHASEBURNCHART##": phase_burndown, "##PHASEBURNTITLE##": "Sprint #%s Burndown diagram" % config["currentSprint"]})
+sprint = FillTemplate(sprint, {"##PHASEBURNCHART##": phase_burndown, "##PHASEBURNTITLE##": "Phase %s, sprint #%s burn-down diagram" % (config["phase"], config["currentSprint"])})
 
 # Total progress
 #  Burndown
@@ -48,7 +48,7 @@ GetWiki({"action": "storePage", "space": config["personal_space"], "title": "%s 
 os.remove("temp.tmp")
 
 WriteFile("temp.tmp", sprint)
-GetWiki({"action": "storePage", "space": config["personal_space"], "title": "%s Sprint Progress" % config["currentSprint"], "file": "temp.tmp", "parent": config["parent_page"]})
+GetWiki({"action": "storePage", "space": config["personal_space"], "title": "Phase %s, sprint %s progress" % (config["phase"], config["currentSprint"]), "file": "temp.tmp", "parent": config["parent_page"]})
 os.remove("temp.tmp")
 
 print "Done"

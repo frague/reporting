@@ -37,6 +37,7 @@ isNumber = re.compile("^[0-9]+$")
 reportLine = re.compile("^[^,]+(, [^,]+){8}$")
 weekends = re.compile("(Sat|Sun)")
 project_issue = re.compile("\[{0,1}%s-([0-9]+)\]{0,1} *" % config["project_abbr"], re.IGNORECASE)
+parameter_key = re.compile("^--([a-z]+)(=([^ ]*)){0,1}", re.IGNORECASE)
 ignore_key = re.compile("^--ignore=", re.IGNORECASE)
 
 jiraAuth = None
@@ -47,6 +48,19 @@ lastWorkday = yesterday
 while (weekends.match(lastWorkday.strftime("%a"))):
 	lastWorkday = lastWorkday - timedelta(days = 1)
 
+
+# Getting command-line parameters
+parameters = {}
+for key in sys.argv:
+	result = parameter_key.match(key)
+	if result:
+		parameters[result.group(1)] = result.group(3) or True
+
+def GetParameter(name):
+	if parameters.has_key(name):
+		return parameters[name]
+	else:
+		return ""
 
 
 # Checks if sub-set exists and adds new value to it

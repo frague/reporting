@@ -5,11 +5,8 @@ personTemplate = GetTemplate("person")
 teams = yaml.load(ReadFile("conf/teams.yaml"))
 
 # Getting command line parameters
-notify = "--notify" in sys.argv
-ignore = []
-for key in sys.argv:
-	if ignore_key.match(key):
-		ignore = ignore_key.sub("", key).split(",")
+notify = GetParameter("notify")
+ignore = GetParameter("ignore").split(",")
 
 
 ######################################################################################
@@ -41,8 +38,8 @@ else:
 	page = FillTemplate(GetTemplate("report"), {"##SARATOV##": BindTeamLogs("Saratov", teams, commits, workLogs, personTemplate), "##US##": BindTeamLogs("US", teams, commits, workLogs, personTemplate), "##TODAY##": today.strftime("%Y-%m-%d")})
 
 	WriteFile("temp1.tmp", page)
-	#GetWiki({"action": "storePage", "space": "~nbogdanov", "title": "gitlog + %s report template" % today, "file": "temp1.tmp", "parent": "BigRock Reporting automation"})
-	GetWiki({"action": "storeNews", "space": "ToRS", "title": "%s Daily Report" % today.strftime("%Y.%m.%d"), "file": "temp1.tmp"})
+	#GetWiki({"action": "storePage", "space": config["personal_space"], "title": "gitlog + %s report template" % today, "file": "temp1.tmp", "parent": config["parent_page"]})
+	GetWiki({"action": "storeNews", "space": config["project_space"], "title": "%s Daily Report" % today.strftime("%Y.%m.%d"), "file": "temp1.tmp"})
 	os.remove("temp1.tmp")
 
 print "Done"
