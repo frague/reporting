@@ -33,23 +33,11 @@ def WriteFile(file_name, contents):
 # Reading config
 config = yaml.load(ReadFile("conf/rabbithole.yaml"))
 
-isNumber = re.compile("^[0-9]+$")
-reportLine = re.compile("^[^,]+(, [^,]+){8}$")
-weekends = re.compile("(Sat|Sun)")
-project_issue = re.compile("\[{0,1}%s-([0-9]+)\]{0,1} *" % config["project_abbr"], re.IGNORECASE)
-parameter_key = re.compile("^--([a-z]+)(=([^ ]*)){0,1}", re.IGNORECASE)
-ignore_key = re.compile("^--ignore=", re.IGNORECASE)
-
 jiraAuth = None
-
-today = datetime.date.today()
-yesterday = today - timedelta(days = 1)
-lastWorkday = yesterday
-while (weekends.match(lastWorkday.strftime("%a"))):
-	lastWorkday = lastWorkday - timedelta(days = 1)
 
 
 # Getting command-line parameters
+parameter_key = re.compile("^--([a-z]+)(=([^ ]*)){0,1}", re.IGNORECASE)
 parameters = {}
 for key in sys.argv:
 	result = parameter_key.match(key)
@@ -62,6 +50,39 @@ def GetParameter(name):
 	else:
 		return ""
 
+# Load profile if passed as parameter
+profile = GetParameter("profile")
+if profile != "":
+	config.update(yaml.load(ReadFile("profiles/%s" % profile)))
+
+
+###################################################################
+# Precompiled regexps
+
+abbr = "JKHFKJHEKJHKJHKSDJDH"
+if config.has_key("project_abbr"):
+	abbr = config["project_abbr"]
+project_issue = re.compile("\[{0,1}%s-([0-9]+)\]{0,1} *" % abbr, re.IGNORECASE)
+
+isNumber = re.compile("^[0-9]+$")
+reportLine = re.compile("^[^,]+(, [^,]+){8}$")
+weekends = re.compile("(Sat|Sun)")
+ignore_key = re.compile("^--ignore=", re.IGNORECASE)
+
+today = datetime.date.today()
+yesterday = today - timedelta(days = 1)
+lastWorkday = yesterday
+while (weekends.match(lastWorkday.strftime("%a"))):
+	lastWorkday = lastWorkday - timedelta(days = 1)
+
+
+
+# Exits if no profile passed as parameter
+def ProfileNeeded():
+	if profile == "":
+		exit("Profile is not specified!")
+	else:
+		print "==== Profile: %s" % profile
 
 # Checks if sub-set exists and adds new value to it
 def AppendSubSet(set, key, value):

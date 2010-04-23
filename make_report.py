@@ -1,8 +1,9 @@
 from rabbithole import *
 
+ProfileNeeded()
+
 commits = {}
 personTemplate = GetTemplate("person")
-teams = yaml.load(ReadFile("conf/teams.yaml"))
 
 # Getting command line parameters
 notify = GetParameter("notify")
@@ -15,13 +16,15 @@ ignore = GetParameter("ignore").split(",")
 print "-- Fetching git commits: -----------------------------------------------"
 
 # Fetch teammembers repositories
-for team in teams.keys():
-	[GetStdoutOf("fetchrep.bat", "%s" % rep) for rep in teams[team]]
+rep_path = config["repository_path"]
+for team in config["teams"].keys():
+	[GetStdoutOf("fetchrep.bat", "%s %s" % (rep, rep_path)) for rep in config["teams"][team]]
 
 # Getting log
 text = GetStdoutOf("gitlog.bat", "%s %s" % (lastWorkday.strftime("%Y-%m-%d"), today.strftime("%Y-%m-%d")))
 # Split into lines and treat each
 [AddCommit(line, commits) for line in text.split("\n")]
+
 
 ######################################################################################
 # Jira worklogs
@@ -35,7 +38,10 @@ if notify:
 	RequestWorklogs(lastWorkday, workLogs, config["notified_skype"], Skype(), commits, ignore)
 else:
 	# Populate template with received values
-	page = FillTemplate(GetTemplate("report"), {"##SARATOV##": BindTeamLogs("Saratov", teams, commits, workLogs, personTemplate), "##US##": BindTeamLogs("US", teams, commits, workLogs, personTemplate), "##TODAY##": today.strftime("%Y-%m-%d")})
+	chunks = {"##TODAY##": today.strftime("%Y-%m-%d"), "##ABBR##": config["project_abbr"]}
+	for team in config["teams"].keys():
+		chunks["##%s##" % team] = BindTeamLogs(team, config["teams"], commits, workLogs, personTemplate)
+	page = FillTemplate(GetTemplate(config["report_template"]), chunks)
 
 	WriteFile("temp1.tmp", page)
 	#GetWiki({"action": "storePage", "space": config["personal_space"], "title": "gitlog + %s report template" % today, "file": "temp1.tmp", "parent": config["parent_page"]})
