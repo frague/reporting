@@ -167,7 +167,8 @@ def GetAndSaveJiraFilteredData(filter_name):
 	return SaveUpdates(filter_name, status)
 
 # Makes Wiki-syntax bar-chart markup for given data
-def MakeWikiBarChart(data):
+def MakeWikiBarChart(data, name=""):
+	print "- Create chart %s - %s line(s)" % (name, len(data))
 	dates = data.keys()
 	dates.sort()
 	result = "|| || %s ||" % " || ".join(date.strftime("%d/%m") for date in dates)
@@ -202,7 +203,9 @@ def MakeWikiBurndownLine(data, max_tasks, max_days=0):
 	return result
 
 # Makes Wiki-syntax burndown markup for given data
-def MakeWikiBurndownChart(data, deadline):
+def MakeWikiBurndownChart(data, deadline, name=""):
+	print "- Create chart %s - %s line(s)" % (name, len(data))
+
 	max_tasks = max([sum(data[date].values()) for date in data.keys()])
 	min_date = min([date for date in data.keys()])
 

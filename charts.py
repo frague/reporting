@@ -21,13 +21,13 @@ for set in [config["charts_burndown"], config["charts_bars"]]:
 
 print "-- Bar charts: ---------------------------------------------------------"
 for key in config["charts_bars"].keys():
-	page = FillTemplate(page, {"##%s##" % key: MakeWikiBarChart(data[config["charts_bars"][key][0]])})
+	page = FillTemplate(page, {"##%s##" % key: MakeWikiBarChart(data[config["charts_bars"][key][0]], key)})
 
 print "-- Burn-down diagrams: -------------------------------------------------"
 burns = config["charts_burndown"]
 for key in burns.keys():
 	value = burns[key]
-	page = FillTemplate(page, {"##%s##" % key: MakeWikiBurndownChart(data[value[0]], config[value[1]])})
+	page = FillTemplate(page, {"##%s##" % key: MakeWikiBurndownChart(data[value[0]], config[value[1]], key)})
 
 
 print "Publishing to wiki"
