@@ -2,3 +2,4 @@ confluence_cli
 jira_cli
 rabbithole.yaml
 profiles/*
+csv/*
