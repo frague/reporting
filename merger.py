@@ -17,9 +17,8 @@ class TestCase:
 			   	(self.Number, self.PRD, self.Name, self.Description, self.ExpectedResult, self.Priority, self.Status, self.Comments) = columns
 
 			self.Name = cleanNewLines(self.Name)
-			self.Description = deNewLine(self.Description)
-			self.ExpectedResult = deNewLine(self.ExpectedResult)
-			self.Comments = deNewLine(self.Comments)
+			if self.IsClosed:
+				self.IsClosed = "Closed"
 
 			if self.Priority and self.Number:
 				self.empty = False
@@ -39,10 +38,15 @@ class TestCase:
 		self.IsClosed = who.IsClosed
 
 	def Publish(self):
-		GetJira({"action": "createIssue", "project": "TORS", "type": "Task", "fixVersions": "Code Hardening 2", "summary": "%s: %s" % (self.Number, self.Name), "description": "*Actions*: \\n %s \\n  \\n *Expected Result*: \\n %s \\n  \\n *Comments*: %s" % (self.Description, self.ExpectedResult, self.Comments), "priority": self.Priority})
+		GetJira({"action": "createIssue", "project": "TORS", "type": "Task", "fixVersions": "Code Hardening 2", "summary": "%s: %s" % (self.Number, self.Name), "description": "*Actions*: \\n %s \\n  \\n *Expected Result*: \\n %s \\n  \\n *Comments*: %s \\n  \\n *PRD*: %s" % (deNewLine(self.Description), deNewLine(self.ExpectedResult), deNewLine(self.Comments), deNewLine(self.PRD)), "priority": self.Priority})
 
 	def ToTabSeparated(self):
-		return "\t".join([self.Number, self.PRD, self.Name, self.Description, self.ExpectedResult, self.Priority, self.Status, self.Comments])
+		return "\t".join([self.Number, truNewLine(self.PRD), self.Name, truNewLine(self.Description), truNewLine(self.ExpectedResult), self.Priority, self.Status, truNewLine(self.Comments), self.Assignee, self.IsClosed])
+
+	def ToXML(self):
+		keys = ["Number", "PRD", "Summary", "Description", "ExpectedResult", "Priority", "Status", "Comments", "Assignee", "IsClosed"]
+		pairs = {"Number": self.Number, "PRD": self.PRD, "Summary": self.Name, "Description": self.Description, "ExpectedResult": self.ExpectedResult, "Priority": self.Priority, "Status": self.Status, "Comments": self.Comments, "Assignee": self.Assignee, "IsClosed": self.IsClosed}
+		return "<line>%s</line>" % "".join(["<%s>%s</%s>" % (key, deXml(truNewLine(pairs[key])), key) for key in keys])
 
 
 # ---------------------------------------------------------
@@ -55,9 +59,15 @@ def reNewLine(matchObj):
 def deNewLine(text):
 	return text.replace("\\\\", " \\n ").replace('"', "")
 
+def truNewLine(text):
+	return text.replace("\\\\", "\n")
+
 def cleanNewLines(text):
 	text = text.replace("\\\\", " ")
 	return re.sub(" +", " ", text)
+
+def deXml(text):
+	return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
 def makePriority(p):
 	if p == "P1":
@@ -96,9 +106,10 @@ justOne = True
 for key in sorted(result.iterkeys()):
 	task = result[key]
 	task.Print()
-	csv.append(task.ToTabSeparated())
+#	csv.append(task.ToTabSeparated())
+	csv.append(task.ToXML())
 	if justOne:
 		justOne = False
 		task.Publish()
 
-WriteFile("csv/merged.txt", "\n".join(csv))
+WriteFile("csv/merged.xml", "<doc>%s</doc>" % "".join(csv))
