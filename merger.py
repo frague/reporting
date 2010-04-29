@@ -4,6 +4,7 @@ class TestCase:
 	empty = True
 	Assignee = ""
 	IsClosed = ""
+	jiraKey = ""
 
 	def __init__(self, tabDelimited):
 		columns = tabDelimited.split("\t")
@@ -37,8 +38,12 @@ class TestCase:
 		self.Assignee = who.Assignee
 		self.IsClosed = who.IsClosed
 
-	def Publish(self):
-		GetJira({"action": "createIssue", "project": "TORS", "type": "Task", "fixVersions": "Code Hardening 2", "summary": "%s: %s" % (self.Number, self.Name), "description": "*Actions*: \\n %s \\n  \\n *Expected Result*: \\n %s \\n  \\n *Comments*: %s \\n  \\n *PRD*: %s" % (deNewLine(self.Description), deNewLine(self.ExpectedResult), deNewLine(self.Comments), deNewLine(self.PRD)), "priority": self.Priority})
+	def Publish(self, project, version):
+		result = GetJira({"action": "createIssue", "project": project, "type": "Task", "fixVersions": version, "summary": "%s: %s" % (self.Number, self.Name), "description": "*Actions*: \\n %s \\n  \\n *Expected Result*: \\n %s \\n  \\n *Comments*: %s \\n  \\n *PRD*: %s" % (deNewLine(self.Description), deNewLine(self.ExpectedResult), deNewLine(self.Comments), deNewLine(self.PRD)), "priority": self.Priority, "assignee": self.Assignee})
+		self.jiraKey = re.sub("^.*(%s-[0-9]+).*$" % project, "\\1", result).strip()
+
+		if self.IsClosed and self.jiraKey:
+			GetJira({"action": "progressIssue", "issue": self.jiraKey, "step": 2})
 
 	def ToTabSeparated(self):
 		return "\t".join([self.Number, truNewLine(self.PRD), self.Name, truNewLine(self.Description), truNewLine(self.ExpectedResult), self.Priority, self.Status, truNewLine(self.Comments), self.Assignee, self.IsClosed])
@@ -106,10 +111,7 @@ justOne = True
 for key in sorted(result.iterkeys()):
 	task = result[key]
 	task.Print()
-#	csv.append(task.ToTabSeparated())
 	csv.append(task.ToXML())
-	if justOne:
-		justOne = False
-		task.Publish()
+	task.Publish(config["project_abbr"], "Code Hardening 2")
 
 WriteFile("csv/merged.xml", "<doc>%s</doc>" % "".join(csv))
