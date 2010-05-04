@@ -71,6 +71,7 @@ ignore_key = re.compile("^--ignore=", re.IGNORECASE)
 
 today = datetime.date.today()
 yesterday = today - timedelta(days = 1)
+tomorrow = today + timedelta(days = 1)
 lastWorkday = yesterday
 while (weekends.match(lastWorkday.strftime("%a"))):
 	lastWorkday = lastWorkday - timedelta(days = 1)

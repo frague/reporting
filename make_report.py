@@ -38,7 +38,7 @@ if notify:
 	RequestWorklogs(lastWorkday, workLogs, config["notified_skype"], Skype(), commits, ignore)
 else:
 	# Populate template with received values
-	chunks = {"##TODAY##": today.strftime("%Y-%m-%d"), "##ABBR##": config["project_abbr"]}
+	chunks = {"##TODAY##": today.strftime("%Y-%m-%d"), "##TOMORROW##": tomorrow.strftime("%Y-%m-%d"), "##ABBR##": config["project_abbr"]}
 	for team in config["teams"].keys():
 		chunks["##%s##" % team] = BindTeamLogs(team, config["teams"], commits, workLogs, personTemplate)
 	page = FillTemplate(GetTemplate(config["report_template"]), chunks)

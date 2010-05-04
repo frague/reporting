@@ -3,6 +3,9 @@
 h3. Progress Charts
 {include:spaceKey=~nbogdanov|pageTitle=##ABBR## ##TODAY## Progress Charts}
 
+h3. Tasks, resolved today:
+{jiraissues:url=https://issues.griddynamics.net/sr/jira.issueviews:searchrequest-xml/temp/SearchRequest.xml?jqlQuery=project+%3D+##ABBR##+AND+fixVersion+%3D+%22Code+Hardening+2%22+AND+status+in+%28Resolved%2C+Closed%29+AND+resolved+%3E%3D+##TODAY##+AND+resolved+%3C%3D+##TOMORROW##&tempMax=1000|renderMode=static}
+
 h3. Key events:
 
 h3. [Risks] dynamics:
