@@ -27,15 +27,17 @@ class Jabber:
 		# Connecting to port 5223 - TLS is pre-started.
 		# Using direct connect.
 
+		jab = config["jabber"]
+
 		# Create a client
 		self.client = Client('griddynamics.com', debug=[])
 
 		# Connect it to SSL port directly
-		if not self.client.connect(server=('talk.google.com', 5223)):
+		if not self.client.connect(server=(jab["server"], jab["port"])):
 		    raise IOError('Can not connect to server.')
 
 		# Authorize client
-		if not self.client.auth('bigrock','noguSh2Y','big-bot'):
+		if not self.client.auth(jab["login"], jab["password"], "big-bot"):
 		    raise IOError('Can not auth with server.')
 
 		# Register some handlers (if you will register them before auth they will be thrown away)
