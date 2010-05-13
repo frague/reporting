@@ -1,8 +1,31 @@
 from rabbithole import *
 
+#############################################################
+
+issuesExpr = re.compile('((^|\n)([^|]+\|){8}[^|\n]+)', re.MULTILINE)
+
+def appendIssue(matchObj):
+	global cqKeys
+
+	issue = matchObj.group(1).strip().split("|")
+	if len(cqKeys) == 0:
+		cqKeys = issue
+	else:
+		i = {}
+		k = 0
+		for key in cqKeys:
+			i[cqKeys[k]] = issue[k]
+			k = k + 1
+		if (i["Assigned_To"] == "tgautier"):
+			cqIssues["%s: %s" % (i["id"], i["Title"])] = i
+
+	return ""
+
+
+#############################################################
 
 class JiraIssue:
-	global soap, jiraAuth
+	global soap, jiraAuth, config
 
 	def __init__(self):
 		pass
@@ -28,18 +51,57 @@ class JiraIssue:
 		if self.IsNotEmpty():
 			soap.updateIssue(jiraAuth, self.key, changes)
 
+	def Resolve(self):
+		if self.IsNotEmpty():
+			soap.progressWorkflowAction(jiraAuth, self.key, '2', [{"id": "resolution", "values": "2"}])
+
+
 
 
 ProfileNeeded()
 
+cqKeys = []
+cqIssues = {}
+issuesExpr.sub(appendIssue, ReadFile("cqt.txt"))
+
+
 soap = SOAPpy.WSDL.Proxy(config["jira_soap"])
 jiraAuth = soap.login(config["jira"]["user"], config["jira"]["password"])
 
-filterName = "CodeHardening2Report"
 issue = JiraIssue()
+issues = soap.getIssuesFromFilter(jiraAuth, "11180")
 
-issues = soap.getIssuesFromFilter(jiraAuth, "11198")
 
+
+for i in issues:
+	issue.Parse(i)
+	action = "-"
+	if (cqIssues.has_key(issue.summary)):	# Existing issue
+		if issue.status != "6":	# Not closed issues
+			i = cqIssues[issue.summary]
+			if i["State"] == "Closed" or i["State"] == "Verify":
+				action = "Resolve"
+				issue.Resolve()
+		del cqIssues[issue.summary]
+
+	print "[%s] %s" % (action, issue.summary)
+
+
+# Create new issues
+for i in cqIssues.keys():
+	v = cqIssues[i]
+
+	if v["State"] != "Closed" and v["State"] != "Verify":
+		descr = re.sub("([^>])(\n<)", "\\1{code}\\2", v["Steps_Description"])
+		descr = re.sub("(>\n)([ \t]*[^< \t])", "\\1{code}\\2", descr)
+
+		newIssue = soap.createIssue(jiraAuth, {"project": config["project_abbr"], "type": "1", "priority": v["Priority"][0:1], "summary": "%s: %s" % (v["id"], v["Title"]), "description": descr, "assignee": "oaravin", "reporter": "bdaftardar"})
+		soap.updateIssue(jiraAuth, newIssue.key, [{"id": "fixVersions", "values": ["10698"]}])
+
+		print "[Created] %s: %s" % (v["id"], v["Title"])
+
+
+'''
 for i in issues:
 	issue.Parse(i)
 	n = issue.Number()
@@ -51,7 +113,7 @@ for i in issues:
 			issue.Update([{"id": "fixVersion", "values": ["10721", "10725"]}])
 
 		if n > 716 and n <=762:
-			issue.Update([{"id": "fixVersion", "values": ["10721", "10726"]}])
+			issue.Update([{"id": "fixVersion", "values": ["10721", "10726"]}])'''
 
 '''if re.search(" same ", issue.summary):
 		print "-- %s" % issue.summary

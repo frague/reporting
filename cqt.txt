@@ -1,0 +1,1648 @@
+id|Functional_Area|State|Priority|Assigned_To|Title|Steps_Description|Note_Entry|SubmitDate
+BUILD00032149|Site Controller|Assigned|2 - High|tgautier|TORS2.5_RA: Getting proper response on specifying Architecture, layer and Arch Tier although known function is specified.|Getting proper response on specifying Architecture, layer and Arch Tier although known function is specified.
+
+Refer Request and Response below.
+
+Steps to Reproduce:
+1) Open SOAP UI
+2) Hit the Request
+
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:xsd="http://com.ebay.osum.service.ras/xsd" xmlns:xsd1="http://soap.service.grid.ebay.com/xsd">
+   <soap:Header/>
+   <soap:Body>
+     <xsd:findResource>
+         <xsd:quantity>2</xsd:quantity>
+         <xsd:resultLimit>5</xsd:resultLimit>
+                 <xsd:tags>find</xsd:tags>
+                 <xsd:tags>blade</xsd:tags> 
+                 <xsd:tags>need_patched_ports</xsd:tags> 
+                 <xsd:tags>function_syi</xsd:tags>
+                 <xsd:tags>architecture_v3</xsd:tags>
+                 <xsd:tags>layer_app</xsd:tags>
+                 <xsd:tags>archtier_app</xsd:tags> 
+                 <xsd:externalValues>
+            <xsd1:bindings>
+               <xsd1:name>datacenters</xsd1:name>
+               <xsd1:values>PHX:PHX</xsd1:values>
+            </xsd1:bindings>
+            <xsd1:bindings>
+               <xsd1:name>assettype</xsd1:name>
+               <xsd1:value>ASTYPE_20744</xsd1:value>
+            </xsd1:bindings>
+                    <xsd1:bindings>
+               <xsd1:name>architecture</xsd1:name>
+               <xsd1:value>v3</xsd1:value>
+            </xsd1:bindings>
+                    <xsd1:bindings>
+               <xsd1:name>layer</xsd1:name>
+               <xsd1:value>app</xsd1:value>
+            </xsd1:bindings>
+                    <xsd1:bindings>
+               <xsd1:name>archtier</xsd1:name>
+               <xsd1:value>app</xsd1:value>
+            </xsd1:bindings>      
+         </xsd:externalValues>
+     </xsd:findResource>
+   </soap:Body>
+</soap:Envelope>
+
+3) Check the Response
+
+<soapenv:Envelope xmlns:soapenv="http://www.w3.org/2003/05/soap-envelope">
+   <soapenv:Body>
+      <ns:findResourceResponse xmlns:ns="http://com.ebay.osum.service.ras/xsd" xmlns:ax25="http://collectioncache.osum.ebay.com/xsd" xmlns:ax23="http://soap.service.grid.ebay.com/xsd">
+         <ns:return type="com.ebay.grid.service.soap.ResourceCollectionsSoap">
+            <ax23:bindings type="com.ebay.grid.service.soap.CollectionBinding">
+               <ax23:collection type="com.ebay.osum.collectioncache.Collection">
+                  <ax25:definition type="com.ebay.osum.collectioncache.CollectionDefinition">
+                     <ax25:criteria/>
+                     <ax25:id>0</ax25:id>
+                     <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                     <ax25:name/>
+                     <ax25:state/>
+                     <ax25:topLevelObjectsCount>1</ax25:topLevelObjectsCount>
+                     <ax25:type/>
+                  </ax25:definition>
+                  <ax25:nodes type="com.ebay.osum.collectioncache.CollectionNode">
+                     <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                        <ax25:collectionId>0</ax25:collectionId>
+                        <ax25:id>0</ax25:id>
+                        <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                        <ax25:name>PHX:PHX:330:MPL.09:01</ax25:name>
+                        <ax25:type>ODB::Rack</ax25:type>
+                     </ax25:managedObject>
+                     <ax25:typeHierarchy/>
+                  </ax25:nodes>
+               </ax23:collection>
+               <ax23:var>rack</ax23:var>
+            </ax23:bindings>
+         </ns:return>
+         <ns:return type="com.ebay.grid.service.soap.ResourceCollectionsSoap">
+            <ax23:bindings type="com.ebay.grid.service.soap.CollectionBinding">
+               <ax23:collection type="com.ebay.osum.collectioncache.Collection">
+                  <ax25:definition type="com.ebay.osum.collectioncache.CollectionDefinition">
+                     <ax25:criteria/>
+                     <ax25:id>0</ax25:id>
+                     <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                     <ax25:name/>
+                     <ax25:state/>
+                     <ax25:topLevelObjectsCount>1</ax25:topLevelObjectsCount>
+                     <ax25:type/>
+                  </ax25:definition>
+                  <ax25:nodes type="com.ebay.osum.collectioncache.CollectionNode">
+                     <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                        <ax25:collectionId>0</ax25:collectionId>
+                        <ax25:id>0</ax25:id>
+                        <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                        <ax25:name>PHX:PHX:330:MPL.09:07</ax25:name>
+                        <ax25:type>ODB::Rack</ax25:type>
+                     </ax25:managedObject>
+                     <ax25:typeHierarchy/>
+                  </ax25:nodes>
+               </ax23:collection>
+               <ax23:var>rack</ax23:var>
+            </ax23:bindings>
+         </ns:return>
+         <ns:return type="com.ebay.grid.service.soap.ResourceCollectionsSoap">
+            <ax23:bindings type="com.ebay.grid.service.soap.CollectionBinding">
+               <ax23:collection type="com.ebay.osum.collectioncache.Collection">
+                  <ax25:definition type="com.ebay.osum.collectioncache.CollectionDefinition">
+                     <ax25:criteria/>
+                     <ax25:id>0</ax25:id>
+                     <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                     <ax25:name/>
+                     <ax25:state/>
+                     <ax25:topLevelObjectsCount>1</ax25:topLevelObjectsCount>
+                     <ax25:type/>
+                  </ax25:definition>
+                  <ax25:nodes type="com.ebay.osum.collectioncache.CollectionNode">
+                     <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                        <ax25:collectionId>0</ax25:collectionId>
+                        <ax25:id>0</ax25:id>
+                        <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                        <ax25:name>PHX:PHX:330:MPL.09:05</ax25:name>
+                        <ax25:type>ODB::Rack</ax25:type>
+                     </ax25:managedObject>
+                     <ax25:typeHierarchy/>
+                  </ax25:nodes>
+               </ax23:collection>
+               <ax23:var>rack</ax23:var>
+            </ax23:bindings>
+         </ns:return>
+         <ns:return type="com.ebay.grid.service.soap.ResourceCollectionsSoap">
+            <ax23:bindings type="com.ebay.grid.service.soap.CollectionBinding">
+               <ax23:collection type="com.ebay.osum.collectioncache.Collection">
+                  <ax25:definition type="com.ebay.osum.collectioncache.CollectionDefinition">
+                     <ax25:criteria/>
+                     <ax25:id>0</ax25:id>
+                     <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                     <ax25:name/>
+                     <ax25:state/>
+                     <ax25:topLevelObjectsCount>1</ax25:topLevelObjectsCount>
+                     <ax25:type/>
+                  </ax25:definition>
+                  <ax25:nodes type="com.ebay.osum.collectioncache.CollectionNode">
+                     <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                        <ax25:collectionId>0</ax25:collectionId>
+                        <ax25:id>0</ax25:id>
+                        <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                        <ax25:name>PHX:PHX:330:MPL.09:02</ax25:name>
+                        <ax25:type>ODB::Rack</ax25:type>
+                     </ax25:managedObject>
+                     <ax25:typeHierarchy/>
+                  </ax25:nodes>
+               </ax23:collection>
+               <ax23:var>rack</ax23:var>
+            </ax23:bindings>
+         </ns:return>
+         <ns:return type="com.ebay.grid.service.soap.ResourceCollectionsSoap">
+            <ax23:bindings type="com.ebay.grid.service.soap.CollectionBinding">
+               <ax23:collection type="com.ebay.osum.collectioncache.Collection">
+                  <ax25:definition type="com.ebay.osum.collectioncache.CollectionDefinition">
+                     <ax25:criteria/>
+                     <ax25:id>0</ax25:id>
+                     <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                     <ax25:name/>
+                     <ax25:state/>
+                     <ax25:topLevelObjectsCount>1</ax25:topLevelObjectsCount>
+                     <ax25:type/>
+                  </ax25:definition>
+                  <ax25:nodes type="com.ebay.osum.collectioncache.CollectionNode">
+                     <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                        <ax25:collectionId>0</ax25:collectionId>
+                        <ax25:id>0</ax25:id>
+                        <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                        <ax25:name>PHX:PHX:330:MPL.09:04</ax25:name>
+                        <ax25:type>ODB::Rack</ax25:type>
+                     </ax25:managedObject>
+                     <ax25:typeHierarchy/>
+                  </ax25:nodes>
+               </ax23:collection>
+               <ax23:var>rack</ax23:var>
+            </ax23:bindings>
+         </ns:return>
+      </ns:findResourceResponse>
+   </soapenv:Body>
+</soapenv:Envelope>
+
+Actual Results: Getting proper response
+
+Expected Results: Should be getting exception
+
+Additional Information:|Moved to Assigned state using a external script.|2010-05-12 23:05:16
+BUILD00032147|Other|Verify|1 - Urgent|tgautier|TORS2.5_RA: Give a DC as PHX:PHX and give rack from some another DC e.g ABC:DAT:R1:Rw1:RCk1 there should be no output|Detailed Description:
+
+Give non mandatory tag for RACK which is in some different DC
+ <xsd1:bindings>
+               <xsd1:name>datacenters</xsd1:name>
+               <xsd1:values>PHX:PHX</xsd1:values>
+            </xsd1:bindings>
+
+<xsd1:bindings>
+               <xsd1:name>rack</xsd1:name>
+               <xsd1:values>ABC:DAT:R1:Rw1:RCk1</xsd1:values>
+            </xsd1:bindings>
+<xsd1:bindings>
+
+There should not be any OUTPUT. Currently it is giving out put.
+Attaching a doc which has request and response.
+
+
+Impact:
+
+Steps to Reproduce:
+1)
+
+Actual Results:
+
+Expected Results:
+
+Additional Information:|User should give correct tags in order to test.
+If in correct tag is given, it will be bypassed, this wont happen in real time as UI will not show the Data which is not there in some another DC|2010-05-12 11:38:55
+BUILD00032145|Site Controller|Assigned|4 - Low|agandhe|RAP_CH: clicking on Help button does not launche browser window displaying the help WIKI.|Detailed Description:
+
+Impact:
+
+Steps to Reproduce:
+1)
+clicking on Help button does not launches browser window displaying the help WIKI.
+
+Actual Results:
+
+Expected Results:
+
+Additional Information:|Moved to Assigned state using a external script.|2010-05-12 08:07:21
+BUILD00032144|Site Controller|Assigned|3 - Medium|abera|RAP_CH: Title pane area doe not display page title and the help button on Request module page|Detailed Description:
+
+Title pane area doe not display page title and the help button on Request module page
+Impact:
+
+Steps to Reproduce:
+1)
+
+Actual Results:
+
+Expected Results:
+
+Additional Information:|Moved to Assigned state using a external script.|2010-05-12 08:05:17
+BUILD00032143|Staging Controller|Assigned|3 - Medium|agandhe|RAP_CH: message pane area doe not displays informative and/or error message|Detailed Description:
+
+Impact:
+
+Steps to Reproduce:
+1)
+message pane area doe not displays informative and/or error message
+Actual Results:
+
+Expected Results:
+
+Additional Information:|Moved to Assigned state using a external script.|2010-05-12 08:03:07
+BUILD00032142|Staging Controller|Assigned|2 - High|agandhe|RAP_CH: Menu items displayed in Navigation pane are visible to invalid user.|Detailed Description:
+
+Impact:
+
+Steps to Reproduce:
+1)
+Menu items displayed in Navigation pane are visible to invalid user.
+Actual Results:
+
+Expected Results:
+
+Additional Information:|Moved to Assigned state using a external script.|2010-05-12 08:00:42
+BUILD00032141|Site Controller|Assigned|2 - High|agandhe|RAP_CH: Runtime error in script for find Resource|Detailed Description:
+
+Impact:
+
+Steps to Reproduce:
+1)
+Runtime error in script ("bpd engine expression" -1:-1).Internal Script error: java.lang.RuntimeException: Failed to update symboltable. Exception = com.lombardisoftware.core.TeamWorksException: Type mismatch. Value "place" must be array. Java class found: java.lang.String
+
+Actual Results:
+
+Expected Results:
+
+Additional Information:|Moved to Assigned state using a external script.|2010-05-12 07:56:07
+BUILD00032140|Site Controller|Assigned|3 - Medium|abera|RAP_CH: Room, Row, Rack, Pod, Phase, Vlan and BridgeGroup are not multi selectable|Detailed Description:
+
+Impact:
+
+Steps to Reproduce:
+1)
+Room, Row, Rack, Pod, Phase, Vlan and BridgeGroup are not multi selectable
+Actual Results:
+
+Expected Results:
+
+Additional Information:|Moved to Assigned state using a external script.|2010-05-12 07:50:59
+BUILD00032139|Site Controller|Assigned|3 - Medium|agandhe|RAP_CH: Click of Reset button did not cleared the Lease return date, RQSVR and Notes|Detailed Description:
+
+Impact:
+
+Steps to Reproduce:
+1)
+
+Click of Reset button 
+Did not cleared the 
+Lease return date, RQSVR and Notes
+
+Actual Results:
+
+Expected Results:
+
+Additional Information:|Moved to Assigned state using a external script.|2010-05-12 07:48:31
+BUILD00032138|Staging Controller|Assigned|3 - Medium|agandhe|RAP_CH: Error msg displayed on the screen are not appropriate|Detailed Description:
+
+Impact:
+
+Steps to Reproduce:
+1)
+
+Error msg displayed on the screen are not appropriate.
+
+Please refer to the excel sheet which we had created 
+
+http://iweb3.corp.ebay.com/TeamSites/30126/Enterprise%20System%20Projects/NextGen%20Data%20Center/22399%20-%20Top%20of%20Rack%20Switch(ToRS)-2/Resource%20placement%20and%20Selection/Design/Resource_Placement_UI_Design.xls 
+
+Actual Results:
+
+Expected Results:
+
+Additional Information:|Moved to Assigned state using a external script.|2010-05-12 07:46:24
+BUILD00032137|Site Controller|Assigned|3 - Medium|agandhe|RAP_CH: external Values for function_null is invalid in the externalValues i/p|Detailed Description:
+
+Impact:
+
+Steps to Reproduce:
+1)
+
+external Values for function_null is invalid in the externalValues i/p
+
+Actual Results:
+
+Expected Results:
+
+Additional Information:|Moved to Assigned state using a external script.|2010-05-12 07:38:42
+BUILD00032136|Site Controller|Assigned|2 - High|agandhe|RAP_CH: Issues in findResource|Detailed Description:
+
+Impact:
+
+Steps to Reproduce:
+1)
+Runtime error in script ("bpd engine expression" -1:-1).Internal Script error: java.lang.RuntimeException: Failed to update symboltable. Exception = com.lombardisoftware.core.TeamWorksException: Type mismatch. Value "place,model_BL460C G6,blade,dont_need_patched_ports,known_function,function_null,architecture_c3,archtier_null" must be array. Java class found: java.lang.String
+
+Actual Results:
+
+Expected Results:
+
+Additional Information:|Moved to Assigned state using a external script.|2010-05-12 07:36:45
+BUILD00032135|Site Controller|Assigned|2 - High|agandhe|RAP_CH: Issues in validate trace ticket|Detailed Description:
+
+Impact:
+
+Steps to Reproduce:
+1)
+
+If the requester enters a value associated with a Related Request ID then the system shall have the ability to verify that the entered value is a valid ticket id in TRACE (i.e. Valid Task ID and the status is not "Resolved", "Cancelled" or "Closed").
+1) Giving error even if th e ticket is valid
+2) Giving error when ticket is blank
+
+Actual Results:
+
+Expected Results:
+
+Additional Information:|Moved to Assigned state using a external script.|2010-05-12 07:33:00
+BUILD00032134|Site Controller|Assigned|3 - Medium|agandhe|RAP_CH: Cancel button is not there on Reservation Status Screen|Detailed Description:
+
+Impact:
+
+Steps to Reproduce:
+1)
+
+Cancel button is not there on Reservation Status Screen
+
+Actual Results:
+
+Expected Results:
+
+Additional Information:|Moved to Assigned state using a external script.|2010-05-12 07:28:23
+BUILD00032133|Site Controller|Assigned|2 - High|agandhe|RAP_CH: The healthcheckapp database has old templates.|Detailed Description:
+
+Impact:
+
+Steps to Reproduce:
+1)
+
+The healthcheckapp database has old templates too. Clean it and reload it with all those rows which are required for the project.
+
+Actual Results:
+
+Expected Results:
+
+Additional Information:|Moved to Assigned state using a external script.|2010-05-12 07:26:24
+BUILD00032132|Site Controller|Assigned|3 - Medium|agandhe|RAP_CH: The Mandatory Field validation code is not working properly, it is validating non mandatory fields|Detailed Description:
+
+Impact:
+
+Steps to Reproduce:
+1)
+The Mandatory Field validation code is not working properly, it is validating non mandatory fields
+
+Actual Results:
+
+Expected Results:
+
+Additional Information:|Moved to Assigned state using a external script.|2010-05-12 07:18:54
+BUILD00032131|Site Controller|Assigned|3 - Medium|agandhe|RAP_CH: Lease Return date is a mandatory field|Detailed Description:
+
+Impact:
+
+Steps to Reproduce:
+1)
+
+Lease Return date is a mandatory field. 
+
+Actual Results:
+
+Expected Results:
+
+Additional Information:|Moved to Assigned state using a external script.|2010-05-12 07:15:45
+BUILD00032130|Site Controller|Assigned|2 - High|slopez|RAP_CH: Error is in the DataBase uiml templates|Detailed Description:
+
+Impact:
+
+Steps to Reproduce:
+1)
+
+Actual Results:
+
+Drop Down will contain manufacturer, model, cpucount, memorysize and maxpowerconsumption attributes of ODB::AssetType
+
+Expected Results:
+
+Additional Information:|Moved to Assigned state using a external script.|2010-05-12 07:10:11
+BUILD00032129|Site Controller|Assigned|3 - Medium|agandhe|RAP_CH: The Model Drop Down contains misplaced model and manufacturer|Detailed Description:
+
+Impact:
+
+Steps to Reproduce:
+1)
+The Model Drop Down will contain model, manufacturer attribute of ODB::Asset
+Actual Results:
+
+Expected Results:
+
+Additional Information:|Moved to Assigned state using a external script.|2010-05-12 07:00:38
+BUILD00032128|Site Controller|Assigned|2 - High|slopez|RAP_CH: Quantity & Related Request value is hardcoded|Detailed Description:
+
+Impact:
+
+Steps to Reproduce:
+1)
+In manual flow , remove the hardcode 20 in Quantity text box and Related Request
+
+Actual Results:
+
+Expected Results:
+
+Additional Information:|Moved to Assigned state using a external script.|2010-05-12 06:31:48
+BUILD00032126|Site Controller|Assigned|3 - Medium|agandhe|RAP_CH: Goal Type drop down contains improper values for Goal Types|Detailed Description:
+
+Impact:
+
+Steps to Reproduce:
+1)
+The requester shall have the ability to specify the Goal Type. The following values are supported:
+Find Physical Server
+Find Blade
+Place Blade
+Place Physical Server 
+Above values are as per PRD
+Actual Results:
+
+Expected Results:
+
+Additional Information:||2010-05-12 05:52:15
+BUILD00032124|Site Controller|Assigned|1 - Urgent|tgautier|TORS2.5_RA: The newly added objects in ODB are not displayed in the Response for Get Entity|Detailed Description:
+The newly added objects are not displayed in the Response.
+
+Impact:
+
+Steps to Reproduce:
+1) Open the SOAP UI
+2) Hit the request for Get Entity API
+
+Reuest:
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:xsd="http://com.ebay.osum.service.ras/xsd" xmlns:xsd1="http://soap.service.grid.ebay.com/xsd">
+   <soap:Header/>
+       <soap:Body>
+      <xsd:getEntities>
+         <!--Optional:-->
+         <xsd:collectionDef>&lt;opt class=&quot;ODB::DataCenter&quot; var=&quot;datacenters&quot;&gt;
+  &lt;attribute name=&quot;label&quot; var=&quot;label&quot;/&gt;
+&lt;/opt&gt;</xsd:collectionDef>
+         <!--Optional:-->
+         <xsd:externalValues>
+            <!--Zero or more repetitions:-->
+                    </xsd:externalValues>
+         <!--Optional:-->
+         <xsd:distinct>true</xsd:distinct>
+      </xsd:getEntities>
+   </soap:Body>
+</soap:Envelope>
+
+
+3) Check the Response.
+
+Response:
+<soapenv:Envelope xmlns:soapenv="http://www.w3.org/2003/05/soap-envelope">
+   <soapenv:Body>
+      <ns:getEntitiesResponse xmlns:ns="http://com.ebay.osum.service.ras/xsd">
+         <ns:return type="com.ebay.grid.service.soap.CandidatesSoap" xmlns:ax27="http://soap.service.grid.ebay.com/xsd">
+            <ax27:candidates type="com.ebay.grid.service.soap.StringMapSoap">
+               <ax27:bindings type="com.ebay.grid.service.soap.KeyValue">
+                  <ax27:name>datacenters</ax27:name>
+                  <ax27:value>2010DC</ax27:value>
+                  <ax27:values xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+               </ax27:bindings>
+               <ax27:bindings type="com.ebay.grid.service.soap.KeyValue">
+                  <ax27:name>label</ax27:name>
+                  <ax27:value>2010DC</ax27:value>
+                  <ax27:values xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+               </ax27:bindings>
+            </ax27:candidates>
+            <ax27:candidates type="com.ebay.grid.service.soap.StringMapSoap">
+               <ax27:bindings type="com.ebay.grid.service.soap.KeyValue">
+                  <ax27:name>datacenters</ax27:name>
+                  <ax27:value>ABC:abc</ax27:value>
+                  <ax27:values xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+               </ax27:bindings>
+               <ax27:bindings type="com.ebay.grid.service.soap.KeyValue">
+                  <ax27:name>label</ax27:name>
+                  <ax27:value>abc</ax27:value>
+                  <ax27:values xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+               </ax27:bindings>
+            </ax27:candidates>
+            <ax27:candidates type="com.ebay.grid.service.soap.StringMapSoap">
+               <ax27:bindings type="com.ebay.grid.service.soap.KeyValue">
+                  <ax27:name>datacenters</ax27:name>
+                  <ax27:value>Auto</ax27:value>
+                  <ax27:values xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+               </ax27:bindings>
+               <ax27:bindings type="com.ebay.grid.service.soap.KeyValue">
+                  <ax27:name>label</ax27:name>
+                  <ax27:value>auto</ax27:value>
+                  <ax27:values xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+               </ax27:bindings>
+            </ax27:candidates>
+            <ax27:candidates type="com.ebay.grid.service.soap.StringMapSoap">
+               <ax27:bindings type="com.ebay.grid.service.soap.KeyValue">
+                  <ax27:name>datacenters</ax27:name>
+                  <ax27:value>SPR:sp1</ax27:value>
+                  <ax27:values xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+               </ax27:bindings>
+               <ax27:bindings type="com.ebay.grid.service.soap.KeyValue">
+                  <ax27:name>label</ax27:name>
+                  <ax27:value>sp1</ax27:value>
+                  <ax27:values xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+               </ax27:bindings>
+            </ax27:candidates>
+            <ax27:candidates type="com.ebay.grid.service.soap.StringMapSoap">
+               <ax27:bindings type="com.ebay.grid.service.soap.KeyValue">
+                  <ax27:name>datacenters</ax27:name>
+                  <ax27:value>ABC:DAT</ax27:value>
+                  <ax27:values xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+               </ax27:bindings>
+               <ax27:bindings type="com.ebay.grid.service.soap.KeyValue">
+                  <ax27:name>label</ax27:name>
+                  <ax27:value>DAT</ax27:value>
+                  <ax27:values xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+               </ax27:bindings>
+            </ax27:candidates>
+            <ax27:candidates type="com.ebay.grid.service.soap.StringMapSoap">
+               <ax27:bindings type="com.ebay.grid.service.soap.KeyValue">
+                  <ax27:name>datacenters</ax27:name>
+                  <ax27:value>AKP:ak1</ax27:value>
+                  <ax27:values xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+               </ax27:bindings>
+               <ax27:bindings type="com.ebay.grid.service.soap.KeyValue">
+                  <ax27:name>label</ax27:name>
+                  <ax27:value>ak1</ax27:value>
+                  <ax27:values xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+               </ax27:bindings>
+            </ax27:candidates>
+            <ax27:candidates type="com.ebay.grid.service.soap.StringMapSoap">
+               <ax27:bindings type="com.ebay.grid.service.soap.KeyValue">
+                  <ax27:name>datacenters</ax27:name>
+                  <ax27:value>APR:APR</ax27:value>
+                  <ax27:values xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+               </ax27:bindings>
+               <ax27:bindings type="com.ebay.grid.service.soap.KeyValue">
+                  <ax27:name>label</ax27:name>
+                  <ax27:value>APR</ax27:value>
+                  <ax27:values xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+               </ax27:bindings>
+            </ax27:candidates>
+            <ax27:candidates type="com.ebay.grid.service.soap.StringMapSoap">
+               <ax27:bindings type="com.ebay.grid.service.soap.KeyValue">
+                  <ax27:name>datacenters</ax27:name>
+                  <ax27:value>SJN:S17</ax27:value>
+                  <ax27:values xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+               </ax27:bindings>
+               <ax27:bindings type="com.ebay.grid.service.soap.KeyValue">
+                  <ax27:name>label</ax27:name>
+                  <ax27:value>S17</ax27:value>
+                  <ax27:values xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+               </ax27:bindings>
+            </ax27:candidates>
+            <ax27:candidates type="com.ebay.grid.service.soap.StringMapSoap">
+               <ax27:bindings type="com.ebay.grid.service.soap.KeyValue">
+                  <ax27:name>datacenters</ax27:name>
+                  <ax27:value>SMF:SQW</ax27:value>
+                  <ax27:values xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+               </ax27:bindings>
+               <ax27:bindings type="com.ebay.grid.service.soap.KeyValue">
+                  <ax27:name>label</ax27:name>
+                  <ax27:value>SQW</ax27:value>
+                  <ax27:values xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+               </ax27:bindings>
+            </ax27:candidates>
+            <ax27:candidates type="com.ebay.grid.service.soap.StringMapSoap">
+               <ax27:bindings type="com.ebay.grid.service.soap.KeyValue">
+                  <ax27:name>datacenters</ax27:name>
+                  <ax27:value>DEN:DEN</ax27:value>
+                  <ax27:values xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+               </ax27:bindings>
+               <ax27:bindings type="com.ebay.grid.service.soap.KeyValue">
+                  <ax27:name>label</ax27:name>
+                  <ax27:value>DEN</ax27:value>
+                  <ax27:values xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+               </ax27:bindings>
+            </ax27:candidates>
+            <ax27:candidates type="com.ebay.grid.service.soap.StringMapSoap">
+               <ax27:bindings type="com.ebay.grid.service.soap.KeyValue">
+                  <ax27:name>datacenters</ax27:name>
+                  <ax27:value>AutoDC</ax27:value>
+                  <ax27:values xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+               </ax27:bindings>
+               <ax27:bindings type="com.ebay.grid.service.soap.KeyValue">
+                  <ax27:name>label</ax27:name>
+                  <ax27:value>Automation DataCenter-label</ax27:value>
+                  <ax27:values xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+               </ax27:bindings>
+            </ax27:candidates>
+            <ax27:candidates type="com.ebay.grid.service.soap.StringMapSoap">
+               <ax27:bindings type="com.ebay.grid.service.soap.KeyValue">
+                  <ax27:name>datacenters</ax27:name>
+                  <ax27:value>LLL:REG</ax27:value>
+                  <ax27:values xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+               </ax27:bindings>
+               <ax27:bindings type="com.ebay.grid.service.soap.KeyValue">
+                  <ax27:name>label</ax27:name>
+                  <ax27:value>REG</ax27:value>
+                  <ax27:values xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+               </ax27:bindings>
+            </ax27:candidates>
+            <ax27:candidates type="com.ebay.grid.service.soap.StringMapSoap">
+               <ax27:bindings type="com.ebay.grid.service.soap.KeyValue">
+                  <ax27:name>datacenters</ax27:name>
+                  <ax27:value>NAM:SHR</ax27:value>
+                  <ax27:values xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+               </ax27:bindings>
+               <ax27:bindings type="com.ebay.grid.service.soap.KeyValue">
+                  <ax27:name>label</ax27:name>
+                  <ax27:value>SHR</ax27:value>
+                  <ax27:values xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+               </ax27:bindings>
+            </ax27:candidates>
+            <ax27:candidates type="com.ebay.grid.service.soap.StringMapSoap">
+               <ax27:bindings type="com.ebay.grid.service.soap.KeyValue">
+                  <ax27:name>datacenters</ax27:name>
+                  <ax27:value>NAM:GRV</ax27:value>
+                  <ax27:values xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+               </ax27:bindings>
+               <ax27:bindings type="com.ebay.grid.service.soap.KeyValue">
+                  <ax27:name>label</ax27:name>
+                  <ax27:value>GRV</ax27:value>
+                  <ax27:values xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+               </ax27:bindings>
+            </ax27:candidates>
+            <ax27:candidates type="com.ebay.grid.service.soap.StringMapSoap">
+               <ax27:bindings type="com.ebay.grid.service.soap.KeyValue">
+                  <ax27:name>datacenters</ax27:name>
+                  <ax27:value>FIN:FIN</ax27:value>
+                  <ax27:values xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+               </ax27:bindings>
+               <ax27:bindings type="com.ebay.grid.service.soap.KeyValue">
+                  <ax27:name>label</ax27:name>
+                  <ax27:value>FIN</ax27:value>
+                  <ax27:values xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+               </ax27:bindings>
+            </ax27:candidates>
+            <ax27:candidates type="com.ebay.grid.service.soap.StringMapSoap">
+               <ax27:bindings type="com.ebay.grid.service.soap.KeyValue">
+                  <ax27:name>datacenters</ax27:name>
+                  <ax27:value>NAM:KAP</ax27:value>
+                  <ax27:values xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+               </ax27:bindings>
+               <ax27:bindings type="com.ebay.grid.service.soap.KeyValue">
+                  <ax27:name>label</ax27:name>
+                  <ax27:value>KAP</ax27:value>
+                  <ax27:values xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+               </ax27:bindings>
+            </ax27:candidates>
+            <ax27:candidates type="com.ebay.grid.service.soap.StringMapSoap">
+               <ax27:bindings type="com.ebay.grid.service.soap.KeyValue">
+                  <ax27:name>datacenters</ax27:name>
+                  <ax27:value>ABC:W92</ax27:value>
+                  <ax27:values xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+               </ax27:bindings>
+               <ax27:bindings type="com.ebay.grid.service.soap.KeyValue">
+                  <ax27:name>label</ax27:name>
+                  <ax27:value>W92</ax27:value>
+                  <ax27:values xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+               </ax27:bindings>
+            </ax27:candidates>
+            <ax27:candidates type="com.ebay.grid.service.soap.StringMapSoap">
+               <ax27:bindings type="com.ebay.grid.service.soap.KeyValue">
+                  <ax27:name>datacenters</ax27:name>
+                  <ax27:value>ABC:xyz</ax27:value>
+                  <ax27:values xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+               </ax27:bindings>
+               <ax27:bindings type="com.ebay.grid.service.soap.KeyValue">
+                  <ax27:name>label</ax27:name>
+                  <ax27:value>xyz</ax27:value>
+                  <ax27:values xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+               </ax27:bindings>
+            </ax27:candidates>
+            <ax27:candidates type="com.ebay.grid.service.soap.StringMapSoap">
+               <ax27:bindings type="com.ebay.grid.service.soap.KeyValue">
+                  <ax27:name>datacenters</ax27:name>
+                  <ax27:value>ABC:WRT</ax27:value>
+                  <ax27:values xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+               </ax27:bindings>
+               <ax27:bindings type="com.ebay.grid.service.soap.KeyValue">
+                  <ax27:name>label</ax27:name>
+                  <ax27:value>WRT</ax27:value>
+                  <ax27:values xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+               </ax27:bindings>
+            </ax27:candidates>
+            <ax27:candidates type="com.ebay.grid.service.soap.StringMapSoap">
+               <ax27:bindings type="com.ebay.grid.service.soap.KeyValue">
+                  <ax27:name>datacenters</ax27:name>
+                  <ax27:value>PHX:PHX</ax27:value>
+                  <ax27:values xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+               </ax27:bindings>
+               <ax27:bindings type="com.ebay.grid.service.soap.KeyValue">
+                  <ax27:name>label</ax27:name>
+                  <ax27:value>PHX</ax27:value>
+                  <ax27:values xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+               </ax27:bindings>
+            </ax27:candidates>
+            <ax27:candidates type="com.ebay.grid.service.soap.StringMapSoap">
+               <ax27:bindings type="com.ebay.grid.service.soap.KeyValue">
+                  <ax27:name>datacenters</ax27:name>
+                  <ax27:value>CHN:DAT</ax27:value>
+                  <ax27:values xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+               </ax27:bindings>
+               <ax27:bindings type="com.ebay.grid.service.soap.KeyValue">
+                  <ax27:name>label</ax27:name>
+                  <ax27:value>DAT</ax27:value>
+                  <ax27:values xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+               </ax27:bindings>
+            </ax27:candidates>
+            <ax27:candidates type="com.ebay.grid.service.soap.StringMapSoap">
+               <ax27:bindings type="com.ebay.grid.service.soap.KeyValue">
+                  <ax27:name>datacenters</ax27:name>
+                  <ax27:value>FRI:FRI</ax27:value>
+                  <ax27:values xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+               </ax27:bindings>
+               <ax27:bindings type="com.ebay.grid.service.soap.KeyValue">
+                  <ax27:name>label</ax27:name>
+                  <ax27:value>FRI</ax27:value>
+                  <ax27:values xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+               </ax27:bindings>
+            </ax27:candidates>
+            <ax27:vars>datacenters</ax27:vars>
+            <ax27:vars>label</ax27:vars>
+         </ns:return>
+      </ns:getEntitiesResponse>
+   </soapenv:Body>
+</soapenv:Envelope>
+
+Actual Results:
+The newly added objects are not displayed in the Response.
+New Added Datacenter ABC:SAG but it is not there in Response but it is displaying in ODB.
+http://jrds.ccc.qa.ebay.com/jodbweb/odb.do?type=object&name=ABC:SAG
+
+Expected Results:
+The newly added objects should be displayed in the Response.
+
+Additional Information:||2010-05-12 05:39:17
+BUILD00032123|Site Controller|Assigned|2 - High|tgautier|TORS2.5_RA: Getting no exception on removing the Model tag and hitting the Request|Getting no exception on removing the Model tag and hitting the Request for find Resource API.
+
+
+Refer Request and Response below.
+
+Steps to Reproduce:
+1) Open the SOAP UI.
+2) Hit the Request --
+
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:xsd="http://com.ebay.osum.service.ras/xsd" xmlns:xsd1="http://soap.service.grid.ebay.com/xsd">
+   <soap:Header/>
+   <soap:Body>
+     <xsd:findResource>
+         <xsd:quantity>2</xsd:quantity>
+         <xsd:resultLimit>5</xsd:resultLimit>
+                 <xsd:tags>place</xsd:tags>
+                 <xsd:tags>server</xsd:tags> 
+                 <xsd:tags>dont_need_patched_ports</xsd:tags> 
+                 <xsd:tags>function_spare</xsd:tags>
+                 <xsd:tags>architecture_v3</xsd:tags>
+                 <xsd:tags>layer_app</xsd:tags>
+                 <xsd:tags>archtier_app</xsd:tags> 
+                 <xsd:externalValues>
+            <xsd1:bindings>
+               <xsd1:name>datacenters</xsd1:name>
+               <xsd1:values>PHX:PHX</xsd1:values>
+            </xsd1:bindings>
+            <xsd1:bindings>
+               <xsd1:name>assettype</xsd1:name>
+               <xsd1:value>ASTYPE_20744</xsd1:value>
+            </xsd1:bindings>
+                    <xsd1:bindings>
+               <xsd1:name>architecture</xsd1:name>
+               <xsd1:value>v3</xsd1:value>
+            </xsd1:bindings>
+                    <xsd1:bindings>
+               <xsd1:name>layer</xsd1:name>
+               <xsd1:value>app</xsd1:value>
+            </xsd1:bindings>
+                    <xsd1:bindings>
+               <xsd1:name>archtier</xsd1:name>
+               <xsd1:value>app</xsd1:value>
+            </xsd1:bindings>      
+         </xsd:externalValues>
+     </xsd:findResource>
+   </soap:Body>
+</soap:Envelope>
+3) Check the Response
+
+<soapenv:Envelope xmlns:soapenv="http://www.w3.org/2003/05/soap-envelope">
+   <soapenv:Body>
+      <ns:findResourceResponse xmlns:ns="http://com.ebay.osum.service.ras/xsd" xmlns:ax25="http://collectioncache.osum.ebay.com/xsd" xmlns:ax23="http://soap.service.grid.ebay.com/xsd">
+         <ns:return type="com.ebay.grid.service.soap.ResourceCollectionsSoap">
+            <ax23:bindings type="com.ebay.grid.service.soap.CollectionBinding">
+               <ax23:collection type="com.ebay.osum.collectioncache.Collection">
+                  <ax25:definition type="com.ebay.osum.collectioncache.CollectionDefinition">
+                     <ax25:criteria/>
+                     <ax25:id>0</ax25:id>
+                     <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                     <ax25:name/>
+                     <ax25:state/>
+                     <ax25:topLevelObjectsCount>1</ax25:topLevelObjectsCount>
+                     <ax25:type/>
+                  </ax25:definition>
+                  <ax25:nodes type="com.ebay.osum.collectioncache.CollectionNode">
+                     <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                        <ax25:collectionId>0</ax25:collectionId>
+                        <ax25:id>0</ax25:id>
+                        <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                        <ax25:name>PHX:PHX:330:MPL.09:01</ax25:name>
+                        <ax25:type>ODB::Rack</ax25:type>
+                     </ax25:managedObject>
+                     <ax25:typeHierarchy/>
+                  </ax25:nodes>
+               </ax23:collection>
+               <ax23:var>rack</ax23:var>
+            </ax23:bindings>
+         </ns:return>
+         <ns:return type="com.ebay.grid.service.soap.ResourceCollectionsSoap">
+            <ax23:bindings type="com.ebay.grid.service.soap.CollectionBinding">
+               <ax23:collection type="com.ebay.osum.collectioncache.Collection">
+                  <ax25:definition type="com.ebay.osum.collectioncache.CollectionDefinition">
+                     <ax25:criteria/>
+                     <ax25:id>0</ax25:id>
+                     <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                     <ax25:name/>
+                     <ax25:state/>
+                     <ax25:topLevelObjectsCount>1</ax25:topLevelObjectsCount>
+                     <ax25:type/>
+                  </ax25:definition>
+                  <ax25:nodes type="com.ebay.osum.collectioncache.CollectionNode">
+                     <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                        <ax25:collectionId>0</ax25:collectionId>
+                        <ax25:id>0</ax25:id>
+                        <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                        <ax25:name>PHX:PHX:330:MPL.09:07</ax25:name>
+                        <ax25:type>ODB::Rack</ax25:type>
+                     </ax25:managedObject>
+                     <ax25:typeHierarchy/>
+                  </ax25:nodes>
+               </ax23:collection>
+               <ax23:var>rack</ax23:var>
+            </ax23:bindings>
+         </ns:return>
+         <ns:return type="com.ebay.grid.service.soap.ResourceCollectionsSoap">
+            <ax23:bindings type="com.ebay.grid.service.soap.CollectionBinding">
+               <ax23:collection type="com.ebay.osum.collectioncache.Collection">
+                  <ax25:definition type="com.ebay.osum.collectioncache.CollectionDefinition">
+                     <ax25:criteria/>
+                     <ax25:id>0</ax25:id>
+                     <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                     <ax25:name/>
+                     <ax25:state/>
+                     <ax25:topLevelObjectsCount>1</ax25:topLevelObjectsCount>
+                     <ax25:type/>
+                  </ax25:definition>
+                  <ax25:nodes type="com.ebay.osum.collectioncache.CollectionNode">
+                     <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                        <ax25:collectionId>0</ax25:collectionId>
+                        <ax25:id>0</ax25:id>
+                        <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                        <ax25:name>PHX:PHX:330:MPL.09:05</ax25:name>
+                        <ax25:type>ODB::Rack</ax25:type>
+                     </ax25:managedObject>
+                     <ax25:typeHierarchy/>
+                  </ax25:nodes>
+               </ax23:collection>
+               <ax23:var>rack</ax23:var>
+            </ax23:bindings>
+         </ns:return>
+         <ns:return type="com.ebay.grid.service.soap.ResourceCollectionsSoap">
+            <ax23:bindings type="com.ebay.grid.service.soap.CollectionBinding">
+               <ax23:collection type="com.ebay.osum.collectioncache.Collection">
+                  <ax25:definition type="com.ebay.osum.collectioncache.CollectionDefinition">
+                     <ax25:criteria/>
+                     <ax25:id>0</ax25:id>
+                     <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                     <ax25:name/>
+                     <ax25:state/>
+                     <ax25:topLevelObjectsCount>1</ax25:topLevelObjectsCount>
+                     <ax25:type/>
+                  </ax25:definition>
+                  <ax25:nodes type="com.ebay.osum.collectioncache.CollectionNode">
+                     <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                        <ax25:collectionId>0</ax25:collectionId>
+                        <ax25:id>0</ax25:id>
+                        <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                        <ax25:name>PHX:PHX:330:MPL.09:02</ax25:name>
+                        <ax25:type>ODB::Rack</ax25:type>
+                     </ax25:managedObject>
+                     <ax25:typeHierarchy/>
+                  </ax25:nodes>
+               </ax23:collection>
+               <ax23:var>rack</ax23:var>
+            </ax23:bindings>
+         </ns:return>
+         <ns:return type="com.ebay.grid.service.soap.ResourceCollectionsSoap">
+            <ax23:bindings type="com.ebay.grid.service.soap.CollectionBinding">
+               <ax23:collection type="com.ebay.osum.collectioncache.Collection">
+                  <ax25:definition type="com.ebay.osum.collectioncache.CollectionDefinition">
+                     <ax25:criteria/>
+                     <ax25:id>0</ax25:id>
+                     <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                     <ax25:name/>
+                     <ax25:state/>
+                     <ax25:topLevelObjectsCount>1</ax25:topLevelObjectsCount>
+                     <ax25:type/>
+                  </ax25:definition>
+                  <ax25:nodes type="com.ebay.osum.collectioncache.CollectionNode">
+                     <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                        <ax25:collectionId>0</ax25:collectionId>
+                        <ax25:id>0</ax25:id>
+                        <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                        <ax25:name>PHX:PHX:330:MPL.09:04</ax25:name>
+                        <ax25:type>ODB::Rack</ax25:type>
+                     </ax25:managedObject>
+                     <ax25:typeHierarchy/>
+                  </ax25:nodes>
+               </ax23:collection>
+               <ax23:var>rack</ax23:var>
+            </ax23:bindings>
+         </ns:return>
+      </ns:findResourceResponse>
+   </soapenv:Body>
+</soapenv:Envelope>
+
+Actual Results: Getting proper response on removing mandatory tag Model
+
+Expected Results:Should not be getting proper response on removing mandatory tag Model
+
+
+Additional Information:|Moved to Assigned state using a external script.|2010-05-12 05:37:47
+BUILD00032122|Site Controller|Closed|2 - High|tgautier|TORS2.5_RA: All Vlans are not displayed in the Response|Detailed Description:
+All Vlans are not displayed in the Response
+
+Impact:
+
+Steps to Reproduce:
+1) Open the SOAP UI
+2) Hit the request for Get Entity API
+
+Request
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:xsd="http://com.ebay.osum.service.ras/xsd" xmlns:xsd1="http://soap.service.grid.ebay.com/xsd">
+   <soap:Header/>
+       <soap:Body>
+      <xsd:getEntities>
+                 <!--Optional:-->
+         <xsd:collectionDef>&lt;opt class=&quot;ODB::BridgeGroup&quot;&gt;
+    &lt;name xvalue=&quot;bridgeGroup&quot; oper=&quot;in&quot;/&gt;
+    &lt;link name=&quot;MemberOf&quot; direction=&quot;to&quot;&gt;
+        &lt;opt class=&quot;ODB::Vlan&quot; var=&quot;vlan&quot;&gt;
+             &lt;attribute name=&quot;label&quot; var='label'/&gt;
+         &lt;/opt&gt;
+    &lt;/link&gt;
+&lt;/opt&gt;</xsd:collectionDef>
+         <!--Optional:-->
+         <xsd:externalValues>
+            <!--Zero or more repetitions:-->
+            <xsd1:bindings>
+               <!--Optional:-->
+               <xsd1:name>bridgeGroup</xsd1:name>
+
+               <!--Zero or more repetitions:-->
+               <xsd1:values>BG:phx2-eBay</xsd1:values>
+            </xsd1:bindings>
+         </xsd:externalValues>
+         <!--Optional:-->
+         <xsd:distinct>false</xsd:distinct>
+
+      </xsd:getEntities>
+   </soap:Body>
+</soap:Envelope>
+3) Check the Response and also check in ODB
+
+Response:
+
+<soapenv:Envelope xmlns:soapenv="http://www.w3.org/2003/05/soap-envelope">
+   <soapenv:Body>
+      <ns:getEntitiesResponse xmlns:ns="http://com.ebay.osum.service.ras/xsd">
+         <ns:return type="com.ebay.grid.service.soap.CandidatesSoap" xmlns:ax27="http://soap.service.grid.ebay.com/xsd">
+            <ax27:candidates type="com.ebay.grid.service.soap.StringMapSoap">
+               <ax27:bindings type="com.ebay.grid.service.soap.KeyValue">
+                  <ax27:name>vlan</ax27:name>
+                  <ax27:value>lax1-eBay:301</ax27:value>
+                  <ax27:values xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+               </ax27:bindings>
+               <ax27:bindings type="com.ebay.grid.service.soap.KeyValue">
+                  <ax27:name>label</ax27:name>
+                  <ax27:value>JUMPSTART</ax27:value>
+                  <ax27:values xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+               </ax27:bindings>
+            </ax27:candidates>
+            <ax27:candidates type="com.ebay.grid.service.soap.StringMapSoap">
+               <ax27:bindings type="com.ebay.grid.service.soap.KeyValue">
+                  <ax27:name>vlan</ax27:name>
+                  <ax27:value>lax1-eBay:429</ax27:value>
+                  <ax27:values xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+               </ax27:bindings>
+               <ax27:bindings type="com.ebay.grid.service.soap.KeyValue">
+                  <ax27:name>label</ax27:name>
+                  <ax27:value>OPFORCE-BUILD</ax27:value>
+                  <ax27:values xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+               </ax27:bindings>
+            </ax27:candidates>
+            <ax27:candidates type="com.ebay.grid.service.soap.StringMapSoap">
+               <ax27:bindings type="com.ebay.grid.service.soap.KeyValue">
+                  <ax27:name>vlan</ax27:name>
+                  <ax27:value>lax1-eBay:260</ax27:value>
+                  <ax27:values xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+               </ax27:bindings>
+               <ax27:bindings type="com.ebay.grid.service.soap.KeyValue">
+                  <ax27:name>label</ax27:name>
+                  <ax27:value>NETWORK-LAX1-VR01</ax27:value>
+                  <ax27:values xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+               </ax27:bindings>
+            </ax27:candidates>
+            <ax27:candidates type="com.ebay.grid.service.soap.StringMapSoap">
+               <ax27:bindings type="com.ebay.grid.service.soap.KeyValue">
+                  <ax27:name>vlan</ax27:name>
+                  <ax27:value>lax1-eBay:477</ax27:value>
+                  <ax27:values xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+               </ax27:bindings>
+               <ax27:bindings type="com.ebay.grid.service.soap.KeyValue">
+                  <ax27:name>label</ax27:name>
+                  <ax27:value/>
+                  <ax27:values xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+               </ax27:bindings>
+            </ax27:candidates>
+            <ax27:vars>vlan</ax27:vars>
+            <ax27:vars>label</ax27:vars>
+         </ns:return>
+      </ns:getEntitiesResponse>
+   </soapenv:Body>
+</soapenv:Envelope>
+
+Actual Results:
+All Vlans are not displayed in the Response
+http://jrds.ccc.qa.ebay.com/jodbweb/odb.do?type=relationship&direction=to&view=object&name=BG:phx2-eBay&relationtype=ODB::Link::MemberOf&targettype=ODB::Vlan
+
+Expected Results:
+All Vlans should be displayed in the Response
+
+Additional Information:|It is working for all vlans except this particular vlan.
+Reson:Data problem/inconsistency.|2010-05-12 05:21:47
+BUILD00032120|Site Controller|Assigned|3 - Medium|tgautier|TORS2.5_RA: The Id and Last Updated time is null in the Response|The Id and Last Updated time is null in the response 
+
+Check the response.
+
+Steps to Reproduce:
+1) Open the SOAP UI
+2) Hit the request for find Resource API
+3) Check the Response.
+
+Actual Results:The Last Updated time is null in the response 
+
+Expected Results:The Last Updated time should not be null in the response 
+
+Additional Information:
+
+_<soapenv:Envelope xmlns:soapenv="http://www.w3.org/2003/05/soap-envelope">
+   <soapenv:Body>
+      <ns:findResourceResponse xmlns:ns="http://com.ebay.osum.service.ras/xsd" xmlns:ax25="http://collectioncache.osum.ebay.com/xsd" xmlns:ax23="http://soap.service.grid.ebay.com/xsd">
+         <ns:return type="com.ebay.grid.service.soap.ResourceCollectionsSoap">
+            <ax23:bindings type="com.ebay.grid.service.soap.CollectionBinding">
+               <ax23:collection type="com.ebay.osum.collectioncache.Collection">
+                  <ax25:definition type="com.ebay.osum.collectioncache.CollectionDefinition">
+                     <ax25:criteria/>
+                     <ax25:id>0</ax25:id>
+                     <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                     <ax25:name/>
+                     <ax25:state/>
+                     <ax25:topLevelObjectsCount>1</ax25:topLevelObjectsCount>
+                     <ax25:type/>
+                  </ax25:definition>
+                  <ax25:nodes type="com.ebay.osum.collectioncache.CollectionNode">
+                     <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                        <ax25:collectionId>0</ax25:collectionId>
+                        <ax25:id>0</ax25:id>
+                        <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                        <ax25:name>PHX:PHX:330:MPL.09:01</ax25:name>
+                        <ax25:type>ODB::Rack</ax25:type>
+                     </ax25:managedObject>
+                     <ax25:typeHierarchy/>
+                  </ax25:nodes>
+               </ax23:collection>
+               <ax23:var>rack</ax23:var>
+            </ax23:bindings>
+         </ns:return>
+         <ns:return type="com.ebay.grid.service.soap.ResourceCollectionsSoap">
+            <ax23:bindings type="com.ebay.grid.service.soap.CollectionBinding">
+               <ax23:collection type="com.ebay.osum.collectioncache.Collection">
+                  <ax25:definition type="com.ebay.osum.collectioncache.CollectionDefinition">
+                     <ax25:criteria/>
+                     <ax25:id>0</ax25:id>
+                     <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                     <ax25:name/>
+                     <ax25:state/>
+                     <ax25:topLevelObjectsCount>1</ax25:topLevelObjectsCount>
+                     <ax25:type/>
+                  </ax25:definition>
+                  <ax25:nodes type="com.ebay.osum.collectioncache.CollectionNode">
+                     <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                        <ax25:collectionId>0</ax25:collectionId>
+                        <ax25:id>0</ax25:id>
+                        <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                        <ax25:name>PHX:PHX:330:MPL.09:07</ax25:name>
+                        <ax25:type>ODB::Rack</ax25:type>
+                     </ax25:managedObject>
+                     <ax25:typeHierarchy/>
+                  </ax25:nodes>
+               </ax23:collection>
+               <ax23:var>rack</ax23:var>
+            </ax23:bindings>
+         </ns:return>
+         <ns:return type="com.ebay.grid.service.soap.ResourceCollectionsSoap">
+            <ax23:bindings type="com.ebay.grid.service.soap.CollectionBinding">
+               <ax23:collection type="com.ebay.osum.collectioncache.Collection">
+                  <ax25:definition type="com.ebay.osum.collectioncache.CollectionDefinition">
+                     <ax25:criteria/>
+                     <ax25:id>0</ax25:id>
+                     <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                     <ax25:name/>
+                     <ax25:state/>
+                     <ax25:topLevelObjectsCount>1</ax25:topLevelObjectsCount>
+                     <ax25:type/>
+                  </ax25:definition>
+                  <ax25:nodes type="com.ebay.osum.collectioncache.CollectionNode">
+                     <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                        <ax25:collectionId>0</ax25:collectionId>
+                        <ax25:id>0</ax25:id>
+                        <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                        <ax25:name>PHX:PHX:330:MPL.09:05</ax25:name>
+                        <ax25:type>ODB::Rack</ax25:type>
+                     </ax25:managedObject>
+                     <ax25:typeHierarchy/>
+                  </ax25:nodes>
+               </ax23:collection>
+               <ax23:var>rack</ax23:var>
+            </ax23:bindings>
+         </ns:return>
+         <ns:return type="com.ebay.grid.service.soap.ResourceCollectionsSoap">
+            <ax23:bindings type="com.ebay.grid.service.soap.CollectionBinding">
+               <ax23:collection type="com.ebay.osum.collectioncache.Collection">
+                  <ax25:definition type="com.ebay.osum.collectioncache.CollectionDefinition">
+                     <ax25:criteria/>
+                     <ax25:id>0</ax25:id>
+                     <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                     <ax25:name/>
+                     <ax25:state/>
+                     <ax25:topLevelObjectsCount>1</ax25:topLevelObjectsCount>
+                     <ax25:type/>
+                  </ax25:definition>
+                  <ax25:nodes type="com.ebay.osum.collectioncache.CollectionNode">
+                     <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                        <ax25:collectionId>0</ax25:collectionId>
+                        <ax25:id>0</ax25:id>
+                        <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                        <ax25:name>PHX:PHX:330:MPL.09:02</ax25:name>
+                        <ax25:type>ODB::Rack</ax25:type>
+                     </ax25:managedObject>
+                     <ax25:typeHierarchy/>
+                  </ax25:nodes>
+               </ax23:collection>
+               <ax23:var>rack</ax23:var>
+            </ax23:bindings>
+         </ns:return>
+         <ns:return type="com.ebay.grid.service.soap.ResourceCollectionsSoap">
+            <ax23:bindings type="com.ebay.grid.service.soap.CollectionBinding">
+               <ax23:collection type="com.ebay.osum.collectioncache.Collection">
+                  <ax25:definition type="com.ebay.osum.collectioncache.CollectionDefinition">
+                     <ax25:criteria/>
+                     <ax25:id>0</ax25:id>
+                     <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                     <ax25:name/>
+                     <ax25:state/>
+                     <ax25:topLevelObjectsCount>1</ax25:topLevelObjectsCount>
+                     <ax25:type/>
+                  </ax25:definition>
+                  <ax25:nodes type="com.ebay.osum.collectioncache.CollectionNode">
+                     <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                        <ax25:collectionId>0</ax25:collectionId>
+                        <ax25:id>0</ax25:id>
+                        <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                        <ax25:name>PHX:PHX:330:MPL.09:04</ax25:name>
+                        <ax25:type>ODB::Rack</ax25:type>
+                     </ax25:managedObject>
+                     <ax25:typeHierarchy/>
+                  </ax25:nodes>
+               </ax23:collection>
+               <ax23:var>rack</ax23:var>
+            </ax23:bindings>
+         </ns:return>
+      </ns:findResourceResponse>
+   </soapenv:Body>
+</soapenv:Envelope>|Moved to Assigned state using a external script.|2010-05-12 04:36:21
+BUILD00032117|Site Controller|Assigned|2 - High|tgautier|TORS2.5_RA: Getting Proper Response on hitting request after removing the Architecture,Layer and Arch tier tags Unknown function is specified|Getting Proper Response on hitting request after removing the Architecture,Layer and Arch tier tags although unknown function is specified.
+
+Refer request and Response.
+
+Steps to Reproduce:
+1) Open SOAP UI
+2) Hit the Request -
+
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:xsd="http://com.ebay.osum.service.ras/xsd" xmlns:xsd1="http://soap.service.grid.ebay.com/xsd">
+   <soap:Header/>
+   <soap:Body>
+     <xsd:findResource>
+         <xsd:quantity>2</xsd:quantity>
+         <xsd:resultLimit>5</xsd:resultLimit>
+                 <xsd:tags>place</xsd:tags>
+                 <xsd:tags>model_P595</xsd:tags> 
+                 <xsd:tags>server</xsd:tags> 
+                 <xsd:tags>dont_need_patched_ports</xsd:tags> 
+                 <xsd:tags>function_spare</xsd:tags>
+                 
+                 <xsd:externalValues>
+            <xsd1:bindings>
+               <xsd1:name>datacenters</xsd1:name>
+               <xsd1:values>PHX:PHX</xsd1:values>
+            </xsd1:bindings>
+            <xsd1:bindings>
+               <xsd1:name>assettype</xsd1:name>
+               <xsd1:value>ASTYPE_20744</xsd1:value>
+            </xsd1:bindings>
+            <xsd1:bindings>
+               <xsd1:name>model</xsd1:name>
+               <xsd1:value>model_P595</xsd1:value>
+            </xsd1:bindings>
+   
+         </xsd:externalValues>
+     </xsd:findResource>
+   </soap:Body>
+</soap:Envelope>
+
+3) Check the Response
+
+Actual Results: Proper response is thrown.
+
+Expected Results: Exception should be thrown.
+
+Additional Information:
+
+Response -
+
+<soapenv:Envelope xmlns:soapenv="http://www.w3.org/2003/05/soap-envelope">
+   <soapenv:Body>
+      <ns:findResourceResponse xmlns:ns="http://com.ebay.osum.service.ras/xsd" xmlns:ax25="http://collectioncache.osum.ebay.com/xsd" xmlns:ax23="http://soap.service.grid.ebay.com/xsd">
+         <ns:return type="com.ebay.grid.service.soap.ResourceCollectionsSoap">
+            <ax23:bindings type="com.ebay.grid.service.soap.CollectionBinding">
+               <ax23:collection type="com.ebay.osum.collectioncache.Collection">
+                  <ax25:definition type="com.ebay.osum.collectioncache.CollectionDefinition">
+                     <ax25:criteria/>
+                     <ax25:id>0</ax25:id>
+                     <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                     <ax25:name/>
+                     <ax25:state/>
+                     <ax25:topLevelObjectsCount>1</ax25:topLevelObjectsCount>
+                     <ax25:type/>
+                  </ax25:definition>
+                  <ax25:nodes type="com.ebay.osum.collectioncache.CollectionNode">
+                     <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                        <ax25:collectionId>0</ax25:collectionId>
+                        <ax25:id>0</ax25:id>
+                        <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                        <ax25:name>PHX:PHX:330:MPL.09:01</ax25:name>
+                        <ax25:type>ODB::Rack</ax25:type>
+                     </ax25:managedObject>
+                     <ax25:typeHierarchy/>
+                  </ax25:nodes>
+               </ax23:collection>
+               <ax23:var>rack</ax23:var>
+            </ax23:bindings>
+         </ns:return>
+         <ns:return type="com.ebay.grid.service.soap.ResourceCollectionsSoap">
+            <ax23:bindings type="com.ebay.grid.service.soap.CollectionBinding">
+               <ax23:collection type="com.ebay.osum.collectioncache.Collection">
+                  <ax25:definition type="com.ebay.osum.collectioncache.CollectionDefinition">
+                     <ax25:criteria/>
+                     <ax25:id>0</ax25:id>
+                     <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                     <ax25:name/>
+                     <ax25:state/>
+                     <ax25:topLevelObjectsCount>1</ax25:topLevelObjectsCount>
+                     <ax25:type/>
+                  </ax25:definition>
+                  <ax25:nodes type="com.ebay.osum.collectioncache.CollectionNode">
+                     <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                        <ax25:collectionId>0</ax25:collectionId>
+                        <ax25:id>0</ax25:id>
+                        <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                        <ax25:name>PHX:PHX:330:MPL.09:07</ax25:name>
+                        <ax25:type>ODB::Rack</ax25:type>
+                     </ax25:managedObject>
+                     <ax25:typeHierarchy/>
+                  </ax25:nodes>
+               </ax23:collection>
+               <ax23:var>rack</ax23:var>
+            </ax23:bindings>
+         </ns:return>
+         <ns:return type="com.ebay.grid.service.soap.ResourceCollectionsSoap">
+            <ax23:bindings type="com.ebay.grid.service.soap.CollectionBinding">
+               <ax23:collection type="com.ebay.osum.collectioncache.Collection">
+                  <ax25:definition type="com.ebay.osum.collectioncache.CollectionDefinition">
+                     <ax25:criteria/>
+                     <ax25:id>0</ax25:id>
+                     <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                     <ax25:name/>
+                     <ax25:state/>
+                     <ax25:topLevelObjectsCount>1</ax25:topLevelObjectsCount>
+                     <ax25:type/>
+                  </ax25:definition>
+                  <ax25:nodes type="com.ebay.osum.collectioncache.CollectionNode">
+                     <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                        <ax25:collectionId>0</ax25:collectionId>
+                        <ax25:id>0</ax25:id>
+                        <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                        <ax25:name>PHX:PHX:330:MPL.09:05</ax25:name>
+                        <ax25:type>ODB::Rack</ax25:type>
+                     </ax25:managedObject>
+                     <ax25:typeHierarchy/>
+                  </ax25:nodes>
+               </ax23:collection>
+               <ax23:var>rack</ax23:var>
+            </ax23:bindings>
+         </ns:return>
+         <ns:return type="com.ebay.grid.service.soap.ResourceCollectionsSoap">
+            <ax23:bindings type="com.ebay.grid.service.soap.CollectionBinding">
+               <ax23:collection type="com.ebay.osum.collectioncache.Collection">
+                  <ax25:definition type="com.ebay.osum.collectioncache.CollectionDefinition">
+                     <ax25:criteria/>
+                     <ax25:id>0</ax25:id>
+                     <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                     <ax25:name/>
+                     <ax25:state/>
+                     <ax25:topLevelObjectsCount>1</ax25:topLevelObjectsCount>
+                     <ax25:type/>
+                  </ax25:definition>
+                  <ax25:nodes type="com.ebay.osum.collectioncache.CollectionNode">
+                     <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                        <ax25:collectionId>0</ax25:collectionId>
+                        <ax25:id>0</ax25:id>
+                        <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                        <ax25:name>PHX:PHX:330:MPL.09:02</ax25:name>
+                        <ax25:type>ODB::Rack</ax25:type>
+                     </ax25:managedObject>
+                     <ax25:typeHierarchy/>
+                  </ax25:nodes>
+               </ax23:collection>
+               <ax23:var>rack</ax23:var>
+            </ax23:bindings>
+         </ns:return>
+         <ns:return type="com.ebay.grid.service.soap.ResourceCollectionsSoap">
+            <ax23:bindings type="com.ebay.grid.service.soap.CollectionBinding">
+               <ax23:collection type="com.ebay.osum.collectioncache.Collection">
+                  <ax25:definition type="com.ebay.osum.collectioncache.CollectionDefinition">
+                     <ax25:criteria/>
+                     <ax25:id>0</ax25:id>
+                     <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                     <ax25:name/>
+                     <ax25:state/>
+                     <ax25:topLevelObjectsCount>1</ax25:topLevelObjectsCount>
+                     <ax25:type/>
+                  </ax25:definition>
+                  <ax25:nodes type="com.ebay.osum.collectioncache.CollectionNode">
+                     <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                        <ax25:collectionId>0</ax25:collectionId>
+                        <ax25:id>0</ax25:id>
+                        <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                        <ax25:name>PHX:PHX:330:MPL.09:04</ax25:name>
+                        <ax25:type>ODB::Rack</ax25:type>
+                     </ax25:managedObject>
+                     <ax25:typeHierarchy/>
+                  </ax25:nodes>
+               </ax23:collection>
+               <ax23:var>rack</ax23:var>
+            </ax23:bindings>
+         </ns:return>
+      </ns:findResourceResponse>
+   </soapenv:Body>
+</soapenv:Envelope>|Moved to Assigned state using a external script.|2010-05-12 00:07:18
+BUILD00032115|Site Controller|Assigned|2 - High|tgautier|TORS2.5_RA: Getting proper Response on hitting the request after removing the mandatory tag Data Center.|Getting proper Response on hitting the request after removing the mandatory tag Data Center. No exception is thrown although mandatory tag is missing.
+
+Refer the Request and Response below.
+
+Steps to Reproduce:
+1) Open SOAP UI
+2) Hit the Request - 
+
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:xsd="http://com.ebay.osum.service.ras/xsd" xmlns:xsd1="http://soap.service.grid.ebay.com/xsd">
+   <soap:Header/>
+   <soap:Body>
+     <xsd:findResource>
+         <xsd:quantity>2</xsd:quantity>
+         <xsd:resultLimit>5</xsd:resultLimit>
+                 <xsd:tags>place</xsd:tags>
+                 <xsd:tags>model_P595</xsd:tags> 
+                 <xsd:tags>server</xsd:tags> 
+                 <xsd:tags>dont_need_patched_ports</xsd:tags> 
+                 <xsd:tags>function_spare</xsd:tags>
+                 <xsd:tags>architecture_v3</xsd:tags>
+                 <xsd:tags>layer_app</xsd:tags>
+                 <xsd:tags>archtier_app</xsd:tags> 
+                 <xsd:externalValues>
+                        <xsd1:bindings>
+               <xsd1:name>assettype</xsd1:name>
+               <xsd1:value>ASTYPE_20744</xsd1:value>
+            </xsd1:bindings>
+            <xsd1:bindings>
+               <xsd1:name>model</xsd1:name>
+               <xsd1:value>model_P595</xsd1:value>
+            </xsd1:bindings>
+                    <xsd1:bindings>
+               <xsd1:name>architecture</xsd1:name>
+               <xsd1:value>v3</xsd1:value>
+            </xsd1:bindings>
+                    <xsd1:bindings>
+               <xsd1:name>layer</xsd1:name>
+               <xsd1:value>app</xsd1:value>
+            </xsd1:bindings>
+                    <xsd1:bindings>
+               <xsd1:name>archtier</xsd1:name>
+               <xsd1:value>app</xsd1:value>
+            </xsd1:bindings>      
+         </xsd:externalValues>
+     </xsd:findResource>
+   </soap:Body>
+</soap:Envelope>
+
+3. Check the Response
+
+Actual Results: Proper response is given
+
+Expected Results: Exception should be thrown
+
+Additional Information:
+
+Response -
+
+<soapenv:Envelope xmlns:soapenv="http://www.w3.org/2003/05/soap-envelope">
+   <soapenv:Body>
+      <ns:findResourceResponse xmlns:ns="http://com.ebay.osum.service.ras/xsd" xmlns:ax25="http://collectioncache.osum.ebay.com/xsd" xmlns:ax23="http://soap.service.grid.ebay.com/xsd">
+         <ns:return type="com.ebay.grid.service.soap.ResourceCollectionsSoap">
+            <ax23:bindings type="com.ebay.grid.service.soap.CollectionBinding">
+               <ax23:collection type="com.ebay.osum.collectioncache.Collection">
+                  <ax25:definition type="com.ebay.osum.collectioncache.CollectionDefinition">
+                     <ax25:criteria/>
+                     <ax25:id>0</ax25:id>
+                     <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                     <ax25:name/>
+                     <ax25:state/>
+                     <ax25:topLevelObjectsCount>1</ax25:topLevelObjectsCount>
+                     <ax25:type/>
+                  </ax25:definition>
+                  <ax25:nodes type="com.ebay.osum.collectioncache.CollectionNode">
+                     <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                        <ax25:collectionId>0</ax25:collectionId>
+                        <ax25:id>0</ax25:id>
+                        <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                        <ax25:name>ABC:abc:asdf:RowName226:RackName226</ax25:name>
+                        <ax25:type>ODB::Rack</ax25:type>
+                     </ax25:managedObject>
+                     <ax25:typeHierarchy/>
+                  </ax25:nodes>
+               </ax23:collection>
+               <ax23:var>rack</ax23:var>
+            </ax23:bindings>
+         </ns:return>
+         <ns:return type="com.ebay.grid.service.soap.ResourceCollectionsSoap">
+            <ax23:bindings type="com.ebay.grid.service.soap.CollectionBinding">
+               <ax23:collection type="com.ebay.osum.collectioncache.Collection">
+                  <ax25:definition type="com.ebay.osum.collectioncache.CollectionDefinition">
+                     <ax25:criteria/>
+                     <ax25:id>0</ax25:id>
+                     <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                     <ax25:name/>
+                     <ax25:state/>
+                     <ax25:topLevelObjectsCount>1</ax25:topLevelObjectsCount>
+                     <ax25:type/>
+                  </ax25:definition>
+                  <ax25:nodes type="com.ebay.osum.collectioncache.CollectionNode">
+                     <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                        <ax25:collectionId>0</ax25:collectionId>
+                        <ax25:id>0</ax25:id>
+                        <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                        <ax25:name>ABC:abc:asdf:RowName568:RackName568</ax25:name>
+                        <ax25:type>ODB::Rack</ax25:type>
+                     </ax25:managedObject>
+                     <ax25:typeHierarchy/>
+                  </ax25:nodes>
+               </ax23:collection>
+               <ax23:var>rack</ax23:var>
+            </ax23:bindings>
+         </ns:return>
+         <ns:return type="com.ebay.grid.service.soap.ResourceCollectionsSoap">
+            <ax23:bindings type="com.ebay.grid.service.soap.CollectionBinding">
+               <ax23:collection type="com.ebay.osum.collectioncache.Collection">
+                  <ax25:definition type="com.ebay.osum.collectioncache.CollectionDefinition">
+                     <ax25:criteria/>
+                     <ax25:id>0</ax25:id>
+                     <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                     <ax25:name/>
+                     <ax25:state/>
+                     <ax25:topLevelObjectsCount>1</ax25:topLevelObjectsCount>
+                     <ax25:type/>
+                  </ax25:definition>
+                  <ax25:nodes type="com.ebay.osum.collectioncache.CollectionNode">
+                     <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                        <ax25:collectionId>0</ax25:collectionId>
+                        <ax25:id>0</ax25:id>
+                        <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                        <ax25:name>ABC:abc:asdf:RowName403:RackName403</ax25:name>
+                        <ax25:type>ODB::Rack</ax25:type>
+                     </ax25:managedObject>
+                     <ax25:typeHierarchy/>
+                  </ax25:nodes>
+               </ax23:collection>
+               <ax23:var>rack</ax23:var>
+            </ax23:bindings>
+         </ns:return>
+         <ns:return type="com.ebay.grid.service.soap.ResourceCollectionsSoap">
+            <ax23:bindings type="com.ebay.grid.service.soap.CollectionBinding">
+               <ax23:collection type="com.ebay.osum.collectioncache.Collection">
+                  <ax25:definition type="com.ebay.osum.collectioncache.CollectionDefinition">
+                     <ax25:criteria/>
+                     <ax25:id>0</ax25:id>
+                     <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                     <ax25:name/>
+                     <ax25:state/>
+                     <ax25:topLevelObjectsCount>1</ax25:topLevelObjectsCount>
+                     <ax25:type/>
+                  </ax25:definition>
+                  <ax25:nodes type="com.ebay.osum.collectioncache.CollectionNode">
+                     <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                        <ax25:collectionId>0</ax25:collectionId>
+                        <ax25:id>0</ax25:id>
+                        <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                        <ax25:name>ABC:abc:asdf:RowName484:RackName484</ax25:name>
+                        <ax25:type>ODB::Rack</ax25:type>
+                     </ax25:managedObject>
+                     <ax25:typeHierarchy/>
+                  </ax25:nodes>
+               </ax23:collection>
+               <ax23:var>rack</ax23:var>
+            </ax23:bindings>
+         </ns:return>
+         <ns:return type="com.ebay.grid.service.soap.ResourceCollectionsSoap">
+            <ax23:bindings type="com.ebay.grid.service.soap.CollectionBinding">
+               <ax23:collection type="com.ebay.osum.collectioncache.Collection">
+                  <ax25:definition type="com.ebay.osum.collectioncache.CollectionDefinition">
+                     <ax25:criteria/>
+                     <ax25:id>0</ax25:id>
+                     <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                     <ax25:name/>
+                     <ax25:state/>
+                     <ax25:topLevelObjectsCount>1</ax25:topLevelObjectsCount>
+                     <ax25:type/>
+                  </ax25:definition>
+                  <ax25:nodes type="com.ebay.osum.collectioncache.CollectionNode">
+                     <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                        <ax25:collectionId>0</ax25:collectionId>
+                        <ax25:id>0</ax25:id>
+                        <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                        <ax25:name>ABC:abc:asdf:RowName40:RackName40</ax25:name>
+                        <ax25:type>ODB::Rack</ax25:type>
+                     </ax25:managedObject>
+                     <ax25:typeHierarchy/>
+                  </ax25:nodes>
+               </ax23:collection>
+               <ax23:var>rack</ax23:var>
+            </ax23:bindings>
+         </ns:return>
+      </ns:findResourceResponse>
+   </soapenv:Body>
+</soapenv:Envelope>|Moved to Assigned state using a external script.|2010-05-11 23:47:25
+BUILD00032110|Other|Closed|4 - Low|prdas|asd|Detailed Description:
+
+asasdasdasdasd
+
+Impact:
+
+Steps to Reproduce:
+1)
+
+Actual Results:
+
+Expected Results:
+
+Additional Information:||2010-05-11 15:22:38
