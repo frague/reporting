@@ -16,7 +16,7 @@ def appendIssue(matchObj):
 		for key in cqKeys:
 			i[cqKeys[k]] = issue[k]
 			k = k + 1
-		if (i["Assigned_To"] == "tgautier"):
+		if (i["Assigned_To"] == "tgautier" or i["Assigned_To"] == "mgorbunov"):
 			cqIssues["%s: %s" % (i["id"], i["Title"])] = i
 
 	return ""
@@ -95,7 +95,7 @@ for i in cqIssues.keys():
 		descr = re.sub("([^>])(\n<)", "\\1{code}\\2", v["Steps_Description"])
 		descr = re.sub("(>\n)([ \t\n]*[^< \t\n])", "\\1{code}\\2", descr)
 
-		newIssue = soap.createIssue(jiraAuth, {"project": config["project_abbr"], "type": "1", "priority": v["Priority"][0:1], "summary": "%s: %s" % (v["id"], v["Title"]), "description": descr, "assignee": "oaravin", "reporter": "nbogdanov"})
+		newIssue = soap.createIssue(jiraAuth, {"project": config["project_abbr"], "type": "1", "priority": v["Priority"][0:1], "summary": "%s: %s" % (v["id"], v["Title"]), "description": descr, "assignee": "oaravin", "reporter": "bdaftardar"})
 		soap.updateIssue(jiraAuth, newIssue.key, [{"id": "fixVersions", "values": ["10698"]}])
 
 		print "[Created] %s: %s" % (v["id"], v["Title"])

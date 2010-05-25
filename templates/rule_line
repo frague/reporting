@@ -1,2 +1,2 @@
-| *##NAME##*
-rule:/##URI## | ##DESCRIPTION## | ##GOAL## | ##PRD## | ##UPDATED## |
+{tr}{td:class=confluenceTd} *##NAME##*
+rule:/##URI##{td}{td:class=confluenceTd}##DESCRIPTION##{td}{td:align=center|class=confluenceTd}##GOAL##{td}{td:align=center|class=confluenceTd}##USEINFILTER##{td}{td:class=confluenceTd}##PRD##{td}{td:class=confluenceTd}##UPDATED##{td}{tr}
