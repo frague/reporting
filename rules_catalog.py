@@ -6,7 +6,7 @@ from rabbithole import *
 ProfileNeeded()
 
 path = "D:/dev/BigRock/rep/rules/new_storage"
-types = {"provider": "Provider", "template": "Template", "aggregation": "Aggregation", "xref": "XREF", "conditional": "Conditional"}
+types = {"provider": "Provider", "template": "Template", "aggregation": "Aggregation", "xref": "XREF", "conditional": "Conditional", "validation": "Validation"}
 typeTemplate = GetTemplate("rule_type")
 lineTemplate = GetTemplate("rule_line")
 emptySpaces = re.compile("[ \t\n\r]+")
@@ -26,10 +26,12 @@ def ProcessRule(file):
 
 	isRule = False
 	for type in types.keys():
-		if len(context.xpathEval("//%s" % type)) == 1:
+		if doc.getRootElement().name == type:
 			isRule = True
 			break
 
+#	print "%s (%s): %s - %s" % (isRule, l, type, file)
+	
 	if not isRule:
 		return
 
@@ -37,7 +39,6 @@ def ProcessRule(file):
 	description = emptySpaces.sub(" ", context.xpathEval("//description")[0].content).replace("->", "&rarr;")
 	tags = context.xpathEval("//tag")
 
-	
 	useInFilter = "both"
 	if doc.getRootElement().name == "provider" and doc.getRootElement().prop("useInFilter") != "true":
 		useInFilter = "recommend"
