@@ -2,10 +2,11 @@ from rabbithole import *
 
 #############################################################
 
-issuesExpr = re.compile('((^|\n)([^|]+\|){8}[^|\n]+)', re.MULTILINE)
+issuesExpr = re.compile('((id|\nBUILD[0-9]+)(\|[^|]*){8}($|\n))', re.MULTILINE)
 
+total = 0
 def appendIssue(matchObj):
-	global cqKeys
+	global cqKeys, total
 
 	issue = matchObj.group(1).strip().split("|")
 	if len(cqKeys) == 0:
@@ -14,8 +15,11 @@ def appendIssue(matchObj):
 		i = {}
 		k = 0
 		for key in cqKeys:
-			i[cqKeys[k]] = issue[k]
+			i[cqKeys[k]] = re.sub("##NA##", "\n", issue[k]).strip()
 			k = k + 1
+
+		total = total + 1
+#		print "%s. %s: %s" % (total, i["id"], i["Assigned_To"])
 		if (i["Assigned_To"] == "tgautier" or i["Assigned_To"] == "mgorbunov"):
 			cqIssues["%s: %s" % (i["id"], i["Title"])] = i
 
@@ -62,8 +66,8 @@ ProfileNeeded()
 
 cqKeys = []
 cqIssues = {}
-issuesExpr.sub(appendIssue, ReadFile("cqt.txt"))
 
+issuesExpr.sub(appendIssue, re.sub("(BUILD[0-9]+)", "\n\\1", re.sub("\n", "##NL##", ReadFile("cqt.txt"))))
 
 soap = SOAPpy.WSDL.Proxy(config["jira_soap"])
 jiraAuth = soap.login(config["jira"]["user"], config["jira"]["password"])
@@ -72,14 +76,13 @@ issue = JiraIssue()
 issues = soap.getIssuesFromFilter(jiraAuth, "11180")
 
 
-
 for i in issues:
 	issue.Parse(i)
 	action = "-"
 	if (cqIssues.has_key(issue.summary)):	# Existing issue
 		if issue.status != "6":	# Not closed issues
 			i = cqIssues[issue.summary]
-			if i["State"] == "Closed" or i["State"] == "Verify":
+			if i["State"] == "Closed":
 				action = "Resolve"
 				issue.Resolve()
 		del cqIssues[issue.summary]
@@ -91,12 +94,12 @@ for i in issues:
 for i in cqIssues.keys():
 	v = cqIssues[i]
 
-	if v["State"] != "Closed" and v["State"] != "Verify":
+	if v["State"] != "Closed":
 		descr = re.sub("([^>])(\n<)", "\\1{code}\\2", v["Steps_Description"])
 		descr = re.sub("(>\n)([ \t\n]*[^< \t\n])", "\\1{code}\\2", descr)
 
 		newIssue = soap.createIssue(jiraAuth, {"project": config["project_abbr"], "type": "1", "priority": v["Priority"][0:1], "summary": "%s: %s" % (v["id"], v["Title"]), "description": descr, "assignee": "oaravin", "reporter": "bdaftardar"})
-		soap.updateIssue(jiraAuth, newIssue.key, [{"id": "fixVersions", "values": ["10698"]}])
+#		soap.updateIssue(jiraAuth, newIssue.key, [{"id": "fixVersions", "values": ["10698"]}])
 
 		print "[Created] %s: %s" % (v["id"], v["Title"])
 
