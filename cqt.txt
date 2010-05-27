@@ -1,5 +1,2027 @@
 id|Functional_Area|State|Priority|Assigned_To|Title|Steps_Description|Note_Entry|SubmitDate
-BUILD00032235|Site Controller|Assigned|2 - High|tgautier|TORS2.5_RA: Getting no exception on not specifying pod for need_patched_ports tag specified in the request.|Getting no exception on not specifying pod for need_patched_ports tag specified in the request.
+BUILD00032243|Site Controller|Assigned|2 - High|tgautier|TORS2.5_RA: Assets in stock are also returned in the response for find resource for find server goal type.|Assets in stock are also returned in the response for find resource for find server goal type.
+
+refer request and response below.
+
+Steps to Reproduce:
+1) Open SOAP UI
+2) Hit the Request -
+
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:xsd="http://com.ebay.osum.service.ras/xsd" xmlns:xsd1="http://soap.service.grid.ebay.com/xsd">
+   <soap:Header/>
+   <soap:Body>
+       <xsd:findResource>
+         <xsd:quantity>10</xsd:quantity>
+         <xsd:resultLimit>10</xsd:resultLimit>
+        	 <xsd:tags>find</xsd:tags>
+                 <xsd:tags>model_X330</xsd:tags> 
+                 <xsd:tags>server</xsd:tags> 
+                 <xsd:tags>dont_need_patched_ports</xsd:tags> 
+                 <xsd:tags>function_cfecache-app</xsd:tags>
+		 <xsd:tags>known_function</xsd:tags>
+		 <xsd:tags>architecture_v3</xsd:tags>
+                 <xsd:tags>layer_app</xsd:tags>
+                 <xsd:tags>archtier_app</xsd:tags> 
+         <xsd:externalValues>
+            <xsd1:bindings>
+               <xsd1:name>datacenters</xsd1:name>
+               <xsd1:values>SLC:SLC</xsd1:values>
+            </xsd1:bindings>
+            <xsd1:bindings>
+               <xsd1:name>assettype</xsd1:name>
+               <xsd1:value>ASTYPE_20728</xsd1:value>
+            </xsd1:bindings>
+	    <xsd1:bindings>
+               <xsd1:name>function</xsd1:name>
+               <xsd1:value>cfecache-app</xsd1:value>
+            </xsd1:bindings>    
+            <xsd1:bindings>
+               <xsd1:name>architecture</xsd1:name>
+               <xsd1:value>v3</xsd1:value>
+            </xsd1:bindings>
+                    <xsd1:bindings>
+               <xsd1:name>layer</xsd1:name>
+               <xsd1:value>app</xsd1:value>
+            </xsd1:bindings>
+                    <xsd1:bindings>
+               <xsd1:name>archtier</xsd1:name>
+               <xsd1:value>app</xsd1:value>
+            </xsd1:bindings>      
+
+         </xsd:externalValues>
+
+         <!--Zero or more repetitions:-->
+
+         	<resultSpec><![CDATA[<opt class="ODB::Asset"
+	print="label,tag,serial,manufacturer,model,assetstatus,leasedenddate">
+	<link name="ContainedIn" direction="to">
+		<opt class="ODB::Rack" print="label,location,buowner">
+		</opt>
+	</link>
+	<link name="ResidesIn" direction="to">
+		<opt class="ODB:: Interface" />
+	</link>
+</opt>
+
+]]></resultSpec>
+	<resultSpec><![CDATA[<opt class="ODB::AssetType" print="physicalsize">
+	<link name="ContainedIn" direction="to">
+		<opt class="ODB::OutletType" print="compatiblereceptacletype"/>
+	</link>
+	</opt>]]>
+	</resultSpec>
+
+      </xsd:findResource>
+   </soap:Body>
+</soap:Envelope>
+
+3) Check the response-
+
+<soapenv:Envelope xmlns:soapenv="http://www.w3.org/2003/05/soap-envelope">
+   <soapenv:Body>
+      <ns:findResourceResponse xmlns:ns="http://com.ebay.osum.service.ras/xsd" xmlns:ax25="http://collectioncache.osum.ebay.com/xsd" xmlns:ax23="http://soap.service.grid.ebay.com/xsd">
+         <ns:return type="com.ebay.grid.service.soap.ResourceCollectionsSoap">
+            <ax23:bindings type="com.ebay.grid.service.soap.CollectionBinding">
+               <ax23:collection type="com.ebay.osum.collectioncache.Collection">
+                  <ax25:definition type="com.ebay.osum.collectioncache.CollectionDefinition">
+                     <ax25:criteria/>
+                     <ax25:id>0</ax25:id>
+                     <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                     <ax25:name/>
+                     <ax25:state/>
+                     <ax25:topLevelObjectsCount>1</ax25:topLevelObjectsCount>
+                     <ax25:type/>
+                  </ax25:definition>
+                  <ax25:nodes type="com.ebay.osum.collectioncache.CollectionNode">
+                     <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>label</ax25:name>
+                           <ax25:value/>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>tag</ax25:name>
+                           <ax25:value>0521109</ax25:value>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>serial</ax25:name>
+                           <ax25:value>SN0521109</ax25:value>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>manufacturer</ax25:name>
+                           <ax25:value>IBM</ax25:value>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>model</ax25:name>
+                           <ax25:value>X330</ax25:value>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>assetstatus</ax25:name>
+                           <ax25:value>STANDBY</ax25:value>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>leasedenddate</ax25:name>
+                           <ax25:value>12/12/2011</ax25:value>
+                        </ax25:attributes>
+                        <ax25:collectionId>0</ax25:collectionId>
+                        <ax25:id>0</ax25:id>
+                        <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                        <ax25:name>ASSET00001421</ax25:name>
+                        <ax25:type>ODB::Asset</ax25:type>
+                     </ax25:managedObject>
+                     <ax25:typeHierarchy>ODB::Asset</ax25:typeHierarchy>
+                  </ax25:nodes>
+               </ax23:collection>
+               <ax23:var>server</ax23:var>
+            </ax23:bindings>
+            <ax23:bindings type="com.ebay.grid.service.soap.CollectionBinding">
+               <ax23:collection type="com.ebay.osum.collectioncache.Collection">
+                  <ax25:definition type="com.ebay.osum.collectioncache.CollectionDefinition">
+                     <ax25:criteria/>
+                     <ax25:id>0</ax25:id>
+                     <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                     <ax25:name/>
+                     <ax25:state/>
+                     <ax25:topLevelObjectsCount>1</ax25:topLevelObjectsCount>
+                     <ax25:type/>
+                  </ax25:definition>
+                  <ax25:nodes type="com.ebay.osum.collectioncache.CollectionNode">
+                     <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                        <ax25:collectionId>0</ax25:collectionId>
+                        <ax25:id>0</ax25:id>
+                        <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                        <ax25:name>SLC:SLC:Room 1:Row1:Rack5</ax25:name>
+                        <ax25:type>ODB::Rack</ax25:type>
+                     </ax25:managedObject>
+                     <ax25:typeHierarchy/>
+                  </ax25:nodes>
+               </ax23:collection>
+               <ax23:var>rack</ax23:var>
+            </ax23:bindings>
+            <ax23:bindings type="com.ebay.grid.service.soap.CollectionBinding">
+               <ax23:collection type="com.ebay.osum.collectioncache.Collection">
+                  <ax25:definition type="com.ebay.osum.collectioncache.CollectionDefinition">
+                     <ax25:criteria/>
+                     <ax25:id>0</ax25:id>
+                     <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                     <ax25:name/>
+                     <ax25:state/>
+                     <ax25:topLevelObjectsCount>1</ax25:topLevelObjectsCount>
+                     <ax25:type/>
+                  </ax25:definition>
+                  <ax25:nodes type="com.ebay.osum.collectioncache.CollectionNode">
+                     <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>physicalsize</ax25:name>
+                           <ax25:value>1</ax25:value>
+                        </ax25:attributes>
+                        <ax25:collectionId>0</ax25:collectionId>
+                        <ax25:id>0</ax25:id>
+                        <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                        <ax25:name>ASTYPE_20728</ax25:name>
+                        <ax25:type>ODB::AssetType</ax25:type>
+                     </ax25:managedObject>
+                     <ax25:relationships type="com.ebay.osum.collectioncache.MoRelationship">
+                        <ax25:name>OLTYPE_73585-ODB::Link::ContainedIn-ASTYPE_20728</ax25:name>
+                        <ax25:node type="com.ebay.osum.collectioncache.CollectionNode">
+                           <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                              <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                                 <ax25:collectionId>0</ax25:collectionId>
+                                 <ax25:id>0</ax25:id>
+                                 <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                                 <ax25:moId>0</ax25:moId>
+                                 <ax25:name>compatiblereceptacletype</ax25:name>
+                                 <ax25:value>L21</ax25:value>
+                              </ax25:attributes>
+                              <ax25:collectionId>0</ax25:collectionId>
+                              <ax25:id>0</ax25:id>
+                              <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                              <ax25:name>OLTYPE_73585</ax25:name>
+                              <ax25:type>ODB::OutletType</ax25:type>
+                           </ax25:managedObject>
+                           <ax25:typeHierarchy>ODB::OutletType</ax25:typeHierarchy>
+                        </ax25:node>
+                        <ax25:type>ContainedIn</ax25:type>
+                     </ax25:relationships>
+                     <ax25:relationships type="com.ebay.osum.collectioncache.MoRelationship">
+                        <ax25:name>OLTYPE_84686-ODB::Link::ContainedIn-ASTYPE_20728</ax25:name>
+                        <ax25:node type="com.ebay.osum.collectioncache.CollectionNode">
+                           <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                              <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                                 <ax25:collectionId>0</ax25:collectionId>
+                                 <ax25:id>0</ax25:id>
+                                 <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                                 <ax25:moId>0</ax25:moId>
+                                 <ax25:name>compatiblereceptacletype</ax25:name>
+                                 <ax25:value>C13</ax25:value>
+                              </ax25:attributes>
+                              <ax25:collectionId>0</ax25:collectionId>
+                              <ax25:id>0</ax25:id>
+                              <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                              <ax25:name>OLTYPE_84686</ax25:name>
+                              <ax25:type>ODB::OutletType</ax25:type>
+                           </ax25:managedObject>
+                           <ax25:typeHierarchy>ODB::OutletType</ax25:typeHierarchy>
+                        </ax25:node>
+                        <ax25:type>ContainedIn</ax25:type>
+                     </ax25:relationships>
+                     <ax25:typeHierarchy>ODB::AssetType</ax25:typeHierarchy>
+                  </ax25:nodes>
+               </ax23:collection>
+               <ax23:var>assettype</ax23:var>
+            </ax23:bindings>
+         </ns:return>
+         <ns:return type="com.ebay.grid.service.soap.ResourceCollectionsSoap">
+            <ax23:bindings type="com.ebay.grid.service.soap.CollectionBinding">
+               <ax23:collection type="com.ebay.osum.collectioncache.Collection">
+                  <ax25:definition type="com.ebay.osum.collectioncache.CollectionDefinition">
+                     <ax25:criteria/>
+                     <ax25:id>0</ax25:id>
+                     <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                     <ax25:name/>
+                     <ax25:state/>
+                     <ax25:topLevelObjectsCount>1</ax25:topLevelObjectsCount>
+                     <ax25:type/>
+                  </ax25:definition>
+                  <ax25:nodes type="com.ebay.osum.collectioncache.CollectionNode">
+                     <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>label</ax25:name>
+                           <ax25:value/>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>tag</ax25:name>
+                           <ax25:value>0521110</ax25:value>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>serial</ax25:name>
+                           <ax25:value>SN0521110</ax25:value>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>manufacturer</ax25:name>
+                           <ax25:value>IBM</ax25:value>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>model</ax25:name>
+                           <ax25:value>X330</ax25:value>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>assetstatus</ax25:name>
+                           <ax25:value>STANDBY</ax25:value>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>leasedenddate</ax25:name>
+                           <ax25:value>12/12/2011</ax25:value>
+                        </ax25:attributes>
+                        <ax25:collectionId>0</ax25:collectionId>
+                        <ax25:id>0</ax25:id>
+                        <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                        <ax25:name>ASSET00001422</ax25:name>
+                        <ax25:type>ODB::Asset</ax25:type>
+                     </ax25:managedObject>
+                     <ax25:typeHierarchy>ODB::Asset</ax25:typeHierarchy>
+                  </ax25:nodes>
+               </ax23:collection>
+               <ax23:var>server</ax23:var>
+            </ax23:bindings>
+            <ax23:bindings type="com.ebay.grid.service.soap.CollectionBinding">
+               <ax23:collection type="com.ebay.osum.collectioncache.Collection">
+                  <ax25:definition type="com.ebay.osum.collectioncache.CollectionDefinition">
+                     <ax25:criteria/>
+                     <ax25:id>0</ax25:id>
+                     <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                     <ax25:name/>
+                     <ax25:state/>
+                     <ax25:topLevelObjectsCount>1</ax25:topLevelObjectsCount>
+                     <ax25:type/>
+                  </ax25:definition>
+                  <ax25:nodes type="com.ebay.osum.collectioncache.CollectionNode">
+                     <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                        <ax25:collectionId>0</ax25:collectionId>
+                        <ax25:id>0</ax25:id>
+                        <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                        <ax25:name>SLC:SLC:Room 1:Row1:Rack5</ax25:name>
+                        <ax25:type>ODB::Rack</ax25:type>
+                     </ax25:managedObject>
+                     <ax25:typeHierarchy/>
+                  </ax25:nodes>
+               </ax23:collection>
+               <ax23:var>rack</ax23:var>
+            </ax23:bindings>
+            <ax23:bindings type="com.ebay.grid.service.soap.CollectionBinding">
+               <ax23:collection type="com.ebay.osum.collectioncache.Collection">
+                  <ax25:definition type="com.ebay.osum.collectioncache.CollectionDefinition">
+                     <ax25:criteria/>
+                     <ax25:id>0</ax25:id>
+                     <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                     <ax25:name/>
+                     <ax25:state/>
+                     <ax25:topLevelObjectsCount>1</ax25:topLevelObjectsCount>
+                     <ax25:type/>
+                  </ax25:definition>
+                  <ax25:nodes type="com.ebay.osum.collectioncache.CollectionNode">
+                     <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>physicalsize</ax25:name>
+                           <ax25:value>1</ax25:value>
+                        </ax25:attributes>
+                        <ax25:collectionId>0</ax25:collectionId>
+                        <ax25:id>0</ax25:id>
+                        <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                        <ax25:name>ASTYPE_20728</ax25:name>
+                        <ax25:type>ODB::AssetType</ax25:type>
+                     </ax25:managedObject>
+                     <ax25:relationships type="com.ebay.osum.collectioncache.MoRelationship">
+                        <ax25:name>OLTYPE_73585-ODB::Link::ContainedIn-ASTYPE_20728</ax25:name>
+                        <ax25:node type="com.ebay.osum.collectioncache.CollectionNode">
+                           <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                              <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                                 <ax25:collectionId>0</ax25:collectionId>
+                                 <ax25:id>0</ax25:id>
+                                 <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                                 <ax25:moId>0</ax25:moId>
+                                 <ax25:name>compatiblereceptacletype</ax25:name>
+                                 <ax25:value>L21</ax25:value>
+                              </ax25:attributes>
+                              <ax25:collectionId>0</ax25:collectionId>
+                              <ax25:id>0</ax25:id>
+                              <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                              <ax25:name>OLTYPE_73585</ax25:name>
+                              <ax25:type>ODB::OutletType</ax25:type>
+                           </ax25:managedObject>
+                           <ax25:typeHierarchy>ODB::OutletType</ax25:typeHierarchy>
+                        </ax25:node>
+                        <ax25:type>ContainedIn</ax25:type>
+                     </ax25:relationships>
+                     <ax25:relationships type="com.ebay.osum.collectioncache.MoRelationship">
+                        <ax25:name>OLTYPE_84686-ODB::Link::ContainedIn-ASTYPE_20728</ax25:name>
+                        <ax25:node type="com.ebay.osum.collectioncache.CollectionNode">
+                           <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                              <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                                 <ax25:collectionId>0</ax25:collectionId>
+                                 <ax25:id>0</ax25:id>
+                                 <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                                 <ax25:moId>0</ax25:moId>
+                                 <ax25:name>compatiblereceptacletype</ax25:name>
+                                 <ax25:value>C13</ax25:value>
+                              </ax25:attributes>
+                              <ax25:collectionId>0</ax25:collectionId>
+                              <ax25:id>0</ax25:id>
+                              <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                              <ax25:name>OLTYPE_84686</ax25:name>
+                              <ax25:type>ODB::OutletType</ax25:type>
+                           </ax25:managedObject>
+                           <ax25:typeHierarchy>ODB::OutletType</ax25:typeHierarchy>
+                        </ax25:node>
+                        <ax25:type>ContainedIn</ax25:type>
+                     </ax25:relationships>
+                     <ax25:typeHierarchy>ODB::AssetType</ax25:typeHierarchy>
+                  </ax25:nodes>
+               </ax23:collection>
+               <ax23:var>assettype</ax23:var>
+            </ax23:bindings>
+         </ns:return>
+         <ns:return type="com.ebay.grid.service.soap.ResourceCollectionsSoap">
+            <ax23:bindings type="com.ebay.grid.service.soap.CollectionBinding">
+               <ax23:collection type="com.ebay.osum.collectioncache.Collection">
+                  <ax25:definition type="com.ebay.osum.collectioncache.CollectionDefinition">
+                     <ax25:criteria/>
+                     <ax25:id>0</ax25:id>
+                     <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                     <ax25:name/>
+                     <ax25:state/>
+                     <ax25:topLevelObjectsCount>1</ax25:topLevelObjectsCount>
+                     <ax25:type/>
+                  </ax25:definition>
+                  <ax25:nodes type="com.ebay.osum.collectioncache.CollectionNode">
+                     <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>label</ax25:name>
+                           <ax25:value/>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>tag</ax25:name>
+                           <ax25:value>12738</ax25:value>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>serial</ax25:name>
+                           <ax25:value>PN566</ax25:value>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>manufacturer</ax25:name>
+                           <ax25:value>IBM</ax25:value>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>model</ax25:name>
+                           <ax25:value>X330</ax25:value>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>assetstatus</ax25:name>
+                           <ax25:value>STOCK</ax25:value>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>leasedenddate</ax25:name>
+                           <ax25:value/>
+                        </ax25:attributes>
+                        <ax25:collectionId>0</ax25:collectionId>
+                        <ax25:id>0</ax25:id>
+                        <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                        <ax25:name>ASSET00093368</ax25:name>
+                        <ax25:type>ODB::Asset</ax25:type>
+                     </ax25:managedObject>
+                     <ax25:typeHierarchy>ODB::Asset</ax25:typeHierarchy>
+                  </ax25:nodes>
+               </ax23:collection>
+               <ax23:var>server</ax23:var>
+            </ax23:bindings>
+            <ax23:bindings type="com.ebay.grid.service.soap.CollectionBinding">
+               <ax23:collection type="com.ebay.osum.collectioncache.Collection">
+                  <ax25:definition type="com.ebay.osum.collectioncache.CollectionDefinition">
+                     <ax25:criteria/>
+                     <ax25:id>0</ax25:id>
+                     <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                     <ax25:name/>
+                     <ax25:state/>
+                     <ax25:topLevelObjectsCount>1</ax25:topLevelObjectsCount>
+                     <ax25:type/>
+                  </ax25:definition>
+                  <ax25:nodes type="com.ebay.osum.collectioncache.CollectionNode">
+                     <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                        <ax25:collectionId>0</ax25:collectionId>
+                        <ax25:id>0</ax25:id>
+                        <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                        <ax25:name>SLC:SLC:Room 1:Row1:Rack1</ax25:name>
+                        <ax25:type>ODB::Rack</ax25:type>
+                     </ax25:managedObject>
+                     <ax25:typeHierarchy/>
+                  </ax25:nodes>
+               </ax23:collection>
+               <ax23:var>rack</ax23:var>
+            </ax23:bindings>
+            <ax23:bindings type="com.ebay.grid.service.soap.CollectionBinding">
+               <ax23:collection type="com.ebay.osum.collectioncache.Collection">
+                  <ax25:definition type="com.ebay.osum.collectioncache.CollectionDefinition">
+                     <ax25:criteria/>
+                     <ax25:id>0</ax25:id>
+                     <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                     <ax25:name/>
+                     <ax25:state/>
+                     <ax25:topLevelObjectsCount>1</ax25:topLevelObjectsCount>
+                     <ax25:type/>
+                  </ax25:definition>
+                  <ax25:nodes type="com.ebay.osum.collectioncache.CollectionNode">
+                     <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>physicalsize</ax25:name>
+                           <ax25:value>1</ax25:value>
+                        </ax25:attributes>
+                        <ax25:collectionId>0</ax25:collectionId>
+                        <ax25:id>0</ax25:id>
+                        <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                        <ax25:name>ASTYPE_20728</ax25:name>
+                        <ax25:type>ODB::AssetType</ax25:type>
+                     </ax25:managedObject>
+                     <ax25:relationships type="com.ebay.osum.collectioncache.MoRelationship">
+                        <ax25:name>OLTYPE_73585-ODB::Link::ContainedIn-ASTYPE_20728</ax25:name>
+                        <ax25:node type="com.ebay.osum.collectioncache.CollectionNode">
+                           <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                              <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                                 <ax25:collectionId>0</ax25:collectionId>
+                                 <ax25:id>0</ax25:id>
+                                 <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                                 <ax25:moId>0</ax25:moId>
+                                 <ax25:name>compatiblereceptacletype</ax25:name>
+                                 <ax25:value>L21</ax25:value>
+                              </ax25:attributes>
+                              <ax25:collectionId>0</ax25:collectionId>
+                              <ax25:id>0</ax25:id>
+                              <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                              <ax25:name>OLTYPE_73585</ax25:name>
+                              <ax25:type>ODB::OutletType</ax25:type>
+                           </ax25:managedObject>
+                           <ax25:typeHierarchy>ODB::OutletType</ax25:typeHierarchy>
+                        </ax25:node>
+                        <ax25:type>ContainedIn</ax25:type>
+                     </ax25:relationships>
+                     <ax25:relationships type="com.ebay.osum.collectioncache.MoRelationship">
+                        <ax25:name>OLTYPE_84686-ODB::Link::ContainedIn-ASTYPE_20728</ax25:name>
+                        <ax25:node type="com.ebay.osum.collectioncache.CollectionNode">
+                           <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                              <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                                 <ax25:collectionId>0</ax25:collectionId>
+                                 <ax25:id>0</ax25:id>
+                                 <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                                 <ax25:moId>0</ax25:moId>
+                                 <ax25:name>compatiblereceptacletype</ax25:name>
+                                 <ax25:value>C13</ax25:value>
+                              </ax25:attributes>
+                              <ax25:collectionId>0</ax25:collectionId>
+                              <ax25:id>0</ax25:id>
+                              <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                              <ax25:name>OLTYPE_84686</ax25:name>
+                              <ax25:type>ODB::OutletType</ax25:type>
+                           </ax25:managedObject>
+                           <ax25:typeHierarchy>ODB::OutletType</ax25:typeHierarchy>
+                        </ax25:node>
+                        <ax25:type>ContainedIn</ax25:type>
+                     </ax25:relationships>
+                     <ax25:typeHierarchy>ODB::AssetType</ax25:typeHierarchy>
+                  </ax25:nodes>
+               </ax23:collection>
+               <ax23:var>assettype</ax23:var>
+            </ax23:bindings>
+         </ns:return>
+         <ns:return type="com.ebay.grid.service.soap.ResourceCollectionsSoap">
+            <ax23:bindings type="com.ebay.grid.service.soap.CollectionBinding">
+               <ax23:collection type="com.ebay.osum.collectioncache.Collection">
+                  <ax25:definition type="com.ebay.osum.collectioncache.CollectionDefinition">
+                     <ax25:criteria/>
+                     <ax25:id>0</ax25:id>
+                     <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                     <ax25:name/>
+                     <ax25:state/>
+                     <ax25:topLevelObjectsCount>1</ax25:topLevelObjectsCount>
+                     <ax25:type/>
+                  </ax25:definition>
+                  <ax25:nodes type="com.ebay.osum.collectioncache.CollectionNode">
+                     <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>label</ax25:name>
+                           <ax25:value/>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>tag</ax25:name>
+                           <ax25:value>12738</ax25:value>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>serial</ax25:name>
+                           <ax25:value>PN566</ax25:value>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>manufacturer</ax25:name>
+                           <ax25:value>IBM</ax25:value>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>model</ax25:name>
+                           <ax25:value>X330</ax25:value>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>assetstatus</ax25:name>
+                           <ax25:value>STOCK</ax25:value>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>leasedenddate</ax25:name>
+                           <ax25:value/>
+                        </ax25:attributes>
+                        <ax25:collectionId>0</ax25:collectionId>
+                        <ax25:id>0</ax25:id>
+                        <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                        <ax25:name>ASSET00093368</ax25:name>
+                        <ax25:type>ODB::Asset</ax25:type>
+                     </ax25:managedObject>
+                     <ax25:typeHierarchy>ODB::Asset</ax25:typeHierarchy>
+                  </ax25:nodes>
+               </ax23:collection>
+               <ax23:var>server</ax23:var>
+            </ax23:bindings>
+            <ax23:bindings type="com.ebay.grid.service.soap.CollectionBinding">
+               <ax23:collection type="com.ebay.osum.collectioncache.Collection">
+                  <ax25:definition type="com.ebay.osum.collectioncache.CollectionDefinition">
+                     <ax25:criteria/>
+                     <ax25:id>0</ax25:id>
+                     <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                     <ax25:name/>
+                     <ax25:state/>
+                     <ax25:topLevelObjectsCount>1</ax25:topLevelObjectsCount>
+                     <ax25:type/>
+                  </ax25:definition>
+                  <ax25:nodes type="com.ebay.osum.collectioncache.CollectionNode">
+                     <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                        <ax25:collectionId>0</ax25:collectionId>
+                        <ax25:id>0</ax25:id>
+                        <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                        <ax25:name>SLC:SLC:Room 1:Row1:Rack1</ax25:name>
+                        <ax25:type>ODB::Rack</ax25:type>
+                     </ax25:managedObject>
+                     <ax25:typeHierarchy/>
+                  </ax25:nodes>
+               </ax23:collection>
+               <ax23:var>rack</ax23:var>
+            </ax23:bindings>
+            <ax23:bindings type="com.ebay.grid.service.soap.CollectionBinding">
+               <ax23:collection type="com.ebay.osum.collectioncache.Collection">
+                  <ax25:definition type="com.ebay.osum.collectioncache.CollectionDefinition">
+                     <ax25:criteria/>
+                     <ax25:id>0</ax25:id>
+                     <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                     <ax25:name/>
+                     <ax25:state/>
+                     <ax25:topLevelObjectsCount>1</ax25:topLevelObjectsCount>
+                     <ax25:type/>
+                  </ax25:definition>
+                  <ax25:nodes type="com.ebay.osum.collectioncache.CollectionNode">
+                     <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>physicalsize</ax25:name>
+                           <ax25:value>1</ax25:value>
+                        </ax25:attributes>
+                        <ax25:collectionId>0</ax25:collectionId>
+                        <ax25:id>0</ax25:id>
+                        <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                        <ax25:name>ASTYPE_20728</ax25:name>
+                        <ax25:type>ODB::AssetType</ax25:type>
+                     </ax25:managedObject>
+                     <ax25:relationships type="com.ebay.osum.collectioncache.MoRelationship">
+                        <ax25:name>OLTYPE_73585-ODB::Link::ContainedIn-ASTYPE_20728</ax25:name>
+                        <ax25:node type="com.ebay.osum.collectioncache.CollectionNode">
+                           <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                              <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                                 <ax25:collectionId>0</ax25:collectionId>
+                                 <ax25:id>0</ax25:id>
+                                 <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                                 <ax25:moId>0</ax25:moId>
+                                 <ax25:name>compatiblereceptacletype</ax25:name>
+                                 <ax25:value>L21</ax25:value>
+                              </ax25:attributes>
+                              <ax25:collectionId>0</ax25:collectionId>
+                              <ax25:id>0</ax25:id>
+                              <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                              <ax25:name>OLTYPE_73585</ax25:name>
+                              <ax25:type>ODB::OutletType</ax25:type>
+                           </ax25:managedObject>
+                           <ax25:typeHierarchy>ODB::OutletType</ax25:typeHierarchy>
+                        </ax25:node>
+                        <ax25:type>ContainedIn</ax25:type>
+                     </ax25:relationships>
+                     <ax25:relationships type="com.ebay.osum.collectioncache.MoRelationship">
+                        <ax25:name>OLTYPE_84686-ODB::Link::ContainedIn-ASTYPE_20728</ax25:name>
+                        <ax25:node type="com.ebay.osum.collectioncache.CollectionNode">
+                           <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                              <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                                 <ax25:collectionId>0</ax25:collectionId>
+                                 <ax25:id>0</ax25:id>
+                                 <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                                 <ax25:moId>0</ax25:moId>
+                                 <ax25:name>compatiblereceptacletype</ax25:name>
+                                 <ax25:value>C13</ax25:value>
+                              </ax25:attributes>
+                              <ax25:collectionId>0</ax25:collectionId>
+                              <ax25:id>0</ax25:id>
+                              <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                              <ax25:name>OLTYPE_84686</ax25:name>
+                              <ax25:type>ODB::OutletType</ax25:type>
+                           </ax25:managedObject>
+                           <ax25:typeHierarchy>ODB::OutletType</ax25:typeHierarchy>
+                        </ax25:node>
+                        <ax25:type>ContainedIn</ax25:type>
+                     </ax25:relationships>
+                     <ax25:typeHierarchy>ODB::AssetType</ax25:typeHierarchy>
+                  </ax25:nodes>
+               </ax23:collection>
+               <ax23:var>assettype</ax23:var>
+            </ax23:bindings>
+         </ns:return>
+         <ns:return type="com.ebay.grid.service.soap.ResourceCollectionsSoap">
+            <ax23:bindings type="com.ebay.grid.service.soap.CollectionBinding">
+               <ax23:collection type="com.ebay.osum.collectioncache.Collection">
+                  <ax25:definition type="com.ebay.osum.collectioncache.CollectionDefinition">
+                     <ax25:criteria/>
+                     <ax25:id>0</ax25:id>
+                     <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                     <ax25:name/>
+                     <ax25:state/>
+                     <ax25:topLevelObjectsCount>1</ax25:topLevelObjectsCount>
+                     <ax25:type/>
+                  </ax25:definition>
+                  <ax25:nodes type="com.ebay.osum.collectioncache.CollectionNode">
+                     <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>label</ax25:name>
+                           <ax25:value/>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>tag</ax25:name>
+                           <ax25:value>7788</ax25:value>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>serial</ax25:name>
+                           <ax25:value>78PN658</ax25:value>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>manufacturer</ax25:name>
+                           <ax25:value>IBM</ax25:value>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>model</ax25:name>
+                           <ax25:value>X330</ax25:value>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>assetstatus</ax25:name>
+                           <ax25:value>STANDBY</ax25:value>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>leasedenddate</ax25:name>
+                           <ax25:value>12/12/2011</ax25:value>
+                        </ax25:attributes>
+                        <ax25:collectionId>0</ax25:collectionId>
+                        <ax25:id>0</ax25:id>
+                        <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                        <ax25:name>ASSET00093418</ax25:name>
+                        <ax25:type>ODB::Asset</ax25:type>
+                     </ax25:managedObject>
+                     <ax25:typeHierarchy>ODB::Asset</ax25:typeHierarchy>
+                  </ax25:nodes>
+               </ax23:collection>
+               <ax23:var>server</ax23:var>
+            </ax23:bindings>
+            <ax23:bindings type="com.ebay.grid.service.soap.CollectionBinding">
+               <ax23:collection type="com.ebay.osum.collectioncache.Collection">
+                  <ax25:definition type="com.ebay.osum.collectioncache.CollectionDefinition">
+                     <ax25:criteria/>
+                     <ax25:id>0</ax25:id>
+                     <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                     <ax25:name/>
+                     <ax25:state/>
+                     <ax25:topLevelObjectsCount>1</ax25:topLevelObjectsCount>
+                     <ax25:type/>
+                  </ax25:definition>
+                  <ax25:nodes type="com.ebay.osum.collectioncache.CollectionNode">
+                     <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                        <ax25:collectionId>0</ax25:collectionId>
+                        <ax25:id>0</ax25:id>
+                        <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                        <ax25:name>SLC:SLC:Room 1:Row1:Rack1</ax25:name>
+                        <ax25:type>ODB::Rack</ax25:type>
+                     </ax25:managedObject>
+                     <ax25:typeHierarchy/>
+                  </ax25:nodes>
+               </ax23:collection>
+               <ax23:var>rack</ax23:var>
+            </ax23:bindings>
+            <ax23:bindings type="com.ebay.grid.service.soap.CollectionBinding">
+               <ax23:collection type="com.ebay.osum.collectioncache.Collection">
+                  <ax25:definition type="com.ebay.osum.collectioncache.CollectionDefinition">
+                     <ax25:criteria/>
+                     <ax25:id>0</ax25:id>
+                     <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                     <ax25:name/>
+                     <ax25:state/>
+                     <ax25:topLevelObjectsCount>1</ax25:topLevelObjectsCount>
+                     <ax25:type/>
+                  </ax25:definition>
+                  <ax25:nodes type="com.ebay.osum.collectioncache.CollectionNode">
+                     <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>physicalsize</ax25:name>
+                           <ax25:value>1</ax25:value>
+                        </ax25:attributes>
+                        <ax25:collectionId>0</ax25:collectionId>
+                        <ax25:id>0</ax25:id>
+                        <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                        <ax25:name>ASTYPE_20728</ax25:name>
+                        <ax25:type>ODB::AssetType</ax25:type>
+                     </ax25:managedObject>
+                     <ax25:relationships type="com.ebay.osum.collectioncache.MoRelationship">
+                        <ax25:name>OLTYPE_73585-ODB::Link::ContainedIn-ASTYPE_20728</ax25:name>
+                        <ax25:node type="com.ebay.osum.collectioncache.CollectionNode">
+                           <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                              <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                                 <ax25:collectionId>0</ax25:collectionId>
+                                 <ax25:id>0</ax25:id>
+                                 <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                                 <ax25:moId>0</ax25:moId>
+                                 <ax25:name>compatiblereceptacletype</ax25:name>
+                                 <ax25:value>L21</ax25:value>
+                              </ax25:attributes>
+                              <ax25:collectionId>0</ax25:collectionId>
+                              <ax25:id>0</ax25:id>
+                              <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                              <ax25:name>OLTYPE_73585</ax25:name>
+                              <ax25:type>ODB::OutletType</ax25:type>
+                           </ax25:managedObject>
+                           <ax25:typeHierarchy>ODB::OutletType</ax25:typeHierarchy>
+                        </ax25:node>
+                        <ax25:type>ContainedIn</ax25:type>
+                     </ax25:relationships>
+                     <ax25:relationships type="com.ebay.osum.collectioncache.MoRelationship">
+                        <ax25:name>OLTYPE_84686-ODB::Link::ContainedIn-ASTYPE_20728</ax25:name>
+                        <ax25:node type="com.ebay.osum.collectioncache.CollectionNode">
+                           <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                              <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                                 <ax25:collectionId>0</ax25:collectionId>
+                                 <ax25:id>0</ax25:id>
+                                 <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                                 <ax25:moId>0</ax25:moId>
+                                 <ax25:name>compatiblereceptacletype</ax25:name>
+                                 <ax25:value>C13</ax25:value>
+                              </ax25:attributes>
+                              <ax25:collectionId>0</ax25:collectionId>
+                              <ax25:id>0</ax25:id>
+                              <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                              <ax25:name>OLTYPE_84686</ax25:name>
+                              <ax25:type>ODB::OutletType</ax25:type>
+                           </ax25:managedObject>
+                           <ax25:typeHierarchy>ODB::OutletType</ax25:typeHierarchy>
+                        </ax25:node>
+                        <ax25:type>ContainedIn</ax25:type>
+                     </ax25:relationships>
+                     <ax25:typeHierarchy>ODB::AssetType</ax25:typeHierarchy>
+                  </ax25:nodes>
+               </ax23:collection>
+               <ax23:var>assettype</ax23:var>
+            </ax23:bindings>
+         </ns:return>
+         <ns:return type="com.ebay.grid.service.soap.ResourceCollectionsSoap">
+            <ax23:bindings type="com.ebay.grid.service.soap.CollectionBinding">
+               <ax23:collection type="com.ebay.osum.collectioncache.Collection">
+                  <ax25:definition type="com.ebay.osum.collectioncache.CollectionDefinition">
+                     <ax25:criteria/>
+                     <ax25:id>0</ax25:id>
+                     <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                     <ax25:name/>
+                     <ax25:state/>
+                     <ax25:topLevelObjectsCount>1</ax25:topLevelObjectsCount>
+                     <ax25:type/>
+                  </ax25:definition>
+                  <ax25:nodes type="com.ebay.osum.collectioncache.CollectionNode">
+                     <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>label</ax25:name>
+                           <ax25:value/>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>tag</ax25:name>
+                           <ax25:value>7788</ax25:value>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>serial</ax25:name>
+                           <ax25:value>78PN658</ax25:value>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>manufacturer</ax25:name>
+                           <ax25:value>IBM</ax25:value>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>model</ax25:name>
+                           <ax25:value>X330</ax25:value>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>assetstatus</ax25:name>
+                           <ax25:value>STANDBY</ax25:value>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>leasedenddate</ax25:name>
+                           <ax25:value>12/12/2011</ax25:value>
+                        </ax25:attributes>
+                        <ax25:collectionId>0</ax25:collectionId>
+                        <ax25:id>0</ax25:id>
+                        <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                        <ax25:name>ASSET00093418</ax25:name>
+                        <ax25:type>ODB::Asset</ax25:type>
+                     </ax25:managedObject>
+                     <ax25:typeHierarchy>ODB::Asset</ax25:typeHierarchy>
+                  </ax25:nodes>
+               </ax23:collection>
+               <ax23:var>server</ax23:var>
+            </ax23:bindings>
+            <ax23:bindings type="com.ebay.grid.service.soap.CollectionBinding">
+               <ax23:collection type="com.ebay.osum.collectioncache.Collection">
+                  <ax25:definition type="com.ebay.osum.collectioncache.CollectionDefinition">
+                     <ax25:criteria/>
+                     <ax25:id>0</ax25:id>
+                     <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                     <ax25:name/>
+                     <ax25:state/>
+                     <ax25:topLevelObjectsCount>1</ax25:topLevelObjectsCount>
+                     <ax25:type/>
+                  </ax25:definition>
+                  <ax25:nodes type="com.ebay.osum.collectioncache.CollectionNode">
+                     <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                        <ax25:collectionId>0</ax25:collectionId>
+                        <ax25:id>0</ax25:id>
+                        <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                        <ax25:name>SLC:SLC:Room 1:Row1:Rack1</ax25:name>
+                        <ax25:type>ODB::Rack</ax25:type>
+                     </ax25:managedObject>
+                     <ax25:typeHierarchy/>
+                  </ax25:nodes>
+               </ax23:collection>
+               <ax23:var>rack</ax23:var>
+            </ax23:bindings>
+            <ax23:bindings type="com.ebay.grid.service.soap.CollectionBinding">
+               <ax23:collection type="com.ebay.osum.collectioncache.Collection">
+                  <ax25:definition type="com.ebay.osum.collectioncache.CollectionDefinition">
+                     <ax25:criteria/>
+                     <ax25:id>0</ax25:id>
+                     <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                     <ax25:name/>
+                     <ax25:state/>
+                     <ax25:topLevelObjectsCount>1</ax25:topLevelObjectsCount>
+                     <ax25:type/>
+                  </ax25:definition>
+                  <ax25:nodes type="com.ebay.osum.collectioncache.CollectionNode">
+                     <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>physicalsize</ax25:name>
+                           <ax25:value>1</ax25:value>
+                        </ax25:attributes>
+                        <ax25:collectionId>0</ax25:collectionId>
+                        <ax25:id>0</ax25:id>
+                        <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                        <ax25:name>ASTYPE_20728</ax25:name>
+                        <ax25:type>ODB::AssetType</ax25:type>
+                     </ax25:managedObject>
+                     <ax25:relationships type="com.ebay.osum.collectioncache.MoRelationship">
+                        <ax25:name>OLTYPE_73585-ODB::Link::ContainedIn-ASTYPE_20728</ax25:name>
+                        <ax25:node type="com.ebay.osum.collectioncache.CollectionNode">
+                           <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                              <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                                 <ax25:collectionId>0</ax25:collectionId>
+                                 <ax25:id>0</ax25:id>
+                                 <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                                 <ax25:moId>0</ax25:moId>
+                                 <ax25:name>compatiblereceptacletype</ax25:name>
+                                 <ax25:value>L21</ax25:value>
+                              </ax25:attributes>
+                              <ax25:collectionId>0</ax25:collectionId>
+                              <ax25:id>0</ax25:id>
+                              <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                              <ax25:name>OLTYPE_73585</ax25:name>
+                              <ax25:type>ODB::OutletType</ax25:type>
+                           </ax25:managedObject>
+                           <ax25:typeHierarchy>ODB::OutletType</ax25:typeHierarchy>
+                        </ax25:node>
+                        <ax25:type>ContainedIn</ax25:type>
+                     </ax25:relationships>
+                     <ax25:relationships type="com.ebay.osum.collectioncache.MoRelationship">
+                        <ax25:name>OLTYPE_84686-ODB::Link::ContainedIn-ASTYPE_20728</ax25:name>
+                        <ax25:node type="com.ebay.osum.collectioncache.CollectionNode">
+                           <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                              <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                                 <ax25:collectionId>0</ax25:collectionId>
+                                 <ax25:id>0</ax25:id>
+                                 <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                                 <ax25:moId>0</ax25:moId>
+                                 <ax25:name>compatiblereceptacletype</ax25:name>
+                                 <ax25:value>C13</ax25:value>
+                              </ax25:attributes>
+                              <ax25:collectionId>0</ax25:collectionId>
+                              <ax25:id>0</ax25:id>
+                              <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                              <ax25:name>OLTYPE_84686</ax25:name>
+                              <ax25:type>ODB::OutletType</ax25:type>
+                           </ax25:managedObject>
+                           <ax25:typeHierarchy>ODB::OutletType</ax25:typeHierarchy>
+                        </ax25:node>
+                        <ax25:type>ContainedIn</ax25:type>
+                     </ax25:relationships>
+                     <ax25:typeHierarchy>ODB::AssetType</ax25:typeHierarchy>
+                  </ax25:nodes>
+               </ax23:collection>
+               <ax23:var>assettype</ax23:var>
+            </ax23:bindings>
+         </ns:return>
+         <ns:return type="com.ebay.grid.service.soap.ResourceCollectionsSoap">
+            <ax23:bindings type="com.ebay.grid.service.soap.CollectionBinding">
+               <ax23:collection type="com.ebay.osum.collectioncache.Collection">
+                  <ax25:definition type="com.ebay.osum.collectioncache.CollectionDefinition">
+                     <ax25:criteria/>
+                     <ax25:id>0</ax25:id>
+                     <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                     <ax25:name/>
+                     <ax25:state/>
+                     <ax25:topLevelObjectsCount>1</ax25:topLevelObjectsCount>
+                     <ax25:type/>
+                  </ax25:definition>
+                  <ax25:nodes type="com.ebay.osum.collectioncache.CollectionNode">
+                     <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>label</ax25:name>
+                           <ax25:value/>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>tag</ax25:name>
+                           <ax25:value>3737</ax25:value>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>serial</ax25:name>
+                           <ax25:value>78LX377</ax25:value>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>manufacturer</ax25:name>
+                           <ax25:value>IBM</ax25:value>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>model</ax25:name>
+                           <ax25:value>X330</ax25:value>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>assetstatus</ax25:name>
+                           <ax25:value>STANDBY</ax25:value>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>leasedenddate</ax25:name>
+                           <ax25:value>12/12/2011</ax25:value>
+                        </ax25:attributes>
+                        <ax25:collectionId>0</ax25:collectionId>
+                        <ax25:id>0</ax25:id>
+                        <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                        <ax25:name>ASSET00093642</ax25:name>
+                        <ax25:type>ODB::Asset</ax25:type>
+                     </ax25:managedObject>
+                     <ax25:typeHierarchy>ODB::Asset</ax25:typeHierarchy>
+                  </ax25:nodes>
+               </ax23:collection>
+               <ax23:var>server</ax23:var>
+            </ax23:bindings>
+            <ax23:bindings type="com.ebay.grid.service.soap.CollectionBinding">
+               <ax23:collection type="com.ebay.osum.collectioncache.Collection">
+                  <ax25:definition type="com.ebay.osum.collectioncache.CollectionDefinition">
+                     <ax25:criteria/>
+                     <ax25:id>0</ax25:id>
+                     <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                     <ax25:name/>
+                     <ax25:state/>
+                     <ax25:topLevelObjectsCount>1</ax25:topLevelObjectsCount>
+                     <ax25:type/>
+                  </ax25:definition>
+                  <ax25:nodes type="com.ebay.osum.collectioncache.CollectionNode">
+                     <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                        <ax25:collectionId>0</ax25:collectionId>
+                        <ax25:id>0</ax25:id>
+                        <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                        <ax25:name>SLC:SLC:Room 1:Row1:Rack1</ax25:name>
+                        <ax25:type>ODB::Rack</ax25:type>
+                     </ax25:managedObject>
+                     <ax25:typeHierarchy/>
+                  </ax25:nodes>
+               </ax23:collection>
+               <ax23:var>rack</ax23:var>
+            </ax23:bindings>
+            <ax23:bindings type="com.ebay.grid.service.soap.CollectionBinding">
+               <ax23:collection type="com.ebay.osum.collectioncache.Collection">
+                  <ax25:definition type="com.ebay.osum.collectioncache.CollectionDefinition">
+                     <ax25:criteria/>
+                     <ax25:id>0</ax25:id>
+                     <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                     <ax25:name/>
+                     <ax25:state/>
+                     <ax25:topLevelObjectsCount>1</ax25:topLevelObjectsCount>
+                     <ax25:type/>
+                  </ax25:definition>
+                  <ax25:nodes type="com.ebay.osum.collectioncache.CollectionNode">
+                     <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>physicalsize</ax25:name>
+                           <ax25:value>1</ax25:value>
+                        </ax25:attributes>
+                        <ax25:collectionId>0</ax25:collectionId>
+                        <ax25:id>0</ax25:id>
+                        <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                        <ax25:name>ASTYPE_20728</ax25:name>
+                        <ax25:type>ODB::AssetType</ax25:type>
+                     </ax25:managedObject>
+                     <ax25:relationships type="com.ebay.osum.collectioncache.MoRelationship">
+                        <ax25:name>OLTYPE_73585-ODB::Link::ContainedIn-ASTYPE_20728</ax25:name>
+                        <ax25:node type="com.ebay.osum.collectioncache.CollectionNode">
+                           <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                              <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                                 <ax25:collectionId>0</ax25:collectionId>
+                                 <ax25:id>0</ax25:id>
+                                 <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                                 <ax25:moId>0</ax25:moId>
+                                 <ax25:name>compatiblereceptacletype</ax25:name>
+                                 <ax25:value>L21</ax25:value>
+                              </ax25:attributes>
+                              <ax25:collectionId>0</ax25:collectionId>
+                              <ax25:id>0</ax25:id>
+                              <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                              <ax25:name>OLTYPE_73585</ax25:name>
+                              <ax25:type>ODB::OutletType</ax25:type>
+                           </ax25:managedObject>
+                           <ax25:typeHierarchy>ODB::OutletType</ax25:typeHierarchy>
+                        </ax25:node>
+                        <ax25:type>ContainedIn</ax25:type>
+                     </ax25:relationships>
+                     <ax25:relationships type="com.ebay.osum.collectioncache.MoRelationship">
+                        <ax25:name>OLTYPE_84686-ODB::Link::ContainedIn-ASTYPE_20728</ax25:name>
+                        <ax25:node type="com.ebay.osum.collectioncache.CollectionNode">
+                           <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                              <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                                 <ax25:collectionId>0</ax25:collectionId>
+                                 <ax25:id>0</ax25:id>
+                                 <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                                 <ax25:moId>0</ax25:moId>
+                                 <ax25:name>compatiblereceptacletype</ax25:name>
+                                 <ax25:value>C13</ax25:value>
+                              </ax25:attributes>
+                              <ax25:collectionId>0</ax25:collectionId>
+                              <ax25:id>0</ax25:id>
+                              <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                              <ax25:name>OLTYPE_84686</ax25:name>
+                              <ax25:type>ODB::OutletType</ax25:type>
+                           </ax25:managedObject>
+                           <ax25:typeHierarchy>ODB::OutletType</ax25:typeHierarchy>
+                        </ax25:node>
+                        <ax25:type>ContainedIn</ax25:type>
+                     </ax25:relationships>
+                     <ax25:typeHierarchy>ODB::AssetType</ax25:typeHierarchy>
+                  </ax25:nodes>
+               </ax23:collection>
+               <ax23:var>assettype</ax23:var>
+            </ax23:bindings>
+         </ns:return>
+         <ns:return type="com.ebay.grid.service.soap.ResourceCollectionsSoap">
+            <ax23:bindings type="com.ebay.grid.service.soap.CollectionBinding">
+               <ax23:collection type="com.ebay.osum.collectioncache.Collection">
+                  <ax25:definition type="com.ebay.osum.collectioncache.CollectionDefinition">
+                     <ax25:criteria/>
+                     <ax25:id>0</ax25:id>
+                     <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                     <ax25:name/>
+                     <ax25:state/>
+                     <ax25:topLevelObjectsCount>1</ax25:topLevelObjectsCount>
+                     <ax25:type/>
+                  </ax25:definition>
+                  <ax25:nodes type="com.ebay.osum.collectioncache.CollectionNode">
+                     <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>label</ax25:name>
+                           <ax25:value/>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>tag</ax25:name>
+                           <ax25:value>3737</ax25:value>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>serial</ax25:name>
+                           <ax25:value>78LX377</ax25:value>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>manufacturer</ax25:name>
+                           <ax25:value>IBM</ax25:value>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>model</ax25:name>
+                           <ax25:value>X330</ax25:value>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>assetstatus</ax25:name>
+                           <ax25:value>STANDBY</ax25:value>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>leasedenddate</ax25:name>
+                           <ax25:value>12/12/2011</ax25:value>
+                        </ax25:attributes>
+                        <ax25:collectionId>0</ax25:collectionId>
+                        <ax25:id>0</ax25:id>
+                        <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                        <ax25:name>ASSET00093642</ax25:name>
+                        <ax25:type>ODB::Asset</ax25:type>
+                     </ax25:managedObject>
+                     <ax25:typeHierarchy>ODB::Asset</ax25:typeHierarchy>
+                  </ax25:nodes>
+               </ax23:collection>
+               <ax23:var>server</ax23:var>
+            </ax23:bindings>
+            <ax23:bindings type="com.ebay.grid.service.soap.CollectionBinding">
+               <ax23:collection type="com.ebay.osum.collectioncache.Collection">
+                  <ax25:definition type="com.ebay.osum.collectioncache.CollectionDefinition">
+                     <ax25:criteria/>
+                     <ax25:id>0</ax25:id>
+                     <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                     <ax25:name/>
+                     <ax25:state/>
+                     <ax25:topLevelObjectsCount>1</ax25:topLevelObjectsCount>
+                     <ax25:type/>
+                  </ax25:definition>
+                  <ax25:nodes type="com.ebay.osum.collectioncache.CollectionNode">
+                     <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                        <ax25:collectionId>0</ax25:collectionId>
+                        <ax25:id>0</ax25:id>
+                        <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                        <ax25:name>SLC:SLC:Room 1:Row1:Rack1</ax25:name>
+                        <ax25:type>ODB::Rack</ax25:type>
+                     </ax25:managedObject>
+                     <ax25:typeHierarchy/>
+                  </ax25:nodes>
+               </ax23:collection>
+               <ax23:var>rack</ax23:var>
+            </ax23:bindings>
+            <ax23:bindings type="com.ebay.grid.service.soap.CollectionBinding">
+               <ax23:collection type="com.ebay.osum.collectioncache.Collection">
+                  <ax25:definition type="com.ebay.osum.collectioncache.CollectionDefinition">
+                     <ax25:criteria/>
+                     <ax25:id>0</ax25:id>
+                     <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                     <ax25:name/>
+                     <ax25:state/>
+                     <ax25:topLevelObjectsCount>1</ax25:topLevelObjectsCount>
+                     <ax25:type/>
+                  </ax25:definition>
+                  <ax25:nodes type="com.ebay.osum.collectioncache.CollectionNode">
+                     <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>physicalsize</ax25:name>
+                           <ax25:value>1</ax25:value>
+                        </ax25:attributes>
+                        <ax25:collectionId>0</ax25:collectionId>
+                        <ax25:id>0</ax25:id>
+                        <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                        <ax25:name>ASTYPE_20728</ax25:name>
+                        <ax25:type>ODB::AssetType</ax25:type>
+                     </ax25:managedObject>
+                     <ax25:relationships type="com.ebay.osum.collectioncache.MoRelationship">
+                        <ax25:name>OLTYPE_73585-ODB::Link::ContainedIn-ASTYPE_20728</ax25:name>
+                        <ax25:node type="com.ebay.osum.collectioncache.CollectionNode">
+                           <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                              <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                                 <ax25:collectionId>0</ax25:collectionId>
+                                 <ax25:id>0</ax25:id>
+                                 <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                                 <ax25:moId>0</ax25:moId>
+                                 <ax25:name>compatiblereceptacletype</ax25:name>
+                                 <ax25:value>L21</ax25:value>
+                              </ax25:attributes>
+                              <ax25:collectionId>0</ax25:collectionId>
+                              <ax25:id>0</ax25:id>
+                              <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                              <ax25:name>OLTYPE_73585</ax25:name>
+                              <ax25:type>ODB::OutletType</ax25:type>
+                           </ax25:managedObject>
+                           <ax25:typeHierarchy>ODB::OutletType</ax25:typeHierarchy>
+                        </ax25:node>
+                        <ax25:type>ContainedIn</ax25:type>
+                     </ax25:relationships>
+                     <ax25:relationships type="com.ebay.osum.collectioncache.MoRelationship">
+                        <ax25:name>OLTYPE_84686-ODB::Link::ContainedIn-ASTYPE_20728</ax25:name>
+                        <ax25:node type="com.ebay.osum.collectioncache.CollectionNode">
+                           <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                              <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                                 <ax25:collectionId>0</ax25:collectionId>
+                                 <ax25:id>0</ax25:id>
+                                 <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                                 <ax25:moId>0</ax25:moId>
+                                 <ax25:name>compatiblereceptacletype</ax25:name>
+                                 <ax25:value>C13</ax25:value>
+                              </ax25:attributes>
+                              <ax25:collectionId>0</ax25:collectionId>
+                              <ax25:id>0</ax25:id>
+                              <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                              <ax25:name>OLTYPE_84686</ax25:name>
+                              <ax25:type>ODB::OutletType</ax25:type>
+                           </ax25:managedObject>
+                           <ax25:typeHierarchy>ODB::OutletType</ax25:typeHierarchy>
+                        </ax25:node>
+                        <ax25:type>ContainedIn</ax25:type>
+                     </ax25:relationships>
+                     <ax25:typeHierarchy>ODB::AssetType</ax25:typeHierarchy>
+                  </ax25:nodes>
+               </ax23:collection>
+               <ax23:var>assettype</ax23:var>
+            </ax23:bindings>
+         </ns:return>
+         <ns:return type="com.ebay.grid.service.soap.ResourceCollectionsSoap">
+            <ax23:bindings type="com.ebay.grid.service.soap.CollectionBinding">
+               <ax23:collection type="com.ebay.osum.collectioncache.Collection">
+                  <ax25:definition type="com.ebay.osum.collectioncache.CollectionDefinition">
+                     <ax25:criteria/>
+                     <ax25:id>0</ax25:id>
+                     <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                     <ax25:name/>
+                     <ax25:state/>
+                     <ax25:topLevelObjectsCount>1</ax25:topLevelObjectsCount>
+                     <ax25:type/>
+                  </ax25:definition>
+                  <ax25:nodes type="com.ebay.osum.collectioncache.CollectionNode">
+                     <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>label</ax25:name>
+                           <ax25:value/>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>tag</ax25:name>
+                           <ax25:value>12485</ax25:value>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>serial</ax25:name>
+                           <ax25:value>1S867431X78NL909</ax25:value>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>manufacturer</ax25:name>
+                           <ax25:value>IBM</ax25:value>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>model</ax25:name>
+                           <ax25:value>X330</ax25:value>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>assetstatus</ax25:name>
+                           <ax25:value>STANDBY</ax25:value>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>leasedenddate</ax25:name>
+                           <ax25:value>12/12/2011</ax25:value>
+                        </ax25:attributes>
+                        <ax25:collectionId>0</ax25:collectionId>
+                        <ax25:id>0</ax25:id>
+                        <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                        <ax25:name>ASSET00093788</ax25:name>
+                        <ax25:type>ODB::Asset</ax25:type>
+                     </ax25:managedObject>
+                     <ax25:typeHierarchy>ODB::Asset</ax25:typeHierarchy>
+                  </ax25:nodes>
+               </ax23:collection>
+               <ax23:var>server</ax23:var>
+            </ax23:bindings>
+            <ax23:bindings type="com.ebay.grid.service.soap.CollectionBinding">
+               <ax23:collection type="com.ebay.osum.collectioncache.Collection">
+                  <ax25:definition type="com.ebay.osum.collectioncache.CollectionDefinition">
+                     <ax25:criteria/>
+                     <ax25:id>0</ax25:id>
+                     <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                     <ax25:name/>
+                     <ax25:state/>
+                     <ax25:topLevelObjectsCount>1</ax25:topLevelObjectsCount>
+                     <ax25:type/>
+                  </ax25:definition>
+                  <ax25:nodes type="com.ebay.osum.collectioncache.CollectionNode">
+                     <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                        <ax25:collectionId>0</ax25:collectionId>
+                        <ax25:id>0</ax25:id>
+                        <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                        <ax25:name>SLC:SLC:Room 1:Row1:Rack1</ax25:name>
+                        <ax25:type>ODB::Rack</ax25:type>
+                     </ax25:managedObject>
+                     <ax25:typeHierarchy/>
+                  </ax25:nodes>
+               </ax23:collection>
+               <ax23:var>rack</ax23:var>
+            </ax23:bindings>
+            <ax23:bindings type="com.ebay.grid.service.soap.CollectionBinding">
+               <ax23:collection type="com.ebay.osum.collectioncache.Collection">
+                  <ax25:definition type="com.ebay.osum.collectioncache.CollectionDefinition">
+                     <ax25:criteria/>
+                     <ax25:id>0</ax25:id>
+                     <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                     <ax25:name/>
+                     <ax25:state/>
+                     <ax25:topLevelObjectsCount>1</ax25:topLevelObjectsCount>
+                     <ax25:type/>
+                  </ax25:definition>
+                  <ax25:nodes type="com.ebay.osum.collectioncache.CollectionNode">
+                     <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>physicalsize</ax25:name>
+                           <ax25:value>1</ax25:value>
+                        </ax25:attributes>
+                        <ax25:collectionId>0</ax25:collectionId>
+                        <ax25:id>0</ax25:id>
+                        <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                        <ax25:name>ASTYPE_20728</ax25:name>
+                        <ax25:type>ODB::AssetType</ax25:type>
+                     </ax25:managedObject>
+                     <ax25:relationships type="com.ebay.osum.collectioncache.MoRelationship">
+                        <ax25:name>OLTYPE_73585-ODB::Link::ContainedIn-ASTYPE_20728</ax25:name>
+                        <ax25:node type="com.ebay.osum.collectioncache.CollectionNode">
+                           <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                              <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                                 <ax25:collectionId>0</ax25:collectionId>
+                                 <ax25:id>0</ax25:id>
+                                 <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                                 <ax25:moId>0</ax25:moId>
+                                 <ax25:name>compatiblereceptacletype</ax25:name>
+                                 <ax25:value>L21</ax25:value>
+                              </ax25:attributes>
+                              <ax25:collectionId>0</ax25:collectionId>
+                              <ax25:id>0</ax25:id>
+                              <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                              <ax25:name>OLTYPE_73585</ax25:name>
+                              <ax25:type>ODB::OutletType</ax25:type>
+                           </ax25:managedObject>
+                           <ax25:typeHierarchy>ODB::OutletType</ax25:typeHierarchy>
+                        </ax25:node>
+                        <ax25:type>ContainedIn</ax25:type>
+                     </ax25:relationships>
+                     <ax25:relationships type="com.ebay.osum.collectioncache.MoRelationship">
+                        <ax25:name>OLTYPE_84686-ODB::Link::ContainedIn-ASTYPE_20728</ax25:name>
+                        <ax25:node type="com.ebay.osum.collectioncache.CollectionNode">
+                           <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                              <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                                 <ax25:collectionId>0</ax25:collectionId>
+                                 <ax25:id>0</ax25:id>
+                                 <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                                 <ax25:moId>0</ax25:moId>
+                                 <ax25:name>compatiblereceptacletype</ax25:name>
+                                 <ax25:value>C13</ax25:value>
+                              </ax25:attributes>
+                              <ax25:collectionId>0</ax25:collectionId>
+                              <ax25:id>0</ax25:id>
+                              <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                              <ax25:name>OLTYPE_84686</ax25:name>
+                              <ax25:type>ODB::OutletType</ax25:type>
+                           </ax25:managedObject>
+                           <ax25:typeHierarchy>ODB::OutletType</ax25:typeHierarchy>
+                        </ax25:node>
+                        <ax25:type>ContainedIn</ax25:type>
+                     </ax25:relationships>
+                     <ax25:typeHierarchy>ODB::AssetType</ax25:typeHierarchy>
+                  </ax25:nodes>
+               </ax23:collection>
+               <ax23:var>assettype</ax23:var>
+            </ax23:bindings>
+         </ns:return>
+         <ns:return type="com.ebay.grid.service.soap.ResourceCollectionsSoap">
+            <ax23:bindings type="com.ebay.grid.service.soap.CollectionBinding">
+               <ax23:collection type="com.ebay.osum.collectioncache.Collection">
+                  <ax25:definition type="com.ebay.osum.collectioncache.CollectionDefinition">
+                     <ax25:criteria/>
+                     <ax25:id>0</ax25:id>
+                     <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                     <ax25:name/>
+                     <ax25:state/>
+                     <ax25:topLevelObjectsCount>1</ax25:topLevelObjectsCount>
+                     <ax25:type/>
+                  </ax25:definition>
+                  <ax25:nodes type="com.ebay.osum.collectioncache.CollectionNode">
+                     <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>label</ax25:name>
+                           <ax25:value/>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>tag</ax25:name>
+                           <ax25:value>12485</ax25:value>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>serial</ax25:name>
+                           <ax25:value>1S867431X78NL909</ax25:value>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>manufacturer</ax25:name>
+                           <ax25:value>IBM</ax25:value>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>model</ax25:name>
+                           <ax25:value>X330</ax25:value>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>assetstatus</ax25:name>
+                           <ax25:value>STANDBY</ax25:value>
+                        </ax25:attributes>
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>leasedenddate</ax25:name>
+                           <ax25:value>12/12/2011</ax25:value>
+                        </ax25:attributes>
+                        <ax25:collectionId>0</ax25:collectionId>
+                        <ax25:id>0</ax25:id>
+                        <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                        <ax25:name>ASSET00093788</ax25:name>
+                        <ax25:type>ODB::Asset</ax25:type>
+                     </ax25:managedObject>
+                     <ax25:typeHierarchy>ODB::Asset</ax25:typeHierarchy>
+                  </ax25:nodes>
+               </ax23:collection>
+               <ax23:var>server</ax23:var>
+            </ax23:bindings>
+            <ax23:bindings type="com.ebay.grid.service.soap.CollectionBinding">
+               <ax23:collection type="com.ebay.osum.collectioncache.Collection">
+                  <ax25:definition type="com.ebay.osum.collectioncache.CollectionDefinition">
+                     <ax25:criteria/>
+                     <ax25:id>0</ax25:id>
+                     <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                     <ax25:name/>
+                     <ax25:state/>
+                     <ax25:topLevelObjectsCount>1</ax25:topLevelObjectsCount>
+                     <ax25:type/>
+                  </ax25:definition>
+                  <ax25:nodes type="com.ebay.osum.collectioncache.CollectionNode">
+                     <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                        <ax25:collectionId>0</ax25:collectionId>
+                        <ax25:id>0</ax25:id>
+                        <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                        <ax25:name>SLC:SLC:Room 1:Row1:Rack1</ax25:name>
+                        <ax25:type>ODB::Rack</ax25:type>
+                     </ax25:managedObject>
+                     <ax25:typeHierarchy/>
+                  </ax25:nodes>
+               </ax23:collection>
+               <ax23:var>rack</ax23:var>
+            </ax23:bindings>
+            <ax23:bindings type="com.ebay.grid.service.soap.CollectionBinding">
+               <ax23:collection type="com.ebay.osum.collectioncache.Collection">
+                  <ax25:definition type="com.ebay.osum.collectioncache.CollectionDefinition">
+                     <ax25:criteria/>
+                     <ax25:id>0</ax25:id>
+                     <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                     <ax25:name/>
+                     <ax25:state/>
+                     <ax25:topLevelObjectsCount>1</ax25:topLevelObjectsCount>
+                     <ax25:type/>
+                  </ax25:definition>
+                  <ax25:nodes type="com.ebay.osum.collectioncache.CollectionNode">
+                     <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                        <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                           <ax25:collectionId>0</ax25:collectionId>
+                           <ax25:id>0</ax25:id>
+                           <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                           <ax25:moId>0</ax25:moId>
+                           <ax25:name>physicalsize</ax25:name>
+                           <ax25:value>1</ax25:value>
+                        </ax25:attributes>
+                        <ax25:collectionId>0</ax25:collectionId>
+                        <ax25:id>0</ax25:id>
+                        <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                        <ax25:name>ASTYPE_20728</ax25:name>
+                        <ax25:type>ODB::AssetType</ax25:type>
+                     </ax25:managedObject>
+                     <ax25:relationships type="com.ebay.osum.collectioncache.MoRelationship">
+                        <ax25:name>OLTYPE_73585-ODB::Link::ContainedIn-ASTYPE_20728</ax25:name>
+                        <ax25:node type="com.ebay.osum.collectioncache.CollectionNode">
+                           <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                              <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                                 <ax25:collectionId>0</ax25:collectionId>
+                                 <ax25:id>0</ax25:id>
+                                 <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                                 <ax25:moId>0</ax25:moId>
+                                 <ax25:name>compatiblereceptacletype</ax25:name>
+                                 <ax25:value>L21</ax25:value>
+                              </ax25:attributes>
+                              <ax25:collectionId>0</ax25:collectionId>
+                              <ax25:id>0</ax25:id>
+                              <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                              <ax25:name>OLTYPE_73585</ax25:name>
+                              <ax25:type>ODB::OutletType</ax25:type>
+                           </ax25:managedObject>
+                           <ax25:typeHierarchy>ODB::OutletType</ax25:typeHierarchy>
+                        </ax25:node>
+                        <ax25:type>ContainedIn</ax25:type>
+                     </ax25:relationships>
+                     <ax25:relationships type="com.ebay.osum.collectioncache.MoRelationship">
+                        <ax25:name>OLTYPE_84686-ODB::Link::ContainedIn-ASTYPE_20728</ax25:name>
+                        <ax25:node type="com.ebay.osum.collectioncache.CollectionNode">
+                           <ax25:managedObject type="com.ebay.osum.collectioncache.ManagedObject">
+                              <ax25:attributes type="com.ebay.osum.collectioncache.MoAttribute">
+                                 <ax25:collectionId>0</ax25:collectionId>
+                                 <ax25:id>0</ax25:id>
+                                 <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                                 <ax25:moId>0</ax25:moId>
+                                 <ax25:name>compatiblereceptacletype</ax25:name>
+                                 <ax25:value>C13</ax25:value>
+                              </ax25:attributes>
+                              <ax25:collectionId>0</ax25:collectionId>
+                              <ax25:id>0</ax25:id>
+                              <ax25:lastUpdatedTime>0</ax25:lastUpdatedTime>
+                              <ax25:name>OLTYPE_84686</ax25:name>
+                              <ax25:type>ODB::OutletType</ax25:type>
+                           </ax25:managedObject>
+                           <ax25:typeHierarchy>ODB::OutletType</ax25:typeHierarchy>
+                        </ax25:node>
+                        <ax25:type>ContainedIn</ax25:type>
+                     </ax25:relationships>
+                     <ax25:typeHierarchy>ODB::AssetType</ax25:typeHierarchy>
+                  </ax25:nodes>
+               </ax23:collection>
+               <ax23:var>assettype</ax23:var>
+            </ax23:bindings>
+         </ns:return>
+      </ns:findResourceResponse>
+   </soapenv:Body>
+</soapenv:Envelope>
+
+Actual Results:Assets in stock are also returned in the response for find resource for find server goal type.
+
+Expected Results:Assets in stock should not be returned in the response for find resource for find server goal type.
+
+Additional Information:|Moved to Assigned state using a external script.|2010-05-25 05:44:14
+BUILD00032239|Site Controller|Verify|2 - High|tgautier|TORS2.5_RA: Getting exception thrown on hitting the request for find/place server goal type|Getting exception thrown on hitting the request for find/place server goal type
+
+Refer request and response below.
+
+Steps to Reproduce:
+1) Open SOAP UI
+2) Hit the request -
+
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:xsd="http://com.ebay.osum.service.ras/xsd" xmlns:xsd1="http://soap.service.grid.ebay.com/xsd">
+   <soap:Header/>
+   <soap:Body>
+     <xsd:findResource>
+         <xsd:quantity>1</xsd:quantity>
+         <xsd:resultLimit>1</xsd:resultLimit>
+                 <xsd:tags>find</xsd:tags>
+                 <xsd:tags>model_DL360G6</xsd:tags> 
+                 <xsd:tags>server</xsd:tags> 
+                 <xsd:tags>dont_need_patched_ports</xsd:tags> 
+                 <xsd:tags>function_spare</xsd:tags>
+                 <xsd:tags>architecture_v3</xsd:tags>
+                 <xsd:tags>layer_app</xsd:tags>
+                 <xsd:tags>archtier_app</xsd:tags> 
+                 <xsd:externalValues>
+            <xsd1:bindings>
+               <xsd1:name>datacenters</xsd1:name>
+               <xsd1:values>PHX:PHX</xsd1:values>
+            </xsd1:bindings>
+<xsd1:bindings>
+               <xsd1:name>assettype</xsd1:name>
+               <xsd1:value>ASTYPE_20659</xsd1:value>
+            </xsd1:bindings>
+            <xsd1:bindings>
+               <xsd1:name>model</xsd1:name>
+               <xsd1:value>model_DL360G6</xsd1:value>
+            </xsd1:bindings>
+                    <xsd1:bindings>
+               <xsd1:name>architecture</xsd1:name>
+               <xsd1:value>v3</xsd1:value>
+            </xsd1:bindings>
+                    <xsd1:bindings>
+               <xsd1:name>layer</xsd1:name>
+               <xsd1:value>app</xsd1:value>
+            </xsd1:bindings>
+                    <xsd1:bindings>
+               <xsd1:name>archtier</xsd1:name>
+               <xsd1:value>app</xsd1:value>
+            </xsd1:bindings>      
+         </xsd:externalValues>
+     </xsd:findResource>
+   </soap:Body>
+</soap:Envelope>
+
+3) Check the response -
+
+<soapenv:Envelope xmlns:soapenv="http://www.w3.org/2003/05/soap-envelope">
+   <soapenv:Body>
+      <soapenv:Fault>
+         <soapenv:Code>
+            <soapenv:Value>soapenv:Receiver</soapenv:Value>
+         </soapenv:Code>
+         <soapenv:Reason>
+            <soapenv:Text xml:lang="en-US">Unknown type of external value "model" (&lt;validationrule_def>#40)</soapenv:Text>
+         </soapenv:Reason>
+         <soapenv:Detail>
+            <Exception>org.apache.axis2.AxisFault: Unknown type of external value "model" (&lt;validationrule_def>#40)
+	at org.apache.axis2.rpc.receivers.RPCMessageReceiver.invokeBusinessLogic(RPCMessageReceiver.java:158)
+	at org.apache.axis2.receivers.AbstractInOutMessageReceiver.invokeBusinessLogic(AbstractInOutMessageReceiver.java:40)
+	at org.apache.axis2.receivers.AbstractMessageReceiver.receive(AbstractMessageReceiver.java:100)
+	at org.apache.axis2.engine.AxisEngine.receive(AxisEngine.java:176)
+	at org.apache.axis2.transport.http.HTTPTransportUtils.processHTTPPostRequest(HTTPTransportUtils.java:275)
+	at org.apache.axis2.transport.http.AxisServlet.doPost(AxisServlet.java:133)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:647)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:729)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:269)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:188)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:213)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:172)
+	at org.apache.catalina.valves.FastCommonAccessLogValve.invoke(FastCommonAccessLogValve.java:500)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:127)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:117)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:108)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:174)
+	at org.apache.coyote.http11.Http11Processor.process(Http11Processor.java:873)
+	at org.apache.coyote.http11.Http11BaseProtocol$Http11ConnectionHandler.processConnection(Http11BaseProtocol.java:665)
+	at org.apache.tomcat.util.net.PoolTcpEndpoint.processSocket(PoolTcpEndpoint.java:528)
+	at org.apache.tomcat.util.net.LeaderFollowerWorkerThread.runIt(LeaderFollowerWorkerThread.java:81)
+	at org.apache.tomcat.util.threads.ThreadPool$ControlRunnable.run(ThreadPool.java:689)
+	at java.lang.Thread.run(Thread.java:619)
+Caused by: java.lang.reflect.InvocationTargetException
+	at sun.reflect.GeneratedMethodAccessor160.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.axis2.rpc.receivers.RPCUtil.invokeServiceClass(RPCUtil.java:194)
+	at org.apache.axis2.rpc.receivers.RPCMessageReceiver.invokeBusinessLogic(RPCMessageReceiver.java:102)
+	... 22 more
+Caused by: com.ebay.grid.odbcache.rules.ValidationException: Unknown type of external value "model" (&lt;validationrule_def>#40)
+	at com.ebay.grid.validationrules.VldRule.apply(VldRule.java:88)
+	at com.ebay.grid.rulesrepository.rules.ValidationUriRule.apply(ValidationUriRule.java:28)
+	at com.ebay.grid.service.ResourceAllocationService.initEnvironment(ResourceAllocationService.java:177)
+	at com.ebay.grid.service.ResourceAllocationService.findResource(ResourceAllocationService.java:66)
+	... 27 more</Exception>
+         </soapenv:Detail>
+      </soapenv:Fault>
+   </soapenv:Body>
+</soapenv:Envelope>
+
+Actual Results: Getting exception as - Unknown type of external value "model"
+
+Expected Results: Proper response should be given.
+
+Additional Information:|Won't fixed because it's incorrect request.
+We agreed not to use model external value.|2010-05-25 02:04:25
+BUILD00032235|Site Controller|Verify|2 - High|tgautier|TORS2.5_RA: Getting no exception on not specifying pod for need_patched_ports tag specified in the request.|Getting no exception on not specifying pod for need_patched_ports tag specified in the request.
 
 Refer request and response below.
 
@@ -450,7 +2472,7 @@ Actual Results: Getting proper response on not specifying pod for need_patched_p
 Expected Results:Should be getting exception on not specifying pod for need_patched_ports tag specified in the request.
 
 
-Additional Information:|Moved to Assigned state using a external script.|2010-05-25 00:22:29
+Additional Information:|Fixed by changing in validation rule|2010-05-25 00:22:29
 BUILD00032221|Site Controller|Assigned|3 - Medium|tgautier|TORS2.5_RA: Proper Response is getting after entering past date in Lease Return Date|Detailed Description:
 Proper Response is getting after entering past date in Lease Return Date
 
@@ -901,7 +2923,7 @@ Expected Results:
 Proper response should not be displayed after entering past date in Lease return Date
 
 Additional Information:|Moved to Assigned state using a external script.|2010-05-24 04:42:54
-BUILD00032220|Site Controller|Assigned|4 - Low|tgautier|TORS2.5_RA: Getting text error in the exception thrown in the response on specifying negative value in the request.|Getting text error in the exception thrown in the response on specifying negative value in the request. then should be written as than in the exception
+BUILD00032220|Site Controller|Verify|4 - Low|tgautier|TORS2.5_RA: Getting text error in the exception thrown in the response on specifying negative value in the request.|Getting text error in the exception thrown in the response on specifying negative value in the request. then should be written as than in the exception
 
 
 Steps to Reproduce:
@@ -965,8 +2987,8 @@ Actual Results:Getting exception as -"Quantity should be more then zero"
 
 Expected Results:Should be Getting exception as -"Quantity should be more than zero"
 
-Additional Information:|Moved to Assigned state using a external script.|2010-05-24 04:37:36
-BUILD00032219|Site Controller|Assigned|2 - High|tgautier|TORS2.5_RA: Getting proper response for find resource with place blade goal type for an assettype which is not a blade.|Getting response for find resource with place blade goal type for an assettype which is not a blade.
+Additional Information:|Fixed|2010-05-24 04:37:36
+BUILD00032219|Site Controller|Verify|2 - High|tgautier|TORS2.5_RA: Getting proper response for find resource with place blade goal type for an assettype which is not a blade.|Getting response for find resource with place blade goal type for an assettype which is not a blade.
 
 Refer request and response below.
 
@@ -1103,7 +3125,7 @@ Actual Results:Getting proper response for find resource with place blade goal t
 
 Expected Results:Should not be Getting proper response for find resource with place blade goal type for an assettype which is not a blade.
 
-Additional Information:|Moved to Assigned state using a external script.|2010-05-24 01:56:40
+Additional Information:|Fixed by adding filter by ¿compatiblechassistype¿|2010-05-24 01:56:40
 BUILD00032166|Site Controller|In_Progress|1 - Urgent|mgorbunov|TORS2.5_RA: Getting no response on hitting the request for find server goal type with vlans tag values.|Getting no response on hitting the request for find server goal type with vlans tag values.
 
 Refer request and response below.
@@ -2664,19 +4686,6 @@ Expected Results:
 
 Additional Information:|User should give correct tags in order to test.
 If in correct tag is given, it will be bypassed, this wont happen in real time as UI will not show the Data which is not there in some another DC|2010-05-12 11:38:55
-BUILD00032145|Site Controller|Assigned|4 - Low|agandhe|RAP_CH: clicking on Help button does not launche browser window displaying the help WIKI.|Detailed Description:
-
-Impact:
-
-Steps to Reproduce:
-1)
-clicking on Help button does not launches browser window displaying the help WIKI.
-
-Actual Results:
-
-Expected Results:
-
-Additional Information:|Moved to Assigned state using a external script.|2010-05-12 08:07:21
 BUILD00032144|Site Controller|Assigned|3 - Medium|agandhe|RAP_CH: Title pane area doe not display page title and the help button on Request module page|Detailed Description:
 
 Title pane area doe not display page title and the help button on Request module page
