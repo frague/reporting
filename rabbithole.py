@@ -8,6 +8,7 @@ import yaml
 import urllib
 import SOAPpy
 import getpass
+import urllib2
 import datetime
 import subprocess
 from skype import *
@@ -91,6 +92,16 @@ def AppendSubSet(set, key, value):
 		set[key].append(value)
 	else:
 		set[key] = [value]
+
+
+# Read web page content
+def GetWebPage(url):
+
+	website = urllib2.urlopen(url)
+	website_html = website.read()
+	website.close()
+	return website_html
+
 
 # Date methods
 # Makes datetime object from set of its components
@@ -226,6 +237,28 @@ def MakeWikiBurndownChart(data, deadline, name=""):
 
 	return result
 	
+# Makes Wiki-progress chart
+def MakeWikiProgressChart(data):
+	print "- Create progress chart (%s line(s))" % len(data)
+	dates = data.keys()
+	dates.sort()
+	result = ""
+	
+	if len(data) == 0:
+		return result
+
+	areas = data[data.keys()[0]].keys()
+
+	for area in areas:
+		result += "\n\n|| Day || %s ||" % area
+	 	for date in dates:
+	 		result += "\n| %s " % date.strftime("%d/%m")
+	 		if data[date].has_key(area):
+	 			result += "| %s |" % data[date][area]
+		 	else:
+	 			result += "| 0 |"
+	return result
+
 #####################################################################################
 # GIT Logs
 

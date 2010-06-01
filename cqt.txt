@@ -1,5 +1,5 @@
 id|Functional_Area|State|Priority|Assigned_To|Title|Steps_Description|Note_Entry|SubmitDate
-BUILD00032243|Site Controller|Assigned|2 - High|tgautier|TORS2.5_RA: Assets in stock are also returned in the response for find resource for find server goal type.|Assets in stock are also returned in the response for find resource for find server goal type.
+BUILD00032243|Site Controller|Closed|2 - High|tgautier|TORS2.5_RA: Assets in stock are also returned in the response for find resource for find server goal type.|Assets in stock are also returned in the response for find resource for find server goal type.
 
 refer request and response below.
 
@@ -1908,8 +1908,8 @@ Actual Results:Assets in stock are also returned in the response for find resour
 
 Expected Results:Assets in stock should not be returned in the response for find resource for find server goal type.
 
-Additional Information:|Moved to Assigned state using a external script.|2010-05-25 05:44:14
-BUILD00032239|Site Controller|Verify|2 - High|tgautier|TORS2.5_RA: Getting exception thrown on hitting the request for find/place server goal type|Getting exception thrown on hitting the request for find/place server goal type
+Additional Information:|Closed.|2010-05-25 05:44:14
+BUILD00032239|Site Controller|Closed|2 - High|tgautier|TORS2.5_RA: Getting exception thrown on hitting the request for find/place server goal type|Getting exception thrown on hitting the request for find/place server goal type
 
 Refer request and response below.
 
@@ -2019,9 +2019,8 @@ Actual Results: Getting exception as - Unknown type of external value "model"
 
 Expected Results: Proper response should be given.
 
-Additional Information:|Won't fixed because it's incorrect request.
-We agreed not to use model external value.|2010-05-25 02:04:25
-BUILD00032235|Site Controller|Verify|2 - High|tgautier|TORS2.5_RA: Getting no exception on not specifying pod for need_patched_ports tag specified in the request.|Getting no exception on not specifying pod for need_patched_ports tag specified in the request.
+Additional Information:|Closing as per the resolution.|2010-05-25 02:04:25
+BUILD00032235|Site Controller|Closed|2 - High|tgautier|TORS2.5_RA: Getting no exception on not specifying pod for need_patched_ports tag specified in the request.|Getting no exception on not specifying pod for need_patched_ports tag specified in the request.
 
 Refer request and response below.
 
@@ -2472,8 +2471,8 @@ Actual Results: Getting proper response on not specifying pod for need_patched_p
 Expected Results:Should be getting exception on not specifying pod for need_patched_ports tag specified in the request.
 
 
-Additional Information:|Fixed by changing in validation rule|2010-05-25 00:22:29
-BUILD00032221|Site Controller|Assigned|3 - Medium|tgautier|TORS2.5_RA: Proper Response is getting after entering past date in Lease Return Date|Detailed Description:
+Additional Information:||2010-05-25 00:22:29
+BUILD00032221|Site Controller|Verify|3 - Medium|tgautier|TORS2.5_RA: Proper Response is getting after entering past date in Lease Return Date|Detailed Description:
 Proper Response is getting after entering past date in Lease Return Date
 
 Impact:
@@ -2922,8 +2921,9 @@ Proper Response is getting after entering past date in Lease Return Date
 Expected Results:
 Proper response should not be displayed after entering past date in Lease return Date
 
-Additional Information:|Moved to Assigned state using a external script.|2010-05-24 04:42:54
-BUILD00032220|Site Controller|Verify|4 - Low|tgautier|TORS2.5_RA: Getting text error in the exception thrown in the response on specifying negative value in the request.|Getting text error in the exception thrown in the response on specifying negative value in the request. then should be written as than in the exception
+Additional Information:|We have a rule that filters Servers by Lease Return Date, this rule is invoked only with tag "find".
+So, in described case this rule is not invoked.|2010-05-24 04:42:54
+BUILD00032220|Site Controller|Closed|4 - Low|tgautier|TORS2.5_RA: Getting text error in the exception thrown in the response on specifying negative value in the request.|Getting text error in the exception thrown in the response on specifying negative value in the request. then should be written as than in the exception
 
 
 Steps to Reproduce:
@@ -2987,8 +2987,8 @@ Actual Results:Getting exception as -"Quantity should be more then zero"
 
 Expected Results:Should be Getting exception as -"Quantity should be more than zero"
 
-Additional Information:|Fixed|2010-05-24 04:37:36
-BUILD00032219|Site Controller|Verify|2 - High|tgautier|TORS2.5_RA: Getting proper response for find resource with place blade goal type for an assettype which is not a blade.|Getting response for find resource with place blade goal type for an assettype which is not a blade.
+Additional Information:||2010-05-24 04:37:36
+BUILD00032219|Site Controller|Closed|2 - High|tgautier|TORS2.5_RA: Getting proper response for find resource with place blade goal type for an assettype which is not a blade.|Getting response for find resource with place blade goal type for an assettype which is not a blade.
 
 Refer request and response below.
 
@@ -3125,8 +3125,9 @@ Actual Results:Getting proper response for find resource with place blade goal t
 
 Expected Results:Should not be Getting proper response for find resource with place blade goal type for an assettype which is not a blade.
 
-Additional Information:|Fixed by adding filter by ¿compatiblechassistype¿|2010-05-24 01:56:40
-BUILD00032166|Site Controller|In_Progress|1 - Urgent|mgorbunov|TORS2.5_RA: Getting no response on hitting the request for find server goal type with vlans tag values.|Getting no response on hitting the request for find server goal type with vlans tag values.
+Additional Information:|Closed as working fine now.
+|2010-05-24 01:56:40
+BUILD00032166|Site Controller|In_Progress|1 - Urgent|bdaftardar|TORS2.5_RA: Getting no response on hitting the request for find server goal type with vlans tag values.|Getting no response on hitting the request for find server goal type with vlans tag values.
 
 Refer request and response below.
 
@@ -3198,8 +3199,8 @@ Actual Results:Getting no response on hitting the request for find server goal t
 
 Expected Results:Should be Getting response on hitting the request for find server goal type with vlans tag values.
 
-Additional Information:||2010-05-17 07:25:58
-BUILD00032165|Site Controller|Assigned|1 - Urgent|tgautier|TORS2.5_RA: Getting no response on hitting request for find server goal type with pods values.|Getting no response on hitting request for find server goal type with pods values.
+Additional Information:|This request does not work since there are no ODB::Assets with given model which are contained in ODB::Racks. You need either fix the data in ODB or change the assettype in request.|2010-05-17 07:25:58
+BUILD00032165|Site Controller|Assigned|1 - Urgent|bdaftardar|TORS2.5_RA: Getting no response on hitting request for find server goal type with pods values.|Getting no response on hitting request for find server goal type with pods values.
 
 Refer request and response for the same below.
 
@@ -3275,7 +3276,7 @@ Actual Results:Getting no response on hitting request for find server goal type 
 Expected Results:Should be Getting response on hitting request for find server goal type with pods values.
 
 
-Additional Information:|Moved to Assigned state using a external script.|2010-05-17 07:16:34
+Additional Information:|This request does not work since there are no ODB::Assets with given model which are contained in ODB::Racks. You need either fix the data in ODB or change the assettype in request.|2010-05-17 07:16:34
 BUILD00032164|Site Controller|Waiting_Info|2 - High|smisra|TORS2.5_RA: Getting Response on changing the type from blade to server for the same model and assettype for place goal type.|Getting Response on changing the type from blade to server for the same model and assettype for place goal type.
 
 Refer below request and response.
@@ -3782,7 +3783,7 @@ Response for place server -
 </soapenv:Envelope>
 
 |can you please check|2010-05-17 05:43:47
-BUILD00032163|Site Controller|Verify|1 - Urgent|tgautier|TORS2.5_RA: Getting response for findResource for the model which is not reflected in the get entities model response.|Getting response for findResource for the model which is not reflected in the get entities model
+BUILD00032163|Site Controller|Closed|1 - Urgent|tgautier|TORS2.5_RA: Getting response for findResource for the model which is not reflected in the get entities model response.|Getting response for findResource for the model which is not reflected in the get entities model
 
 refer request and response below.
 
@@ -3950,7 +3951,7 @@ Actual Results:Getting response for findResource for the model which is not refl
 Expected Results: Should not be Getting response for findResource for the model which is not reflected in the get entities model
 
 
-Additional Information:|Cgecjed with Sid, it works fine.|2010-05-17 04:36:16
+Additional Information:||2010-05-17 04:36:16
 BUILD00032157|Site Controller|Closed|4 - Low|tgautier|TORS2.5_RA: Getting exception on hitting the request on specifying Place/Find instead of place/find.| Getting exception on hitting the request on specifying Place/Find instead of place/find.
 
 Impact:
@@ -4466,7 +4467,7 @@ Caused by: com.ebay.grid.odbcache.rules.ValidationException: Can not define exte
       </soapenv:Fault>
    </soapenv:Body>
 </soapenv:Envelope>|2010-05-14 00:46:16
-BUILD00032149|Site Controller|Verify|2 - High|tgautier|TORS2.5_RA: Getting proper response on specifying Architecture, layer and Arch Tier although known function is specified.|Getting proper response on specifying Architecture, layer and Arch Tier although known function is specified.
+BUILD00032149|Site Controller|Closed|2 - High|tgautier|TORS2.5_RA: Getting proper response on specifying Architecture, layer and Arch Tier although known function is specified.|Getting proper response on specifying Architecture, layer and Arch Tier although known function is specified.
 
 Refer Request and Response below.
 
@@ -4656,8 +4657,8 @@ Actual Results: Getting proper response
 
 Expected Results: Should be getting exception
 
-Additional Information:|fixed|2010-05-12 23:05:16
-BUILD00032147|Other|Verify|1 - Urgent|tgautier|TORS2.5_RA: Give a DC as PHX:PHX and give rack from some another DC e.g ABC:DAT:R1:Rw1:RCk1 there should be no output|Detailed Description:
+Additional Information:|Closed|2010-05-12 23:05:16
+BUILD00032147|Other|Closed|1 - Urgent|tgautier|TORS2.5_RA: Give a DC as PHX:PHX and give rack from some another DC e.g ABC:DAT:R1:Rw1:RCk1 there should be no output|Detailed Description:
 
 Give non mandatory tag for RACK which is in some different DC
  <xsd1:bindings>
@@ -4684,258 +4685,7 @@ Actual Results:
 
 Expected Results:
 
-Additional Information:|User should give correct tags in order to test.
-If in correct tag is given, it will be bypassed, this wont happen in real time as UI will not show the Data which is not there in some another DC|2010-05-12 11:38:55
-BUILD00032144|Site Controller|Assigned|3 - Medium|agandhe|RAP_CH: Title pane area doe not display page title and the help button on Request module page|Detailed Description:
-
-Title pane area doe not display page title and the help button on Request module page
-Impact:
-
-Steps to Reproduce:
-1)
-
-Actual Results:
-
-Expected Results:
-
-Additional Information:||2010-05-12 08:05:17
-BUILD00032143|Staging Controller|Assigned|3 - Medium|agandhe|RAP_CH: message pane area doe not displays informative and/or error message|Detailed Description:
-
-Impact:
-
-Steps to Reproduce:
-1)
-message pane area doe not displays informative and/or error message
-Actual Results:
-
-Expected Results:
-
-Additional Information:|Moved to Assigned state using a external script.|2010-05-12 08:03:07
-BUILD00032142|Staging Controller|Assigned|2 - High|agandhe|RAP_CH: Menu items displayed in Navigation pane are visible to invalid user.|Detailed Description:
-
-Impact:
-
-Steps to Reproduce:
-1)
-Menu items displayed in Navigation pane are visible to invalid user.
-Actual Results:
-
-Expected Results:
-
-Additional Information:|Moved to Assigned state using a external script.|2010-05-12 08:00:42
-BUILD00032141|Site Controller|Assigned|2 - High|agandhe|RAP_CH: Runtime error in script for find Resource|Detailed Description:
-
-Impact:
-
-Steps to Reproduce:
-1)
-Runtime error in script ("bpd engine expression" -1:-1).Internal Script error: java.lang.RuntimeException: Failed to update symboltable. Exception = com.lombardisoftware.core.TeamWorksException: Type mismatch. Value "place" must be array. Java class found: java.lang.String
-
-Actual Results:
-
-Expected Results:
-
-Additional Information:|Moved to Assigned state using a external script.|2010-05-12 07:56:07
-BUILD00032140|Site Controller|Assigned|3 - Medium|agandhe|RAP_CH: Room, Row, Rack, Pod, Phase, Vlan and BridgeGroup are not multi selectable|Detailed Description:
-
-Impact:
-
-Steps to Reproduce:
-1)
-Room, Row, Rack, Pod, Phase, Vlan and BridgeGroup are not multi selectable
-Actual Results:
-
-Expected Results:
-
-Additional Information:||2010-05-12 07:50:59
-BUILD00032139|Site Controller|Assigned|3 - Medium|agandhe|RAP_CH: Click of Reset button did not cleared the Lease return date, RQSVR and Notes|Detailed Description:
-
-Impact:
-
-Steps to Reproduce:
-1)
-
-Click of Reset button 
-Did not cleared the 
-Lease return date, RQSVR and Notes
-
-Actual Results:
-
-Expected Results:
-
-Additional Information:|Moved to Assigned state using a external script.|2010-05-12 07:48:31
-BUILD00032138|Staging Controller|Assigned|3 - Medium|agandhe|RAP_CH: Error msg displayed on the screen are not appropriate|Detailed Description:
-
-Impact:
-
-Steps to Reproduce:
-1)
-
-Error msg displayed on the screen are not appropriate.
-
-Please refer to the excel sheet which we had created 
-
-http://iweb3.corp.ebay.com/TeamSites/30126/Enterprise%20System%20Projects/NextGen%20Data%20Center/22399%20-%20Top%20of%20Rack%20Switch(ToRS)-2/Resource%20placement%20and%20Selection/Design/Resource_Placement_UI_Design.xls 
-
-Actual Results:
-
-Expected Results:
-
-Additional Information:|Moved to Assigned state using a external script.|2010-05-12 07:46:24
-BUILD00032137|Site Controller|Assigned|3 - Medium|agandhe|RAP_CH: external Values for function_null is invalid in the externalValues i/p|Detailed Description:
-
-Impact:
-
-Steps to Reproduce:
-1)
-
-external Values for function_null is invalid in the externalValues i/p
-
-Actual Results:
-
-Expected Results:
-
-Additional Information:|Moved to Assigned state using a external script.|2010-05-12 07:38:42
-BUILD00032136|Site Controller|Assigned|2 - High|agandhe|RAP_CH: Issues in findResource|Detailed Description:
-
-Impact:
-
-Steps to Reproduce:
-1)
-Runtime error in script ("bpd engine expression" -1:-1).Internal Script error: java.lang.RuntimeException: Failed to update symboltable. Exception = com.lombardisoftware.core.TeamWorksException: Type mismatch. Value "place,model_BL460C G6,blade,dont_need_patched_ports,known_function,function_null,architecture_c3,archtier_null" must be array. Java class found: java.lang.String
-
-Actual Results:
-
-Expected Results:
-
-Additional Information:|Moved to Assigned state using a external script.|2010-05-12 07:36:45
-BUILD00032135|Site Controller|Assigned|2 - High|agandhe|RAP_CH: Issues in validate trace ticket|Detailed Description:
-
-Impact:
-
-Steps to Reproduce:
-1)
-
-If the requester enters a value associated with a Related Request ID then the system shall have the ability to verify that the entered value is a valid ticket id in TRACE (i.e. Valid Task ID and the status is not "Resolved", "Cancelled" or "Closed").
-1) Giving error even if th e ticket is valid
-2) Giving error when ticket is blank
-
-Actual Results:
-
-Expected Results:
-
-Additional Information:|Moved to Assigned state using a external script.|2010-05-12 07:33:00
-BUILD00032134|Site Controller|Assigned|3 - Medium|agandhe|RAP_CH: Cancel button is not there on Reservation Status Screen|Detailed Description:
-
-Impact:
-
-Steps to Reproduce:
-1)
-
-Cancel button is not there on Reservation Status Screen
-
-Actual Results:
-
-Expected Results:
-
-Additional Information:|Moved to Assigned state using a external script.|2010-05-12 07:28:23
-BUILD00032133|Site Controller|Assigned|2 - High|agandhe|RAP_CH: The healthcheckapp database has old templates.|Detailed Description:
-
-Impact:
-
-Steps to Reproduce:
-1)
-
-The healthcheckapp database has old templates too. Clean it and reload it with all those rows which are required for the project.
-
-Actual Results:
-
-Expected Results:
-
-Additional Information:|Moved to Assigned state using a external script.|2010-05-12 07:26:24
-BUILD00032132|Site Controller|Assigned|3 - Medium|agandhe|RAP_CH: The Mandatory Field validation code is not working properly, it is validating non mandatory fields|Detailed Description:
-
-Impact:
-
-Steps to Reproduce:
-1)
-The Mandatory Field validation code is not working properly, it is validating non mandatory fields
-
-Actual Results:
-
-Expected Results:
-
-Additional Information:|Moved to Assigned state using a external script.|2010-05-12 07:18:54
-BUILD00032131|Site Controller|Assigned|3 - Medium|agandhe|RAP_CH: Lease Return date is a mandatory field|Detailed Description:
-
-Impact:
-
-Steps to Reproduce:
-1)
-
-Lease Return date is a mandatory field. 
-
-Actual Results:
-
-Expected Results:
-
-Additional Information:|Moved to Assigned state using a external script.|2010-05-12 07:15:45
-BUILD00032130|Site Controller|Assigned|2 - High|agandhe|RAP_CH: Error is in the DataBase uiml templates|Detailed Description:
-
-Impact:
-
-Steps to Reproduce:
-1)
-
-Actual Results:
-
-Drop Down will contain manufacturer, model, cpucount, memorysize and maxpowerconsumption attributes of ODB::AssetType
-
-Expected Results:
-
-Additional Information:||2010-05-12 07:10:11
-BUILD00032129|Site Controller|Assigned|3 - Medium|agandhe|RAP_CH: The Model Drop Down contains misplaced model and manufacturer|Detailed Description:
-
-Impact:
-
-Steps to Reproduce:
-1)
-The Model Drop Down will contain model, manufacturer attribute of ODB::Asset
-Actual Results:
-
-Expected Results:
-
-Additional Information:|Moved to Assigned state using a external script.|2010-05-12 07:00:38
-BUILD00032128|Site Controller|Assigned|2 - High|agandhe|RAP_CH: Quantity & Related Request value is hardcoded|Detailed Description:
-
-Impact:
-
-Steps to Reproduce:
-1)
-In manual flow , remove the hardcode 20 in Quantity text box and Related Request
-
-Actual Results:
-
-Expected Results:
-
-Additional Information:||2010-05-12 06:31:48
-BUILD00032126|Site Controller|Assigned|3 - Medium|agandhe|RAP_CH: Goal Type drop down contains improper values for Goal Types|Detailed Description:
-
-Impact:
-
-Steps to Reproduce:
-1)
-The requester shall have the ability to specify the Goal Type. The following values are supported:
-Find Physical Server
-Find Blade
-Place Blade
-Place Physical Server 
-Above values are as per PRD
-Actual Results:
-
-Expected Results:
-
-Additional Information:||2010-05-12 05:52:15
+Additional Information:||2010-05-12 11:38:55
 BUILD00032124|Site Controller|Closed|1 - Urgent|tgautier|TORS2.5_RA: The newly added objects in ODB are not displayed in the Response for Get Entity|Detailed Description:
 The newly added objects are not displayed in the Response.
 

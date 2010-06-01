@@ -87,7 +87,7 @@ for i in issues:
 				issue.Resolve()
 		del cqIssues[issue.summary]
 
-	print "[%s] %s" % (action, issue.summary)
+	print "[%s] %s" % (action, issue.summary[0:80])
 
 
 # Create new issues
@@ -98,10 +98,10 @@ for i in cqIssues.keys():
 		descr = re.sub("([^>])(\n<)", "\\1{code}\\2", v["Steps_Description"])
 		descr = re.sub("(>\n)([ \t\n]*[^< \t\n])", "\\1{code}\\2", descr)
 
-		newIssue = soap.createIssue(jiraAuth, {"project": config["project_abbr"], "type": "1", "priority": v["Priority"][0:1], "summary": "%s: %s" % (v["id"], v["Title"]), "description": descr, "assignee": "oaravin", "reporter": "bdaftardar"})
-#		soap.updateIssue(jiraAuth, newIssue.key, [{"id": "fixVersions", "values": ["10698"]}])
+		newIssue = soap.createIssue(jiraAuth, {"project": config["project_abbr"], "type": "1", "priority": v["Priority"][0:1], "summary": "%s: %s" % (v["id"], v["Title"]), "description": descr, "assignee": "oaravin", "reporter": "nbogdanov"})
+		soap.updateIssue(jiraAuth, newIssue.key, [{"id": "fixVersions", "values": ["10698"]}])
 
-		print "[Created] %s: %s" % (v["id"], v["Title"])
+		print "[Created] %s: %s" % (v["id"], v["Title"][0:80])
 
 
 '''
