@@ -1,0 +1,3 @@
+{chart:title=Coverage with tests|type=line|width=600|height=300|xLabel=Date|yLabel=Coverage %|dataOrientation=vertical|rangeAxisLowerBound=0|domainaxisrotateticklabel=false|categoryLabelPosition=down45|colors=#FF358B,#F58723,#309018,#0079D6,#7E8AA2|showShapes=false}
+##COVERAGECHART##
+{chart}
