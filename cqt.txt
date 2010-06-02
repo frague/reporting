@@ -1,4 +1,23 @@
 id|Functional_Area|State|Priority|Assigned_To|Title|Steps_Description|Note_Entry|SubmitDate
+BUILD00032318|Site Controller|Assigned|2 - High|tgautier|TORS2.5_RA: Repeatative results are there in the grid on Recommendation Results page.|Records are repeatitive in the grid in Recommendation Reults page.
+
+PFA screenshot.
+
+Steps to Reproduce:
+1) Login to http://qa-lombardi05.qa.ebay.com:8081/workflowinbox/WorkflowInbox.html
+2) Click on New link under Resource Allocation tab
+3) Check for the task generated in Inbox
+4) Click on Run button corresponding to that task.
+5) Clcik on search and then recommend on next page
+6) Select preeference and click on recommend.
+7) Now check the results in the grid.
+
+
+Actual Results:
+
+Expected Results:
+
+Additional Information:||2010-05-28 06:21:04
 BUILD00032243|Site Controller|Closed|2 - High|tgautier|TORS2.5_RA: Assets in stock are also returned in the response for find resource for find server goal type.|Assets in stock are also returned in the response for find resource for find server goal type.
 
 refer request and response below.

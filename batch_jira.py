@@ -2,6 +2,8 @@ from rabbithole import *
 
 #############################################################
 
+line = 80
+
 issuesExpr = re.compile('((id|\nBUILD[0-9]+)(\|[^|]*){8}($|\n))', re.MULTILINE)
 
 total = 0
@@ -15,7 +17,7 @@ def appendIssue(matchObj):
 		i = {}
 		k = 0
 		for key in cqKeys:
-			i[cqKeys[k]] = re.sub("##NA##", "\n", issue[k]).strip()
+			i[cqKeys[k]] = re.sub("##NL##", "\n", issue[k]).strip()
 			k = k + 1
 
 		total = total + 1
@@ -78,16 +80,16 @@ issues = soap.getIssuesFromFilter(jiraAuth, "11180")
 
 for i in issues:
 	issue.Parse(i)
-	action = "-"
+	action = " "
 	if (cqIssues.has_key(issue.summary)):	# Existing issue
 		if issue.status != "6":	# Not closed issues
 			i = cqIssues[issue.summary]
 			if i["State"] == "Closed":
-				action = "Resolve"
+				action = "-"
 				issue.Resolve()
 		del cqIssues[issue.summary]
 
-	print "[%s] %s" % (action, issue.summary[0:80])
+	print "[%s] %s" % (action, issue.summary[0:line])
 
 
 # Create new issues
@@ -101,7 +103,7 @@ for i in cqIssues.keys():
 		newIssue = soap.createIssue(jiraAuth, {"project": config["project_abbr"], "type": "1", "priority": v["Priority"][0:1], "summary": "%s: %s" % (v["id"], v["Title"]), "description": descr, "assignee": "oaravin", "reporter": "nbogdanov"})
 		soap.updateIssue(jiraAuth, newIssue.key, [{"id": "fixVersions", "values": ["10698"]}])
 
-		print "[Created] %s: %s" % (v["id"], v["Title"][0:80])
+		print "[+] %s: %s" % (v["id"], v["Title"][0:line])
 
 
 '''
