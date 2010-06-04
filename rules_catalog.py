@@ -57,6 +57,8 @@ def ProcessRule(file):
 [ProcessRule(file) for file in glob.glob(os.path.join(path, "*.*"))]
 
 
+print "Publishing to wiki"
+
 WriteFile("rules_cat.tmp", "{table:class=confluenceTable}%s{table}" % "".join([FillTemplate(typeTemplate, {"##TYPE##": types[type], "##RULES##": "".join(result[type])}) for type in result.keys()]))
 GetWiki({"action": "storePage", "space": config["personal_space"], "title": "Rules Catalog (generated)", "file": "rules_cat.tmp", "parent": "Home"})
 os.remove("rules_cat.tmp")

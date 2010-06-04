@@ -20,6 +20,7 @@ data = SaveUpdates("cobertura", stats)
 page = GetTemplate("coverage")
 page = FillTemplate(page, {"##COVERAGECHART##": MakeWikiProgressChart(data)})
 
+print "Publishing to wiki"
 WriteFile("temp.tmp", page)
 GetWiki({"action": "storePage", "space": config["personal_space"], "title": "Code Coverage", "file": "temp.tmp", "parent": config["parent_page"]})
 os.remove("temp.tmp")
