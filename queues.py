@@ -47,14 +47,13 @@ except:
 
 
 result = []
-for env in config["deployments"].keys():
+for env in sorted(config["deployments"].keys()):
 	url = "http://%s/info" % config["deployments"][env]
 	result.append(FillTemplate(lineTemplate, {"##TITLE##": env, "##URL##": url, "##COMMENT##": GetDeployedQueue(url)}))
  
 
 print "--- Publishing to wiki"
 
-WriteFile("temp.tmp", FillTemplate(page, {"##QUEUES##": "".join(result), "##UPDATED##": today.strftime("%Y.%m.%d")}))
-#GetWiki({"action": "storePage", "space": config["personal_space"], "title": "Code Coverage", "file": "temp.tmp", "parent": config["parent_page"]})
+WriteFile("temp.tmp", FillTemplate(page, {"##QUEUES##": "".join(result), "##UPDATED##": today.strftime("%b %d, %Y.")}))
 GetWiki({"action": "storePage", "space": config["project_space"], "title": "ActiveMQ queues utilization", "file": "temp.tmp"})
 os.remove("temp.tmp")

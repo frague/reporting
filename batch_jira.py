@@ -69,14 +69,13 @@ ProfileNeeded()
 cqKeys = []
 cqIssues = {}
 
-issuesExpr.sub(appendIssue, re.sub("(BUILD[0-9]+)", "\n\\1", re.sub("\n", "##NL##", ReadFile("cqt.txt"))))
+issuesExpr.sub(appendIssue, re.sub("(BUILD[0-9]+)", "\n\\1", re.sub("\n", "##NL##", ReadFile(config["QABugsFile"]))))
 
 soap = SOAPpy.WSDL.Proxy(config["jira_soap"])
 jiraAuth = soap.login(config["jira"]["user"], config["jira"]["password"])
 
 issue = JiraIssue()
-issues = soap.getIssuesFromFilter(jiraAuth, "11180")
-
+issues = soap.getIssuesFromJqlSearch(jiraAuth, "project = %s AND fixVersion = QA" % config["project_abbr"], 100)
 
 for i in issues:
 	issue.Parse(i)
@@ -100,10 +99,12 @@ for i in cqIssues.keys():
 		descr = re.sub("([^>])(\n<)", "\\1{code}\\2", v["Steps_Description"])
 		descr = re.sub("(>\n)([ \t\n]*[^< \t\n])", "\\1{code}\\2", descr)
 
-		newIssue = soap.createIssue(jiraAuth, {"project": config["project_abbr"], "type": "1", "priority": v["Priority"][0:1], "summary": "%s: %s" % (v["id"], v["Title"]), "description": descr, "assignee": "oaravin", "reporter": "nbogdanov"})
-		soap.updateIssue(jiraAuth, newIssue.key, [{"id": "fixVersions", "values": ["10698"]}])
-
 		print "[+] %s: %s" % (v["id"], v["Title"][0:line])
+#		print descr
+
+		newIssue = soap.createIssue(jiraAuth, {"project": config["project_abbr"], "type": "1", "priority": v["Priority"][0:1], "summary": "%s: %s" % (v["id"], v["Title"]), "description": descr, "assignee": config["QAAssignee"], "reporter": "nbogdanov"})
+		soap.updateIssue(jiraAuth, newIssue.key, [{"id": "fixVersions", "values": [config["QAVersionId"]]}])
+
 
 
 '''

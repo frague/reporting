@@ -3,4 +3,4 @@ jira_cli
 rabbithole.yaml
 profiles/*
 csv/*
-cqt.txt
+bugs_*.txt
