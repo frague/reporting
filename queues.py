@@ -22,7 +22,6 @@ used = {}
 def GetDeployedQueue(url):
 	global used
 
-	print "Processing %s" % url
 	match = None
 	try:
 		match = queueExpr.search(GetWebPage(url))
@@ -49,7 +48,9 @@ except:
 result = []
 for env in sorted(config["deployments"].keys()):
 	url = "http://%s/info" % config["deployments"][env]
-	result.append(FillTemplate(lineTemplate, {"##TITLE##": env, "##URL##": url, "##COMMENT##": GetDeployedQueue(url)}))
+	queue = GetDeployedQueue(url)
+	print "Environment %s uses queue %s" % (env, queue)
+	result.append(FillTemplate(lineTemplate, {"##TITLE##": env, "##URL##": url, "##COMMENT##": queue}))
  
 
 print "--- Publishing to wiki"
