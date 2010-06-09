@@ -5,7 +5,8 @@ from rabbithole import *
 
 ProfileNeeded()
 
-path = "D:/dev/BigRock/rep/rules/new_storage"
+path = "D:/dev/BigRock/rep/rules/%s" % config["rules_folder"]
+
 types = {"provider": "Provider", "template": "Template", "aggregation": "Aggregation", "xref": "XREF", "conditional": "Conditional", "validation": "Validation"}
 typeTemplate = GetTemplate("rule_type")
 lineTemplate = GetTemplate("rule_line")
@@ -60,5 +61,5 @@ def ProcessRule(file):
 print "Publishing to wiki"
 
 WriteFile("rules_cat.tmp", "{table:class=confluenceTable}%s{table}" % "".join([FillTemplate(typeTemplate, {"##TYPE##": types[type], "##RULES##": "".join(result[type])}) for type in result.keys()]))
-GetWiki({"action": "storePage", "space": config["personal_space"], "title": "Rules Catalog (generated)", "file": "rules_cat.tmp", "parent": "Home"})
+GetWiki({"action": "storePage", "space": config["personal_space"], "title": "%s Rules Catalog (generated)" % config["project_abbr"], "file": "rules_cat.tmp", "parent": "Home"})
 os.remove("rules_cat.tmp")
