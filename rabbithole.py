@@ -95,9 +95,8 @@ def AppendSubSet(set, key, value):
 
 
 # Read web page content
-def GetWebPage(url):
-
-	website = urllib2.urlopen(url)
+def GetWebPage(url, timeout = 120):
+	website = urllib2.urlopen(url, timeout=timeout)
 	website_html = website.read()
 	website.close()
 	return website_html
