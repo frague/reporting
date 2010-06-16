@@ -38,12 +38,15 @@ jiraAuth = None
 
 
 # Getting command-line parameters
-parameter_key = re.compile("^--([a-z]+)(=([^ ]*)){0,1}", re.IGNORECASE)
+param_expr = re.compile("^--([a-z]+)(=(.*)){0,1}$", re.IGNORECASE)
 parameters = {}
 for key in sys.argv:
-	result = parameter_key.match(key)
+	result = param_expr.match(key)
+	print "%s" % (key)
 	if result:
 		parameters[result.group(1)] = result.group(3) or True
+		print " = %s" % (result.group(3))
+
 
 def GetParameter(name):
 	if parameters.has_key(name):
@@ -375,4 +378,40 @@ def RequestWorklogs(fromDate, worklogs, notifiee, engine, commits, ignore = []):
 				print " - %s (ignored)" % login
 
 		engine.Disconnect()
+
+######################################################################################
+# Jira Issue class
+
+class JiraIssue:
+	global soap, jiraAuth, config
+
+	def __init__(self):
+		pass
+
+	def Number(self):
+		if self.IsNotEmpty():
+			return int(re.sub("[^0-9]", "", self.key))
+		else:
+			return 0
+
+	def Parse(self, line):
+		for key in line._keys():
+			setattr(self, key, line[key])
+	
+	def Clear(self):
+		self.id = 0
+		self.key = ""
+
+	def IsNotEmpty(self):
+		return self.key and self.id
+
+	def Update(self, changes):
+		if self.IsNotEmpty():
+			soap.updateIssue(jiraAuth, self.key, changes)
+
+	def Resolve(self):
+		if self.IsNotEmpty():
+			soap.progressWorkflowAction(jiraAuth, self.key, '2', [{"id": "resolution", "values": "2"}])
+
+
 
