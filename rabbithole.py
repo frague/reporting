@@ -35,18 +35,15 @@ def WriteFile(file_name, contents):
 config = yaml.load(ReadFile("conf/rabbithole.yaml"))
 
 jiraAuth = None
-
+soap = None
 
 # Getting command-line parameters
 param_expr = re.compile("^--([a-z]+)(=(.*)){0,1}$", re.IGNORECASE)
 parameters = {}
 for key in sys.argv:
 	result = param_expr.match(key)
-	print "%s" % (key)
 	if result:
 		parameters[result.group(1)] = result.group(3) or True
-		print " = %s" % (result.group(3))
-
 
 def GetParameter(name):
 	if parameters.has_key(name):
@@ -383,9 +380,11 @@ def RequestWorklogs(fromDate, worklogs, notifiee, engine, commits, ignore = []):
 # Jira Issue class
 
 class JiraIssue:
-	global soap, jiraAuth, config
+	global config
 
-	def __init__(self):
+	def __init__(self, soap, jiraAuth):
+		self.soap = soap
+		self.jiraAuth = jiraAuth
 		pass
 
 	def Number(self):
@@ -407,11 +406,11 @@ class JiraIssue:
 
 	def Update(self, changes):
 		if self.IsNotEmpty():
-			soap.updateIssue(jiraAuth, self.key, changes)
+			self.soap.updateIssue(self.jiraAuth, self.key, changes)
 
 	def Resolve(self):
 		if self.IsNotEmpty():
-			soap.progressWorkflowAction(jiraAuth, self.key, '2', [{"id": "resolution", "values": "2"}])
+			self.soap.progressWorkflowAction(self.jiraAuth, self.key, '2', [{"id": "resolution", "values": "2"}])
 
 
 
