@@ -47,8 +47,9 @@ issues = soap.getIssuesFromJqlSearch(jiraAuth, "project = %s AND fixVersion = QA
 for i in issues:
 	issue.Parse(i)
 	action = " "
+#	print "--- %s, %s" % (issue.status, issue.summary[0:line])
 	if (cqIssues.has_key(issue.summary)):	# Existing issue
-		if issue.status != "6":	# Not closed issues
+		if issue.status != "6" and issue.status != "5":	# Not closed issues
 			i = cqIssues[issue.summary]
 			if i["State"] == "Closed":
 				action = "-"
