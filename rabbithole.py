@@ -63,7 +63,8 @@ if profile != "":
 abbr = "JKHFKJHEKJHKJHKSDJDH"
 if config.has_key("project_abbr"):
 	abbr = config["project_abbr"]
-project_issue = re.compile("\[{0,1}%s-([0-9]+)\]{0,1} *" % abbr, re.IGNORECASE)
+project_issue = re.compile("\\{0,1}\[{0,1}%s-([0-9]+)\]{0,1} *" % abbr, re.IGNORECASE)
+wiki_slashes = re.compile("([\[\{])")
 
 isNumber = re.compile("^[0-9]+$")
 reportLine = re.compile("^[^,]+(, [^,]+){8}$")
@@ -258,6 +259,12 @@ def MakeWikiProgressChart(data):
 	 			result += "| 0 |"
 	return result
 
+
+
+def WikiSlash(text):
+	return wiki_slashes.sub("\\\\\\1", text)
+
+
 #####################################################################################
 # GIT Logs
 
@@ -271,7 +278,7 @@ def AddCommit(line, commits):
 	if (commitDate[:10] != authorDate[:10]):
 		return
 
-	commit = project_issue.sub("[%s-\\1@issues] " % config["project_abbr"], commit)
+	commit = project_issue.sub("[%s-\\1@issues] " % config["project_abbr"], WikiSlash(commit))
 	AppendSubSet(commits, email, commit)
 	print " + %s: %s" % (email, commit)
 
@@ -340,7 +347,7 @@ def GetWorkLogs(fromDate, tillDate):
 			# + 3 hours for England
 			startDate = DateFromSet(i["startDate"]) + timedelta(hours = 3)
 			if startDate.date() >= fromDate and startDate.date() < tillDate:
-				value = "[%s@issues] (%s) %s - %s" % (issueKey, updatedIssues[issueKey], i["comment"].strip(" \n\r"), i["timeSpent"])
+				value = "[%s@issues] (%s) %s - %s" % (issueKey, WikiSlash(updatedIssues[issueKey]), WikiSlash(i["comment"].strip(" \n\r")), i["timeSpent"])
 				AppendSubSet(workLogs, i["author"], value)
 				print " + %s: %s (%s)" % (i["author"], i["comment"].strip(" \n\r"), i["timeSpent"])
 				#found[i["author"]] = True
