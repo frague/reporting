@@ -63,7 +63,7 @@ if profile != "":
 abbr = "JKHFKJHEKJHKJHKSDJDH"
 if config.has_key("project_abbr"):
 	abbr = config["project_abbr"]
-project_issue = re.compile("\\{0,1}\[{0,1}%s-([0-9]+)\]{0,1} *" % abbr, re.IGNORECASE)
+project_issue = re.compile("\\\\{0,1}\[{0,1}%s-([0-9]+)\]{0,1} *" % abbr, re.IGNORECASE)
 wiki_slashes = re.compile("([\[\{])")
 
 isNumber = re.compile("^[0-9]+$")

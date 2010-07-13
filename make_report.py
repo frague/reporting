@@ -45,7 +45,7 @@ else:
 
 	WriteFile("temp1.tmp", page)
 	#GetWiki({"action": "storePage", "space": config["personal_space"], "title": "gitlog + %s report template" % today, "file": "temp1.tmp", "parent": config["parent_page"]})
-	GetWiki({"action": "storeNews", "space": config["project_space"], "title": "%s Daily Report" % today.strftime("%Y.%m.%d"), "file": "temp1.tmp"})
+#	GetWiki({"action": "storeNews", "space": config["project_space"], "title": "%s Daily Report" % today.strftime("%Y.%m.%d"), "file": "temp1.tmp"})
 	os.remove("temp1.tmp")
 
 print "Done"
