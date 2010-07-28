@@ -3,18 +3,52 @@ from rabbithole import *
 #############################################################
 
 line = 80
+regexpReserved = re.compile("([\[\]\{\}\.\?\*\+\-])")
 
 ProfileNeeded()
 containerPage = GetParameter("source")
 version = GetParameter("version")
 
-if not containerPage or not version:
+'''if not containerPage or not version:
 	print "[!] Usage: wiki_to_jira.py --profile=PROFILE_NAME --source=SOURCE_PAGE --version=VERSION"
 	exit(0)
+	'''
 
-print GetWiki({"action": "getSource", "space": config["project_space"], "title": containerPage})
+page = GetWiki({"action": "getSource", "space": config["project_space"], "title": containerPage})
+#page = ReadFile("csv/Sprint10.txt")
+
+def deRegexp(text):
+	return regexpReserved.sub("\\\\\\1", text)
+
+def NotEqualExpression(word):
+	collector = ""
+	result = ""
+	for char in word:
+		char = deRegexp(char)
+		if result:
+			result += "|"
+		if collector:
+			result += collector
+		result += "[^%s]" % char
+		collector += char
+	return "(%s)" % result
+
+def GetSection(text, prefix, title=""):
+	dPrefix = deRegexp(prefix)
+	if title:
+		title += "\n"
+
+	section = re.compile("%s {0,1}%s(%s*)(\\n%s|$)" % (dPrefix, title, NotEqualExpression(prefix), dPrefix), re.MULTILINE)
+
+	found = section.search(text)
+	if found:
+		return found.group(1)
+	return found
 
 
+requirements = GetSection(page, "h4.")
+print GetSection(requirements, "h6.", "Major")
+print GetSection(requirements, "h6.", "Nice to have")
 
 exit(0)
 
