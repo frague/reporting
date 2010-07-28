@@ -4,6 +4,8 @@ from rabbithole import *
 
 line = 80
 regexpReserved = re.compile("([\[\]\{\}\.\?\*\+\-])")
+separateRequirement = re.compile("^[#\-\*] ", re.MULTILINE)
+excerpt = re.compile("\{excerpt-include:([^\|\}]+)[\|\}]")
 
 ProfileNeeded()
 containerPage = GetParameter("source")
@@ -20,6 +22,7 @@ page = GetWiki({"action": "getSource", "space": config["project_space"], "title"
 def deRegexp(text):
 	return regexpReserved.sub("\\\\\\1", text)
 
+# Creates RegExp for matching text until given word will be met
 def NotEqualExpression(word):
 	collector = ""
 	result = ""
@@ -33,7 +36,12 @@ def NotEqualExpression(word):
 		collector += char
 	return "(%s)" % result
 
+# Gets section by prefix from text (e.g. h6. Title ..... h6.)
+# In case when there several sections with the same prefix in the text, title can be used
 def GetSection(text, prefix, title=""):
+	if not text:
+		return ""
+
 	dPrefix = deRegexp(prefix)
 	if title:
 		title += "\n"
@@ -45,10 +53,25 @@ def GetSection(text, prefix, title=""):
 		return found.group(1)
 	return found
 
+# Processes issue by title (in case if issue excerpted)
+def ProcessIssue(title):
+	a = excerpt.search(title)
+	if a:
+		return "[%s]" % a.group(1)
+	return title
+
+# List separate issues in the given text (section)
+def ListIssues(text):
+	for i in separateRequirement.split(text):
+		if i:
+			print "-- %s" % ProcessIssue(i.strip())
 
 requirements = GetSection(page, "h4.")
-print GetSection(requirements, "h6.", "Major")
-print GetSection(requirements, "h6.", "Nice to have")
+
+print
+ListIssues(GetSection(requirements, "h6.", "Major"))
+print
+ListIssues(GetSection(requirements, "h6.", "Nice to have"))
 
 exit(0)
 
