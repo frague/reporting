@@ -10,6 +10,7 @@ path = "D:/dev/BigRock/rep/rules/%s" % config["rules_folder"]
 types = {"provider": "Provider", "template": "Template", "aggregation": "Aggregation", "xref": "XREF", "conditional": "Conditional", "validation": "Validation"}
 typeTemplate = GetTemplate("rule_type")
 lineTemplate = GetTemplate("rule_line")
+mainTemplate = GetTemplate("rule_main")
 emptySpaces = re.compile("[ \t\n\r]+")
 prd = re.compile("PRD: (\d(\.\d+)+)")
 useInFilterExpr = re.compile("/useinfilter=[\"\']{0,1}true[\"\']{0,1}/", re.IGNORECASE)
@@ -60,6 +61,8 @@ def ProcessRule(file):
 
 print "Publishing to wiki"
 
-WriteFile("rules_cat.tmp", "{table:class=confluenceTable}%s{table}" % "".join([FillTemplate(typeTemplate, {"##TYPE##": types[type], "##RULES##": "".join(result[type])}) for type in result.keys()]))
+page = FillTemplate(mainTemplate, {"##UPDATED##": datetime.datetime.today().strftime("%b %d, %Y (%H:%M)"), "##RULES##": "".join([FillTemplate(typeTemplate, {"##TYPE##": types[type], "##RULES##": "".join(result[type])}) for type in result.keys()])})
+
+WriteFile("rules_cat.tmp", page)
 GetWiki({"action": "storePage", "space": config["personal_space"], "title": "%s Rules Catalog (generated)" % config["project_abbr"], "file": "rules_cat.tmp", "parent": "Home"})
 os.remove("rules_cat.tmp")
