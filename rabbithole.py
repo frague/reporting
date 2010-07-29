@@ -389,9 +389,14 @@ def RequestWorklogs(fromDate, worklogs, notifiee, engine, commits, ignore = []):
 class JiraIssue:
 	global config
 
-	def __init__(self, soap, jiraAuth):
+	def __init__(self):
+		self.IsConnected = False
+		pass
+
+	def Connect(self, soap, jiraAuth):
 		self.soap = soap
 		self.jiraAuth = jiraAuth
+		self.IsConnected = True
 		pass
 
 	def Number(self):
@@ -412,11 +417,11 @@ class JiraIssue:
 		return self.key and self.id
 
 	def Update(self, changes):
-		if self.IsNotEmpty():
+		if self.IsNotEmpty() and self.IsConnected:
 			self.soap.updateIssue(self.jiraAuth, self.key, changes)
 
 	def Resolve(self):
-		if self.IsNotEmpty():
+		if self.IsNotEmpty() and self.IsConnected:
 			self.soap.progressWorkflowAction(self.jiraAuth, self.key, '2', [{"id": "resolution", "values": "2"}])
 
 

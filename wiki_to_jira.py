@@ -5,7 +5,10 @@ from rabbithole import *
 line = 80
 regexpReserved = re.compile("([\[\]\{\}\.\?\*\+\-])")
 separateRequirement = re.compile("^[#\-\*] ", re.MULTILINE)
-excerpt = re.compile("\{excerpt-include:([^\|\}]+)[\|\}]")
+excerptInclude = re.compile("\{excerpt-include:([^\|\}]+)[\|\}]")
+wikiLink = re.compile("^\[(([^\|]+)\|){0,1}([^\]]+)\]$")
+firstSentence = re.compile("^([^\n]+([\.\?\!][ \n$]|\n))")
+jiraLink = re.compile("\[([a-z0-9]+-\d+)@issues\]", re.IGNORECASE)
 
 ProfileNeeded()
 containerPage = GetParameter("source")
@@ -16,8 +19,11 @@ version = GetParameter("version")
 	exit(0)
 	'''
 
-page = GetWiki({"action": "getSource", "space": config["project_space"], "title": containerPage})
-#page = ReadFile("csv/Sprint10.txt")
+def GetMatchGroup(haystack, expr, group):
+	a = expr.search(haystack)
+	if a:
+		return a.group(group)
+	return ""
 
 def deRegexp(text):
 	return regexpReserved.sub("\\\\\\1", text)
@@ -36,11 +42,16 @@ def NotEqualExpression(word):
 		collector += char
 	return "(%s)" % result
 
+e = NotEqualExpression("{excerpt}")
+excerptExpression = re.compile("\{excerpt\}(%s*)\{excerpt\}" % e)
+
 # Gets section by prefix from text (e.g. h6. Title ..... h6.)
 # In case when there several sections with the same prefix in the text, title can be used
 def GetSection(text, prefix, title=""):
 	if not text:
 		return ""
+
+#	print "\n----- Section \"%s %s\"" % (prefix, title)
 
 	dPrefix = deRegexp(prefix)
 	if title:
@@ -53,54 +64,108 @@ def GetSection(text, prefix, title=""):
 		return found.group(1)
 	return found
 
+# Return the only fist sentence from the text
+def TakeFirstSentence(text):
+	return GetMatchGroup(text, firstSentence, 1).strip() or text
+
+def ProcessRequirementPage(page_title, issue):
+	# TODO: Handle spaces in link
+	requirement = GetWiki({"action": "getSource", "space": config["project_space"], "title": page_title})
+	issue.summary = GetMatchGroup(requirement, excerptExpression, 1).strip()
+	issue.description = GetSection(requirement, "h6.", "Description")
+	print "-----\n%s\n-----\n" % issue.description
+
+
 # Processes issue by title (in case if issue excerpted)
 def ProcessIssue(title):
-	a = excerpt.search(title)
+	issue = JiraIssue()
+
+	key = GetMatchGroup(title, jiraLink, 1)
+	if key:
+		title = jiraLink.sub("", title).strip()
+		issue.key = key
+
+	excerpt = GetMatchGroup(title, excerptInclude, 1)
+	if excerpt:
+		ProcessRequirementPage(excerpt, issue)
+	else:
+		issue.summary = TakeFirstSentence(title)
+		issue.description = title
+	
+	return issue.summary
+'''	a = excerptInclude.search(title)
 	if a:
-		return "[%s]" % a.group(1)
-	return title
+		return "[!] Process page [%s] (\"%s\")" % (a.group(1), ProcessRequirementPage(a.group(1)))
+	a = wikiLink.search(title)
+	if a:
+		return "[!] Link to page [%s] (\"%s\")" % (a.group(3), a.group(2))'''
+
 
 # List separate issues in the given text (section)
 def ListIssues(text):
+	if not text:
+		return
+
+	k = 1
 	for i in separateRequirement.split(text):
 		if i:
-			print "-- %s" % ProcessIssue(i.strip())
+			print "%s. %s" % (k, ProcessIssue(i.strip()))
+			k += 1
 
-requirements = GetSection(page, "h4.")
+########################################################################################################################
 
-print
-ListIssues(GetSection(requirements, "h6.", "Major"))
-print
-ListIssues(GetSection(requirements, "h6.", "Nice to have"))
+wikiIssues = []
+
+page = GetWiki({"action": "getSource", "space": config["project_space"], "title": containerPage})
+
+requirements = GetSection(page, "h4.", "Requirements")
+[ListIssues(GetSection(requirements, "h6.", priority)) for priority in config["priorities"]]
+
+
+## Jira issues for version
+
+print "Issues in jira:"
+
+jiraIssues = []
+
+soap = SOAPpy.WSDL.Proxy(config["jira_soap"])
+jiraAuth = soap.login(config["jira"]["user"], config["jira"]["password"])
+
+issue = JiraIssue()
+issue.Connect(soap, jiraAuth)
+issues = soap.getIssuesFromJqlSearch(jiraAuth, "project = %s AND fixVersion = %s" % (config["project_abbr"], version), 100)
+
+for i in issues:
+	issue.Parse(i)
+	jiraIssues.append(issue)
+	print "[%s] %s" % (action, issue.summary[0:line])
+
+
 
 exit(0)
 
 
 
 
-cqKeys = []
-cqIssues = {}
 
-issuesExpr.sub(appendIssue, re.sub("(BUILD[0-9]+)", "\n\\1", re.sub("\n", "##NL##", ReadFile(config["QABugsFile"]))))
 
-soap = SOAPpy.WSDL.Proxy(config["jira_soap"])
-jiraAuth = soap.login(config["jira"]["user"], config["jira"]["password"])
 
-issue = JiraIssue()
-issues = soap.getIssuesFromJqlSearch(jiraAuth, "project = %s AND fixVersion = QA" % config["project_abbr"], 100)
 
-for i in issues:
-	issue.Parse(i)
-	action = " "
-	if (cqIssues.has_key(issue.summary)):	# Existing issue
-		if issue.status != "6":	# Not closed issues
-			i = cqIssues[issue.summary]
-			if i["State"] == "Closed":
-				action = "-"
-				issue.Resolve()
-		del cqIssues[issue.summary]
 
-	print "[%s] %s" % (action, issue.summary[0:line])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 # Create new issues

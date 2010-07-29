@@ -41,7 +41,8 @@ issuesExpr.sub(appendIssue, re.sub("(BUILD[0-9]+)", "\n\\1", re.sub("\n", "##NL#
 soap = SOAPpy.WSDL.Proxy(config["jira_soap"])
 jiraAuth = soap.login(config["jira"]["user"], config["jira"]["password"])
 
-issue = JiraIssue(soap, jiraAuth)
+issue = JiraIssue()
+issue.Connect(soap, jiraAuth)
 issues = soap.getIssuesFromJqlSearch(jiraAuth, "project = %s AND fixVersion = QA" % config["project_abbr"], 100)
 
 for i in issues:
