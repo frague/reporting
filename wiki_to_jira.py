@@ -73,12 +73,13 @@ def ProcessRequirementPage(page_title, issue):
 	requirement = GetWiki({"action": "getSource", "space": config["project_space"], "title": page_title})
 	issue.summary = GetMatchGroup(requirement, excerptExpression, 1).strip()
 	issue.description = GetSection(requirement, "h6.", "Description")
-	print "-----\n%s\n-----\n" % issue.description
+#	print "-----\n%s\n-----\n" % issue.description
 
 
 # Processes issue by title (in case if issue excerpted)
-def ProcessIssue(title):
+def ProcessIssue(title, priority):
 	issue = JiraIssue()
+	issue.priority = priority
 
 	key = GetMatchGroup(title, jiraLink, 1)
 	if key:
@@ -92,44 +93,69 @@ def ProcessIssue(title):
 		issue.summary = TakeFirstSentence(title)
 		issue.description = title
 	
-	return issue.summary
-'''	a = excerptInclude.search(title)
-	if a:
-		return "[!] Process page [%s] (\"%s\")" % (a.group(1), ProcessRequirementPage(a.group(1)))
-	a = wikiLink.search(title)
-	if a:
-		return "[!] Link to page [%s] (\"%s\")" % (a.group(3), a.group(2))'''
+	wikiIssues[issue.summary] = issue
+	if key:
+		wikiIssuesByKey[issue.key] = issue
+
+	return issue
 
 
 # List separate issues in the given text (section)
-def ListIssues(text):
+def ListIssues(text, priority):
 	if not text:
 		return
 
-	k = 1
 	for i in separateRequirement.split(text):
 		if i:
-			print "%s. %s" % (k, ProcessIssue(i.strip()))
-			k += 1
+			issue = ProcessIssue(i.strip(), config["priorities"][priority])
+			action = " "
+			if issue.key:
+				if jiraIssuesByKey.has_key(issue.key):
+					# Issue already exists on jira - compare
+					pass
+				else:
+					# jira issue has been deleted - notify user to update wiki
+					pass
+			else:
+				if jiraIssues.has_key(issue.summary):
+					# Shouldn't occur ...
+					pass
+				else:
+					# jira issue doesn't exist - create new
+					issue.project = config["project_abbr"]
+					issue.reporter = "nbogdanov"
+
+					issue.Connect(soap, jiraAuth)
+					issue.Create()
+					issue.SetVersion(versionId)
+					action = "+";
+
+			print " [%s] %s" % (action, issue.ToString(line))
 
 ########################################################################################################################
 
-wikiIssues = []
+soap = SOAPpy.WSDL.Proxy(config["jira_soap"])
+jiraAuth = soap.login(config["jira"]["user"], config["jira"]["password"])
 
-page = GetWiki({"action": "getSource", "space": config["project_space"], "title": containerPage})
+versionId = None
+for v in soap.getVersions(jiraAuth, config["project_abbr"]):
+	if v["name"] == version:
+		versionId = v["id"]
+		break
 
-requirements = GetSection(page, "h4.", "Requirements")
-[ListIssues(GetSection(requirements, "h6.", priority)) for priority in config["priorities"]]
+if not versionId:
+	print "[!] jira version not found!"
+	exit(0)
+
+
 
 
 ## Jira issues for version
 
 print "Issues in jira:"
 
-jiraIssues = []
-
-soap = SOAPpy.WSDL.Proxy(config["jira_soap"])
-jiraAuth = soap.login(config["jira"]["user"], config["jira"]["password"])
+jiraIssues = {}			# TODO: Not needed, remove
+jiraIssuesByKey = {}
 
 issue = JiraIssue()
 issue.Connect(soap, jiraAuth)
@@ -137,8 +163,20 @@ issues = soap.getIssuesFromJqlSearch(jiraAuth, "project = %s AND fixVersion = %s
 
 for i in issues:
 	issue.Parse(i)
-	jiraIssues.append(issue)
-	print "[%s] %s" % (action, issue.summary[0:line])
+	jiraIssues[issue.summary] = issue
+	jiraIssuesByKey[issue.key] = issue
+	print " %s" % (issue.ToString(line))
+
+
+## Issues on wiki
+
+wikiIssues = {}
+wikiIssuesByKey = {}
+
+page = GetWiki({"action": "getSource", "space": config["project_space"], "title": containerPage})
+
+requirements = GetSection(page, "h4.", "Requirements")
+[ListIssues(GetSection(requirements, "h6.", priority), priority) for priority in config["priorities"].keys()]
 
 
 

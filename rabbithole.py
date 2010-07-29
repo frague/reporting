@@ -391,6 +391,7 @@ class JiraIssue:
 
 	def __init__(self):
 		self.IsConnected = False
+		self.Clear()
 		pass
 
 	def Connect(self, soap, jiraAuth):
@@ -412,13 +413,33 @@ class JiraIssue:
 	def Clear(self):
 		self.id = 0
 		self.key = ""
+		self.summary = ""
+		self.description = ""
+		self.priority = "3"
+		self.type = "3"
+		self.assignee = ""
+		self.reporter = ""
 
 	def IsNotEmpty(self):
 		return self.key and self.id
 
+	def ToString(self, crop):
+		return "[%s] %s (%s)" % (self.key, self.summary[0:crop], self.priority)
+	
+	def Create(self):
+		if self.IsConnected:
+#			newIssue = self.soap.createIssue(self.jiraAuth, {"project": self.project, "type": self.type, "priority": self.priority, "summary": self.summary, "description": self.description, "assignee": self.assignee, "reporter": self.reporter})
+			newIssue = self.soap.createIssue(self.jiraAuth, {"project": self.project, "type": self.type, "priority": self.priority, "summary": self.summary, "description": self.description, "reporter": self.reporter})
+			self.key = newIssue.key
+			self.id = newIssue.id
+			
 	def Update(self, changes):
 		if self.IsNotEmpty() and self.IsConnected:
 			self.soap.updateIssue(self.jiraAuth, self.key, changes)
+
+	def SetVersion(self, version):
+		if self.IsNotEmpty() and self.IsConnected:
+			self.Update([{"id": "fixVersions", "values": [version]}])
 
 	def Resolve(self):
 		if self.IsNotEmpty() and self.IsConnected:

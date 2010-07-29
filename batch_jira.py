@@ -92,7 +92,7 @@ for i in issues:
 
 '''if re.search(" same ", issue.summary):
 		print "-- %s" % issue.summary
-		issue.Update([{"id": "priority", "values": "3"}, {"id": "assignee", "values": "tgautier"}])'''
+		issue.Update([{"id": "priority", "values": "3"}, {"id": "assignee", "values": "tgau"}])'''
 
 #		issue.Update([{"id": "priority", "values": "3"}])
 
