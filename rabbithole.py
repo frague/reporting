@@ -83,7 +83,7 @@ while (weekends.match(lastWorkday.strftime("%a"))):
 # Exits if no profile passed as parameter
 def ProfileNeeded():
 	if profile == "":
-		exit("Profile is not specified!")
+		exit("[!] Profile is not specified!")
 	else:
 		print "==== Profile: %s" % profile
 
@@ -424,7 +424,7 @@ class JiraIssue:
 		return self.key and self.id
 
 	def ToString(self, crop):
-		return "[%s] %s (%s)" % (self.key, self.summary[0:crop], self.priority)
+		return "[%s] %s (%s)" % (self.key or "...", self.summary[0:crop], self.priority)
 	
 	def Create(self):
 		if self.IsConnected:

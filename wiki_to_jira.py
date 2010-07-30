@@ -45,6 +45,14 @@ def NotEqualExpression(word):
 e = NotEqualExpression("{excerpt}")
 excerptExpression = re.compile("\{excerpt\}(%s*)\{excerpt\}" % e)
 
+
+# Creates regexp for section searching
+def MakeSectionRegexp(prefix, title=""):
+	dPrefix = deRegexp(prefix)
+	if title:
+		title += "\n"
+	return re.compile("(%s {0,1}%s)(%s*)(\\n%s|$)" % (dPrefix, title, NotEqualExpression(prefix), dPrefix), re.MULTILINE)
+
 # Gets section by prefix from text (e.g. h6. Title ..... h6.)
 # In case when there several sections with the same prefix in the text, title can be used
 def GetSection(text, prefix, title=""):
@@ -52,17 +60,18 @@ def GetSection(text, prefix, title=""):
 		return ""
 
 #	print "\n----- Section \"%s %s\"" % (prefix, title)
-
-	dPrefix = deRegexp(prefix)
-	if title:
-		title += "\n"
-
-	section = re.compile("%s {0,1}%s(%s*)(\\n%s|$)" % (dPrefix, title, NotEqualExpression(prefix), dPrefix), re.MULTILINE)
-
-	found = section.search(text)
+	found = MakeSectionRegexp(prefix, title).search(text)
 	if found:
-		return found.group(1)
+		return found.group(2)
 	return found
+
+# Substitutes content of section in text.
+# If section has not been found, new content will be appended to the text
+def SubstituteSection(text, new_content, prefix, title=""):
+	new_text = MakeSectionRegexp(prefix, title).sub("\\1%s\\4" % new_content, text)
+	if new_text == text:
+		new_text = "\n%s %s\n%s\n" % (prefix, title, new_content)
+	return new_text
 
 # Return the only fist sentence from the text
 def TakeFirstSentence(text):
@@ -101,9 +110,15 @@ def ProcessIssue(title, priority):
 
 
 # List separate issues in the given text (section)
-def ListIssues(text, priority):
+def ListIssues(prefix, title):
+	global page, updateWiki
+
+	text = GetSection(requirements, prefix, title)
 	if not text:
 		return
+
+	sectionUpdated = False
+	new_content = ""
 
 	for i in separateRequirement.split(text):
 		if i:
@@ -117,9 +132,10 @@ def ListIssues(text, priority):
 					# jira issue has been deleted - notify user to update wiki
 					pass
 			else:
+				sectionUpdated = True
 				if jiraIssues.has_key(issue.summary):
 					# Shouldn't occur ...
-					pass
+					i = "[%s@issues] %s" % (jiraIssues[issue.summary].key, i)
 				else:
 					# jira issue doesn't exist - create new
 					issue.project = config["project_abbr"]
@@ -129,10 +145,22 @@ def ListIssues(text, priority):
 					issue.Create()
 					issue.SetVersion(versionId)
 					action = "+";
+					i = "[%s@issues] " % (issue.key, i)
+
+			new_content += "# %s\n" % i.strip()
 
 			print " [%s] %s" % (action, issue.ToString(line))
 
+#	print "\n-----------------------------------------\n" + new_content + "\n-----------------------------------------\n"
+
+	if sectionUpdated:	
+		updateWiki = True
+		page = SubstituteSection(page, new_content, prefix, title)
+		
+
 ########################################################################################################################
+
+updateWiki = False
 
 soap = SOAPpy.WSDL.Proxy(config["jira_soap"])
 jiraAuth = soap.login(config["jira"]["user"], config["jira"]["password"])
@@ -144,10 +172,8 @@ for v in soap.getVersions(jiraAuth, config["project_abbr"]):
 		break
 
 if not versionId:
-	print "[!] jira version not found!"
+	print "[!] jira version is not found!"
 	exit(0)
-
-
 
 
 ## Jira issues for version
@@ -157,11 +183,11 @@ print "Issues in jira:"
 jiraIssues = {}			# TODO: Not needed, remove
 jiraIssuesByKey = {}
 
-issue = JiraIssue()
-issue.Connect(soap, jiraAuth)
-issues = soap.getIssuesFromJqlSearch(jiraAuth, "project = %s AND fixVersion = %s" % (config["project_abbr"], version), 100)
+issues = soap.getIssuesFromJqlSearch(jiraAuth, "project = '%s' AND fixVersion = '%s'" % (config["project_abbr"], version), 100)
 
 for i in issues:
+	issue = JiraIssue()
+	issue.Connect(soap, jiraAuth)
 	issue.Parse(i)
 	jiraIssues[issue.summary] = issue
 	jiraIssuesByKey[issue.key] = issue
@@ -170,98 +196,18 @@ for i in issues:
 
 ## Issues on wiki
 
+print "\nIssues on wiki:"
+
 wikiIssues = {}
 wikiIssuesByKey = {}
 
-page = GetWiki({"action": "getSource", "space": config["project_space"], "title": containerPage})
+page = re.sub("^Page source\n", "", GetWiki({"action": "getSource", "space": config["project_space"], "title": containerPage}))
 
 requirements = GetSection(page, "h4.", "Requirements")
-[ListIssues(GetSection(requirements, "h6.", priority), priority) for priority in config["priorities"].keys()]
+[ListIssues("h6.", priority) for priority in config["priorities"].keys()]
 
-
-
-exit(0)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Create new issues
-for i in cqIssues.keys():
-	v = cqIssues[i]
-
-	if v["State"] != "Closed":
-		descr = re.sub("([^>])(\n<)", "\\1{code}\\2", v["Steps_Description"])
-		descr = re.sub("(>\n)([ \t\n]*[^< \t\n])", "\\1{code}\\2", descr)
-
-		print "[+] %s: %s" % (v["id"], v["Title"][0:line])
-#		print descr
-
-		newIssue = soap.createIssue(jiraAuth, {"project": config["project_abbr"], "type": "1", "priority": v["Priority"][0:1], "summary": "%s: %s" % (v["id"], v["Title"]), "description": descr, "assignee": config["QAAssignee"], "reporter": "nbogdanov"})
-		soap.updateIssue(jiraAuth, newIssue.key, [{"id": "fixVersions", "values": [config["QAVersionId"]]}])
-
-
-
-'''
-for i in issues:
-	issue.Parse(i)
-	n = issue.Number()
-
-	print "%s: %s" % (issue.key, issue.status)
-
-	if (issue.status != "6"):
-		if n >= 645 and n <=716:
-			issue.Update([{"id": "fixVersion", "values": ["10721", "10725"]}])
-
-		if n > 716 and n <=762:
-			issue.Update([{"id": "fixVersion", "values": ["10721", "10726"]}])'''
-
-'''if re.search(" same ", issue.summary):
-		print "-- %s" % issue.summary
-		issue.Update([{"id": "priority", "values": "3"}, {"id": "assignee", "values": "tgautier"}])'''
-
-#		issue.Update([{"id": "priority", "values": "3"}])
-
-
-'''
-
-[
-059.        {"id": "summary", "values": ['[Updated] Issue created with Python'] },
-060. 
-061.        # Change issue type to 'New feature'
-062.        {"id":"issuetype", "values":'2'},
-063. 
-064.        # Setting a custom field. The id (10010) is discoverable from
-065.        # the database or URLs in the admin section
-066. 
-067.        {"id": "customfield_10010", "values": ["Random text set in updateIssue method"] },
-068. 
-069.        {"id":"fixVersions", "values":['10331']},
-070.        # Demonstrate setting a cascading selectlist:
-071.        {"id": "customfield_10061", "values": ["10098"]},
-072.        {"id": "customfield_10061_1", "values": ["10105"]},
-073.        {"id": "duedate", "values": datetime.date.today().strftime("%d-%b-%y")}
-074. 
-075.        ]
-
-'''
+if updateWiki:
+	WriteFile("temp.tmp", page)
+	GetWiki({"action": "storePage", "space": config["project_space"], "title": containerPage, "file": "temp.tmp"})
+	os.remove("temp.tmp")
+	print "[!] wiki page has been updated"
