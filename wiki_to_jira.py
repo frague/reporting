@@ -7,8 +7,12 @@ regexpReserved = re.compile("([\[\]\{\}\.\?\*\+\-])")
 separateRequirement = re.compile("^[#\-\*] ", re.MULTILINE)
 excerptInclude = re.compile("\{excerpt-include:([^\|\}]+)[\|\}]")
 wikiLink = re.compile("^\[(([^\|]+)\|){0,1}([^\]]+)\]$")
-firstSentence = re.compile("^([^\n]+([\.\?\!][ \n$]|\n))")
 jiraLink = re.compile("\[([a-z0-9]+-\d+)@issues\]", re.IGNORECASE)
+doubleList = re.compile("^[#*]([#*] )", re.MULTILINE)
+
+
+firstSentence = re.compile("^([^\n]+([\.\?\!][ \n$]|\n))")
+
 
 ProfileNeeded()
 containerPage = GetParameter("source")
@@ -111,10 +115,11 @@ def ProcessIssue(title, priority):
 
 # List separate issues in the given text (section)
 def ListIssues(prefix, title):
-	global page, updateWiki
+	global requirements, page, updateWiki, metKeys
 
 	text = GetSection(requirements, prefix, title)
 	if not text:
+#		print "[!] Section %s \"%s\" is not found" % (prefix, title)
 		return
 
 	sectionUpdated = False
@@ -122,15 +127,19 @@ def ListIssues(prefix, title):
 
 	for i in separateRequirement.split(text):
 		if i:
-			issue = ProcessIssue(i.strip(), config["priorities"][priority])
+			issue = ProcessIssue(doubleList.sub("\\1", i).strip(), config["priorities"][priority])
 			action = " "
 			if issue.key:
+				metKeys.append(issue.key)
+
 				if jiraIssuesByKey.has_key(issue.key):
 					# Issue already exists on jira - compare
-					pass
+					if not issue.Equals(jiraIssuesByKey[issue.key]):
+						action = "@"
+						jiraIssuesByKey[issue.key].UpdateFrom(issue)
 				else:
 					# jira issue has been deleted - notify user to update wiki
-					pass
+					action = "?"
 			else:
 				sectionUpdated = True
 				if jiraIssues.has_key(issue.summary):
@@ -143,9 +152,10 @@ def ListIssues(prefix, title):
 
 					issue.Connect(soap, jiraAuth)
 					issue.Create()
-					issue.SetVersion(versionId)
+					issue.SetVersion([versionId, backlogVersionId])
 					action = "+";
-					i = "[%s@issues] " % (issue.key, i)
+					i = "[%s@issues] %s" % (issue.key, i)
+					metKeys.append(issue.key)
 
 			new_content += "# %s\n" % i.strip()
 
@@ -166,22 +176,25 @@ soap = SOAPpy.WSDL.Proxy(config["jira_soap"])
 jiraAuth = soap.login(config["jira"]["user"], config["jira"]["password"])
 
 versionId = None
+backlogVersionId = None
 for v in soap.getVersions(jiraAuth, config["project_abbr"]):
 	if v["name"] == version:
 		versionId = v["id"]
-		break
+	if v["name"] == "Product Backlog":
+		backlogVersionId = v["id"]
 
-if not versionId:
+if not versionId or not backlogVersionId:
 	print "[!] jira version is not found!"
 	exit(0)
 
 
 ## Jira issues for version
 
-print "Issues in jira:"
+#print "Issues in jira:"
 
 jiraIssues = {}			# TODO: Not needed, remove
 jiraIssuesByKey = {}
+metKeys = []
 
 issues = soap.getIssuesFromJqlSearch(jiraAuth, "project = '%s' AND fixVersion = '%s'" % (config["project_abbr"], version), 100)
 
@@ -191,12 +204,12 @@ for i in issues:
 	issue.Parse(i)
 	jiraIssues[issue.summary] = issue
 	jiraIssuesByKey[issue.key] = issue
-	print " %s" % (issue.ToString(line))
+#	print " %s" % (issue.ToString(line))
 
 
 ## Issues on wiki
 
-print "\nIssues on wiki:"
+print "Issues on wiki:"
 
 wikiIssues = {}
 wikiIssuesByKey = {}
@@ -204,8 +217,17 @@ wikiIssuesByKey = {}
 page = re.sub("^Page source\n", "", GetWiki({"action": "getSource", "space": config["project_space"], "title": containerPage}))
 
 requirements = GetSection(page, "h4.", "Requirements")
+
+# Sync existing issues
 [ListIssues("h6.", priority) for priority in config["priorities"].keys()]
 
+# Remove deleted issues from jira
+for key in jiraIssuesByKey.keys():
+	if not key in metKeys:
+		print " [-] %s" % jiraIssuesByKey[key].ToString(line)
+		jiraIssuesByKey[key].Delete()
+
+# Update wiki with jira keys
 if updateWiki:
 	WriteFile("temp.tmp", page)
 	GetWiki({"action": "storePage", "space": config["project_space"], "title": containerPage, "file": "temp.tmp"})

@@ -423,6 +423,9 @@ class JiraIssue:
 	def IsNotEmpty(self):
 		return self.key and self.id
 
+	def Equals(self, issue):
+		return self.key == issue.key and self.summary == issue.summary and self.description == issue.description and self.priority == issue.priority
+
 	def ToString(self, crop):
 		return "[%s] %s (%s)" % (self.key or "...", self.summary[0:crop], self.priority)
 	
@@ -437,13 +440,21 @@ class JiraIssue:
 		if self.IsNotEmpty() and self.IsConnected:
 			self.soap.updateIssue(self.jiraAuth, self.key, changes)
 
+	def UpdateFrom(self, issue):
+		if self.IsNotEmpty() and self.IsConnected:
+			self.soap.updateIssue(self.jiraAuth, self.key, [{"id": "type", "values": [issue.type]}, {"id": "priority", "values": [issue.priority]}, {"id": "summary", "values": [issue.summary]}, {"id": "description", "values": [issue.description]}])
+
 	def SetVersion(self, version):
 		if self.IsNotEmpty() and self.IsConnected:
-			self.Update([{"id": "fixVersions", "values": [version]}])
+			self.Update([{"id": "fixVersions", "values": version}])
 
 	def Resolve(self):
 		if self.IsNotEmpty() and self.IsConnected:
 			self.soap.progressWorkflowAction(self.jiraAuth, self.key, '2', [{"id": "resolution", "values": "2"}])
+
+	def Delete(self):
+		if self.IsNotEmpty() and self.IsConnected:
+			self.soap.deleteIssue(self.jiraAuth, self.key)
 
 
 
