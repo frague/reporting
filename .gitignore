@@ -4,3 +4,4 @@ rabbithole.yaml
 profiles/*
 csv/*
 bugs_*.txt
+queues.txt
