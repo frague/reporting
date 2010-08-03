@@ -8,7 +8,7 @@ separateRequirement = re.compile("^[#\-\*] ", re.MULTILINE)
 excerptInclude = re.compile("\{excerpt-include:([^\|\}]+)[\|\}]")
 wikiLink = re.compile("^\[(([^\|]+)\|){0,1}([^\]]+)\]$")
 jiraLink = re.compile("\[([a-z0-9]+-\d+)@issues\]", re.IGNORECASE)
-doubleList = re.compile("^[#*]([#*] )", re.MULTILINE)
+doubleList = re.compile("^[#*]([#*]+ )", re.MULTILINE)
 
 
 firstSentence = re.compile("^([^\n]+([\.\?\!][ \n$]|\n))")
