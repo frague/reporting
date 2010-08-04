@@ -74,7 +74,8 @@ def GetSection(text, prefix, title=""):
 def SubstituteSection(text, new_content, prefix, title=""):
 	new_text = MakeSectionRegexp(prefix, title).sub("\\1%s\\4" % new_content, text)
 	if new_text == text:
-		new_text = "\n%s %s\n%s\n" % (prefix, title, new_content)
+		# Appending new content to the end
+		new_text = "%s\n%s %s\n%s\n" % (text, prefix, title, new_content)
 	return new_text
 
 # Return the only fist sentence from the text
@@ -165,7 +166,7 @@ def ListIssues(prefix, title):
 
 	if sectionUpdated:	
 		updateWiki = True
-		page = SubstituteSection(page, new_content, prefix, title)
+		page = SubstituteSection(requirements, new_content, prefix, title)
 		
 
 ########################################################################################################################
@@ -221,11 +222,22 @@ requirements = GetSection(page, "h4.", "Requirements")
 # Sync existing issues
 [ListIssues("h6.", priority) for priority in config["priorities"].keys()]
 
-# Remove deleted issues from jira
+'''# Remove deleted issues from jira
 for key in jiraIssuesByKey.keys():
 	if not key in metKeys:
 		print " [-] %s" % jiraIssuesByKey[key].ToString(line)
-		jiraIssuesByKey[key].Delete()
+		jiraIssuesByKey[key].Delete()'''
+
+# Put unsynched jira issues to separate section
+updateWiki = True
+jiraOnly = ""
+for key in jiraIssuesByKey.keys():
+	if not key in metKeys:
+		print " [#] %s" % jiraIssuesByKey[key].ToString(line)
+		jiraOnly += "# [%s@issues] %s\n" % (key, jiraIssuesByKey[key].summary)
+
+requirements = SubstituteSection(requirements, jiraOnly, "h6.", "Issues in jira only")
+page = SubstituteSection(page, requirements, "h4.", "Requirements")
 
 # Update wiki with jira keys
 if updateWiki:
