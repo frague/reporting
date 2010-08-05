@@ -142,7 +142,6 @@ def ListIssues(prefix, title):
 					# jira issue has been deleted - notify user to update wiki
 					action = "?"
 			else:
-				sectionUpdated = True
 				if jiraIssues.has_key(issue.summary):
 					# Shouldn't occur ...
 					i = "[%s@issues] %s" % (jiraIssues[issue.summary].key, i)
@@ -165,13 +164,11 @@ def ListIssues(prefix, title):
 #	print "\n-----------------------------------------\n" + new_content + "\n-----------------------------------------\n"
 
 	if sectionUpdated:	
-		updateWiki = True
 		page = SubstituteSection(requirements, new_content, prefix, title)
 		
 
 ########################################################################################################################
 
-updateWiki = False
 
 soap = SOAPpy.WSDL.Proxy(config["jira_soap"])
 jiraAuth = soap.login(config["jira"]["user"], config["jira"]["password"])
