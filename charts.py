@@ -15,9 +15,11 @@ data = {}
 for set in [config["charts_burndown"], config["charts_bars"]]:
 	for dataSet in set.values():
 		if len(dataSet) > 0 and not data.has_key(dataSet[0]):
-			data[dataSet[0]] = GetAndSaveJiraFilteredData(dataSet[0])
-			print "Filter %s data loaded." % dataSet[0]
 
+			data[dataSet[0]] = GetAndSaveJiraVersionIssues(config["project_abbr"], dataSet[0])
+			
+			print "Filter %s data loaded." % dataSet[0]
+#			print data[dataSet[0]]
 
 print "-- Bar charts: ---------------------------------------------------------"
 for key in config["charts_bars"].keys():

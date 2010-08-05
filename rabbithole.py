@@ -143,25 +143,32 @@ def GetJira(add_params = {}):
 
 # Update cache file with received data
 # Returns updated dictionary
-def SaveUpdates(filter_name, status):
-	name = "cache/%s.yaml" % filter_name
+def SaveUpdates(project, version_name, status):
+	name = re.sub(" ", "", "cache/%s_%s.yaml" % (project, version_name))
 	existing = yaml.load(ReadFile(name)) or {}
 	existing.update({datetime.date.today(): status})
 	WriteFile(name, yaml.dump(existing))
 	return existing
 	
-# Requests data from Jira by given filter name
-def GetJiraFilterData(filter_name):
+
+def CountJiraIssuesStatuses(project, version_name):
+	global jiraAuth, soap
+
+	if (jiraAuth == None):
+		InitJiraSOAP()
+
+	# Getting Issues by Jql filter
 	status = {}
-	for line in filter(lambda line: reportLine.match(line), GetJira({"action": "getIssueList", "filter": filter_name}).split("\n")):
-		[Key, Id, Project, CurrentStatus, Priority, Assignee, Reporter, Created, DateDue] = line.split(", ")
-		if isNumber.match(CurrentStatus):
-			try:
-				status[config["statuses"][int(CurrentStatus)]] += 1
-			except:
-				status[config["statuses"][int(CurrentStatus)]] = 1
+	for i in soap.getIssuesFromJqlSearch(jiraAuth, "project = '%s' AND fixVersion = '%s'" % (project, version_name), 1000):
+		issue = JiraIssue()
+		issue.Parse(i)
+		status_name = config["statuses"][int(issue.status)]
+		if status.has_key(status_name):
+			status[status_name] += 1
+		else:
+			status[status_name] = 1
 	return status
-		
+
 
 # Reads template from filesystem
 def GetTemplate(template_name):
@@ -173,10 +180,10 @@ def FillTemplate(template, values):
 		template = template.replace(chunk, values[chunk])
 	return template
 
-# Retrieves data from jira and appends storage file with it
-def GetAndSaveJiraFilteredData(filter_name):
-	status = GetJiraFilterData(filter_name)
-	return SaveUpdates(filter_name, status)
+# Retrieves data from jira by project and version name and appends storage file with it
+def GetAndSaveJiraVersionIssues(project, version_name):
+	status = CountJiraIssuesStatuses(project, version_name)
+	return SaveUpdates(project, version_name, status)
 
 # Makes Wiki-syntax bar-chart markup for given data
 def MakeWikiBarChart(data, name=""):
