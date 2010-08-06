@@ -300,7 +300,7 @@ def BindLogs(key, source, title):
 
 
 def BindTeamLogs(team_name, teams, commits, worklog, personTemplate):
-	result = "h3. %s Team\n{section}\n{column:width=49%%}\n" % team_name
+	result = "h2. %s Team\n{section}\n{column:width=49%%}\n" % team_name
 	i = 1
 	divide = True
 	for user in teams[team_name]:

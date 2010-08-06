@@ -17,11 +17,11 @@ firstSentence = re.compile("^([^\n]+([\.\?\!][ \n$]|\n))")
 ProfileNeeded()
 containerPage = GetParameter("source")
 version = GetParameter("version")
+confidence = GetParameter("confidence")
 
-'''if not containerPage or not version:
-	print "[!] Usage: wiki_to_jira.py --profile=PROFILE_NAME --source=SOURCE_PAGE --version=VERSION"
+if not containerPage or not version:
+	print "[!] Usage: wiki_to_jira.py --profile=PROFILE_NAME --source=SOURCE_PAGE --version=VERSION [--confidence]"
 	exit(0)
-	'''
 
 def GetMatchGroup(haystack, expr, group):
 	a = expr.search(haystack)
@@ -46,9 +46,7 @@ def NotEqualExpression(word):
 		collector += char
 	return "(%s)" % result
 
-e = NotEqualExpression("{excerpt}")
-excerptExpression = re.compile("\{excerpt\}(%s*)\{excerpt\}" % e)
-
+excerptExpression = re.compile("\{excerpt\}(%s*)\{excerpt\}" % NotEqualExpression("{excerpt}"))
 
 # Creates regexp for section searching
 def MakeSectionRegexp(prefix, title=""):
@@ -72,11 +70,12 @@ def GetSection(text, prefix, title=""):
 # Substitutes content of section in text.
 # If section has not been found, new content will be appended to the text
 def SubstituteSection(text, new_content, prefix, title=""):
-	new_text = MakeSectionRegexp(prefix, title).sub("\\1%s\\4" % new_content, text)
-	if new_text == text:
+	if GetSection(text, prefix, title):
+		# Substitute text
+		return MakeSectionRegexp(prefix, title).sub("\\1%s\\4" % new_content, text)
+	else:
 		# Appending new content to the end
-		new_text = "%s\n%s %s\n%s\n" % (text, prefix, title, new_content)
-	return new_text
+		return "%s\n%s %s\n%s\n" % (text, prefix, title, new_content)
 
 # Return the only fist sentence from the text
 def TakeFirstSentence(text):
@@ -92,6 +91,8 @@ def ProcessRequirementPage(page_title, issue):
 
 # Processes issue by title (in case if issue excerpted)
 def ProcessIssue(title, priority):
+	global confidence, issues_confidence
+
 	issue = JiraIssue()
 	issue.priority = priority
 
@@ -108,6 +109,12 @@ def ProcessIssue(title, priority):
 		issue.description = title
 	
 	wikiIssues[issue.summary] = issue
+	if confidence:
+		co = "(?)"
+		if jiraIssuesByKey.has_key(issue.key) and (jiraIssuesByKey[issue.key].status == "5" or jiraIssuesByKey[issue.key].status == "6"):
+			co = "(/) 100%"
+		issues_confidence += FillTemplate(GetTemplate(config["confidence_line_template"]), {"##KEY##": issue.key, "##SUMMARY##": issue.summary, "##CONFIDENCE##": co})
+
 	if key:
 		wikiIssuesByKey[issue.key] = issue
 
@@ -116,13 +123,18 @@ def ProcessIssue(title, priority):
 
 # List separate issues in the given text (section)
 def ListIssues(prefix, title):
-	global requirements, page, updateWiki, metKeys
+	global requirements, page, updateWiki, metKeys, issues_confidence
 
 	text = GetSection(requirements, prefix, title)
 	if not text:
 #		print "[!] Section %s \"%s\" is not found" % (prefix, title)
 		return
 
+	print title
+
+	if confidence:
+		issues_confidence += FillTemplate(GetTemplate(config["confidence_priority_template"]), {"##PRIORITY##": title})
+	
 	sectionUpdated = False
 	new_content = ""
 
@@ -211,13 +223,14 @@ print "Issues on wiki:"
 
 wikiIssues = {}
 wikiIssuesByKey = {}
+issues_confidence = ""
 
 page = re.sub("^Page source\n", "", GetWiki({"action": "getSource", "space": config["project_space"], "title": containerPage}))
 
 requirements = GetSection(page, "h4.", "Requirements")
 
 # Sync existing issues
-[ListIssues("h6.", priority) for priority in config["priorities"].keys()]
+[ListIssues("h6.", priority) for priority in sorted(config["priorities"].iterkeys())]
 
 '''# Remove deleted issues from jira
 for key in jiraIssuesByKey.keys():
@@ -235,6 +248,9 @@ for key in jiraIssuesByKey.keys():
 
 requirements = SubstituteSection(requirements, jiraOnly, "h6.", "Issues in jira only")
 page = SubstituteSection(page, requirements, "h4.", "Requirements")
+
+if confidence:
+	page = SubstituteSection(page, FillTemplate(GetTemplate(config["confidence_main_template"]), {"##CONTENT##": issues_confidence}), "h4.", "Confidence")
 
 # Update wiki with jira keys
 if updateWiki:
