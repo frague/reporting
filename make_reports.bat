@@ -1,3 +1,6 @@
+@echo off
+cls
+
 charts.py --profile=cloud
 charts.py --profile=dcsm
 
