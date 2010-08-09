@@ -105,6 +105,7 @@ def ProcessIssue(title, priority):
 	if excerpt:
 		ProcessRequirementPage(excerpt, issue)
 	else:
+		title = title.replace("{excerpt}", "").strip()
 		issue.summary = TakeFirstSentence(title)
 		issue.description = title
 	
