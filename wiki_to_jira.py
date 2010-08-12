@@ -29,23 +29,6 @@ def GetMatchGroup(haystack, expr, group):
 		return a.group(group)
 	return ""
 
-def deRegexp(text):
-	return regexpReserved.sub("\\\\\\1", text)
-
-# Creates RegExp for matching text until given word will be met
-def NotEqualExpression(word):
-	collector = ""
-	result = ""
-	for char in word:
-		char = deRegexp(char)
-		if result:
-			result += "|"
-		if collector:
-			result += collector
-		result += "[^%s]" % char
-		collector += char
-	return "(%s)" % result
-
 excerptExpression = re.compile("\{excerpt\}(%s*)\{excerpt\}" % NotEqualExpression("{excerpt}"))
 
 # Creates regexp for section searching

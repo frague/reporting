@@ -70,6 +70,7 @@ isNumber = re.compile("^[0-9]+$")
 reportLine = re.compile("^[^,]+(, [^,]+){8}$")
 weekends = re.compile("(Sat|Sun)")
 ignore_key = re.compile("^--ignore=", re.IGNORECASE)
+regexpReserved = re.compile("([\[\]\{\}\.\?\*\+\-])")
 
 today = datetime.date.today()
 yesterday = today - timedelta(days = 1)
@@ -78,6 +79,30 @@ lastWorkday = yesterday
 while (weekends.match(lastWorkday.strftime("%a"))):
 	lastWorkday = lastWorkday - timedelta(days = 1)
 
+def deRegexp(text):
+	return regexpReserved.sub("\\\\\\1", text)
+
+# Creates RegExp for matching text until given word will be met
+def NotEqualExpression(word):
+	collector = ""
+	result = ""
+	for char in word:
+		char = deRegexp(char)
+		if result:
+			result += "|"
+		if collector:
+			result += collector
+		result += "[^%s]" % char
+		collector += char
+	return "(%s)" % result
+
+# Searches haystack for expression, trying to return requested group string
+# if not found - emty string will be returned
+def GetMatchGroup(haystack, expr, group):
+	a = expr.search(haystack)
+	if a:
+		return a.group(group)
+	return ""
 
 
 # Exits if no profile passed as parameter
@@ -150,7 +175,7 @@ def SaveUpdates(project, version_name, status):
 	WriteFile(name, yaml.dump(existing))
 	return existing
 	
-
+# Count jira issues of each status by given version
 def CountJiraIssuesStatuses(project, version_name):
 	global jiraAuth, soap
 
@@ -463,5 +488,10 @@ class JiraIssue:
 		if self.IsNotEmpty() and self.IsConnected:
 			self.soap.deleteIssue(self.jiraAuth, self.key)
 
+######################################################################################
+# Text transforming methods
 
+cellExpression = re.compile("(<t[rdh])[^>]*>", re.IGNORECASE)
+def CleanHtmlTable(markup):
+	return cellExpression.sub("\\1>", markup)
 
