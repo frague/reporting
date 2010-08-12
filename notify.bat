@@ -1,6 +1,5 @@
 @echo off
 
-
 cls
 
 make_report.py --profile=cloud --notify
