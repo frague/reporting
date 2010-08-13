@@ -4,12 +4,33 @@ from operator import itemgetter
 
 tableExpr = re.compile("<table[^>]*>(%s+)</table>" % NotEqualExpression("</table>"), re.MULTILINE)
 titleExpr = re.compile("title=\"([^\"]+)\"")
+keyExpr = re.compile("\[([a-z]+\-\d+)@issues\]", re.IGNORECASE)
+userExpr = re.compile("\[~([a-z]+)\]", re.IGNORECASE)
 
 ################################################################################################################
 
 
 # Creates regexp for section searching
-def MakeSectionRegexp(level, title=""):
+def MakeSectionRegexp(prefix, title=""):
+	dPrefix = deRegexp(prefix)
+	if title:
+		title += "\n"
+	return re.compile("(%s {0,1}%s)(%s*)(\\n%s|$)" % (dPrefix, title, NotEqualExpression(prefix), dPrefix), re.MULTILINE)
+
+# Gets section by prefix from text (e.g. h6. Title ..... h6.)
+# In case when there several sections with the same prefix in the text, title can be used
+def GetSection(text, prefix, title=""):
+	if not text:
+		return ""
+
+#	print "\n----- Section \"%s %s\"" % (prefix, title)
+	found = MakeSectionRegexp(prefix, title).search(text)
+	if found:
+		return found.group(2)
+	return found
+
+# Creates regexp for section searching
+def MakeHtmlSectionRegexp(level, title=""):
 	dPrefix = deRegexp("<h%s>" % level)
 	return re.compile("<h%s><a[^>]*></a>%s</h%s>(%s+)" % (level, title, level, NotEqualExpression("<h%s" % level)), re.MULTILINE)
 
@@ -19,7 +40,7 @@ def GetHtmlSection(text, level, title=""):
 	if not text:
 		return ""
 
-	found = MakeSectionRegexp(level, title).search(text)
+	found = MakeHtmlSectionRegexp(level, title).search(text)
 	if found:
 		return found.group(1)
 	return found
@@ -40,6 +61,8 @@ def ParseHeadedTable(markup):
 		else:
 			item = {}
 			for i in range(len(cols)):
+				if cols[i] == "Priority":
+					values[i] = long(values[i])
 				item[cols[i]] = values[i]
 			result.append(item)
 	return result
@@ -108,9 +131,15 @@ wikiIssues.reverse()
 
 # Synching
 seen = []
-for issue in wikiIssues:
-	pageTitle = GetMatchGroup(issue["Title"], titleExpr, 1)
-	page = soapW.getPage(wikiAuth, config["project_abbr"], pageTitle)
-	print page
+for index in range(len(wikiIssues)):
+	issue = wikiIssues[index]
+	summary = GetMatchGroup(issue["Title"], titleExpr, 1)
+	page = soapW.getPage(wikiAuth, config["project_abbr"], summary)
+	i = JiraIssue()
+	i.summary = summary
+#	i.key = GetMatchGroup(issue["JIRA"], keyExpr, 1)
+	i.description = "%s\nh6. Detailed Description\n%s" % (issue["Description"], GetSection(page["content"], "h6.", "Detailed Description"))
+#	i.assignee = GetMatchGroup(issue["Implementation Owner"], userExpr, 1)
 
+	print "%s - %s" % (i.ToString(80), issue["Priority"])
 
