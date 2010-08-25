@@ -1,20 +1,28 @@
 from rabbithole import *
 from operator import itemgetter
+import xmlrpclib
 
 
 tableExpr = re.compile("<table[^>]*>(%s+)</table>" % NotEqualExpression("</table>"), re.MULTILINE)
 titleExpr = re.compile("title=\"([^\"]+)\"")
 keyExpr = re.compile("\[([a-z]+\-\d+)@issues\]", re.IGNORECASE)
+keyPageExpr = re.compile("\|\| *JIRA *\|([^\|]*)\|", re.IGNORECASE)
 userExpr = re.compile("\[~([a-z]+)\]", re.IGNORECASE)
+assigneeExpr = re.compile("\|\|Implementation Owner\|([a-z\[\]\~]+)\|", re.IGNORECASE)
 
 ################################################################################################################
 
 
+crlf = re.compile("[\n\r]+")
+def LineEndings(text):
+	return crlf.sub("\n", text)
+
 # Creates regexp for section searching
 def MakeSectionRegexp(prefix, title=""):
 	dPrefix = deRegexp(prefix)
-	if title:
-		title += "\n"
+#	if title:
+#		title += "\\n"
+#	print "(%s {0,1}%s)(%s*)(\\n%s|$)" % (dPrefix, title, NotEqualExpression(prefix), dPrefix)
 	return re.compile("(%s {0,1}%s)(%s*)(\\n%s|$)" % (dPrefix, title, NotEqualExpression(prefix), dPrefix), re.MULTILINE)
 
 # Gets section by prefix from text (e.g. h6. Title ..... h6.)
@@ -26,7 +34,7 @@ def GetSection(text, prefix, title=""):
 #	print "\n----- Section \"%s %s\"" % (prefix, title)
 	found = MakeSectionRegexp(prefix, title).search(text)
 	if found:
-		return found.group(2)
+		return found.group(2).strip()
 	return found
 
 # Creates regexp for section searching
@@ -43,7 +51,7 @@ def GetHtmlSection(text, level, title=""):
 	found = MakeHtmlSectionRegexp(level, title).search(text)
 	if found:
 		return found.group(1)
-	return found
+	return ""
 
 
 # Parses table with header into a set of dectionaries, one per each row
@@ -100,46 +108,95 @@ if not versionId or not backlogVersionId:
 
 ## Jira issues for version
 
+
 jiraIssues = {}			# TODO: Not needed, remove
 jiraIssuesByKey = {}
 metKeys = []
 
 issues = soap.getIssuesFromJqlSearch(jiraAuth, "project = '%s' AND fixVersion = '%s'" % (config["project_abbr"], version), 100)
+print "-- Existing jira issues by version \"%s\" (%s)" % (version, len(issues))
 for i in issues:
 	issue = JiraIssue()
 	issue.Connect(soap, jiraAuth)
 	issue.Parse(i)
-	jiraIssues[issue.summary] = issue
+	issue.description = LineEndings(issue.description)
+	jiraIssues[issue.summary] = issue	# Do we need this?
 	jiraIssuesByKey[issue.key] = issue
 #	print " %s" % (issue.ToString(line))
 
 
 
 # Getting issues from wiki (sorted by priority)
-soapW = SOAPpy.WSDL.Proxy(config["wiki_soap"])
-wikiAuth = soapW.login(config["wiki"]["user"], config["wiki"]["password"])
+wikiServer = xmlrpclib.ServerProxy(config["wiki_xmlrpc"])
+wikiToken = wikiServer.confluence1.login(config["wiki"]["user"], config["wiki"]["password"])
 
-page = soapW.getPage(wikiAuth, config["project_abbr"], containerPage)
 
-rendered = soapW.renderContent(wikiAuth, config["project_abbr"], SOAPpy.Types.longType(long(page["id"])))
+page = wikiServer.confluence1.getPage(wikiToken, config["project_abbr"], containerPage)
+
+rendered = wikiServer.confluence1.renderContent(wikiToken, config["project_abbr"], page.get("id"), "")
 requirements = GetHtmlSection(rendered, 6, "Requirements")
-
 wikiIssues = ParseHeadedTable(CleanHtmlTable(GetMatchGroup(requirements, tableExpr, 1)))
 wikiIssues.sort(key=itemgetter("Priority"))
-wikiIssues.reverse()
+#wikiIssues.reverse()		# Makes issues sorted by priority from GREATER to LESSER
 
+print "-- Requirements listed on the wiki page \"%s\" (%s)" % (containerPage, len(wikiIssues))
 
 # Synching
+flag = True
+
 seen = []
 for index in range(len(wikiIssues)):
 	issue = wikiIssues[index]
 	summary = GetMatchGroup(issue["Title"], titleExpr, 1)
-	page = soapW.getPage(wikiAuth, config["project_abbr"], summary)
-	i = JiraIssue()
-	i.summary = summary
-#	i.key = GetMatchGroup(issue["JIRA"], keyExpr, 1)
-	i.description = "%s\nh6. Detailed Description\n%s" % (issue["Description"], GetSection(page["content"], "h6.", "Detailed Description"))
-#	i.assignee = GetMatchGroup(issue["Implementation Owner"], userExpr, 1)
 
-	print "%s - %s" % (i.ToString(80), issue["Priority"])
+	pageName = deHtml(summary)
+	page = wikiServer.confluence1.getPage(wikiToken, config["project_abbr"], pageName)
+	
+	i = JiraIssue()
+	i.Connect(soap, jiraAuth)
+
+	key = GetMatchGroup(page["content"], keyPageExpr, 1)
+	i.key = GetMatchGroup(key, keyExpr, 1)
+
+	i.project = config["project_abbr"]
+	i.summary = summary
+	i.description = LineEndings("%s\nh6. Detailed Description\n%s" % (issue["Description"], GetSection(page["content"], "h6.", "Detailed Description")))
+	# DeHTML
+	i.summary = i.summary.replace("&quot;", "\"")
+
+	i.assignee = GetMatchGroup(page["content"], assigneeExpr, 1)
+	if userExpr.match(i.assignee):
+		i.assignee = GetMatchGroup(i.assignee, userExpr, 1)
+	else:
+		i.assignee = ""
+
+	action = " "
+	if i.key:
+		if jiraIssuesByKey.has_key(i.key):
+			ji = jiraIssuesByKey[i.key] 
+			if ji.Equals(i):
+				# Issues are the same
+				action = "="
+			else:
+				# Issues aren't equal - update to newer
+				WriteFile("1.txt", ji.description)
+				WriteFile("2.txt", i.description)
+				ji.UpdateFrom(i)
+				ji.SetVersion([versionId, backlogVersionId])
+				action = "@"
+		else:
+			action = "?"
+	else:
+		action = "+"
+		# New issue - create
+		i.Create()
+		i.SetVersion([versionId, backlogVersionId])
+		# Update wiki page with jira key
+		page["content"] = keyPageExpr.sub("|| JIRA | [%s@issues] |" % i.key, page["content"])
+		wikiServer.confluence1.storePage(wikiToken, page)
+
+
+	print "[%s] %s - %s (%s)" % (action, i.ToString(80), issue["Priority"], i.assignee)
+
+
 

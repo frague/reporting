@@ -82,6 +82,10 @@ while (weekends.match(lastWorkday.strftime("%a"))):
 def deRegexp(text):
 	return regexpReserved.sub("\\\\\\1", text)
 
+def deHtml(text):
+    return text.replace('&amp;', '&').replace('&lt;', '<').replace('&gt;', '>').replace('&quot;', '"').replace('&#39;', "'")
+
+
 # Creates RegExp for matching text until given word will be met
 def NotEqualExpression(word):
 	collector = ""
@@ -440,7 +444,7 @@ class JiraIssue:
 
 	def Parse(self, line):
 		for key in line._keys():
-			setattr(self, key, line[key])
+			setattr(self, key, line[key] or "")
 	
 	def Clear(self):
 		self.id = 0
@@ -451,12 +455,25 @@ class JiraIssue:
 		self.type = "3"
 		self.assignee = ""
 		self.reporter = ""
+		self.fixVersions = []
 
 	def IsNotEmpty(self):
 		return self.key and self.id
 
+	def AssertEqual(self, a, b, msg):
+#		if a != b:
+#			print "%s: \"%s\" <> \"%s\"" % (msg, a, b)
+		return a == b
+	
 	def Equals(self, issue):
-		return self.key == issue.key and self.summary == issue.summary and self.description == issue.description and self.priority == issue.priority
+		result = True
+		result = result and self.AssertEqual(self.key, issue.key, "Key")
+		result = result and self.AssertEqual(self.summary, issue.summary, "Summary")
+		result = result and self.AssertEqual(self.description, issue.description, "Description")
+		result = result and self.AssertEqual(self.priority, issue.priority, "Priority")
+		result = result and self.AssertEqual(self.assignee, issue.assignee, "Assignee")
+		return result
+#		return self.key == issue.key and self.summary == issue.summary and self.description == issue.description and self.priority == issue.priority and self.assignee == issue.assignee
 
 	def ToString(self, crop):
 		return "[%s] %s (%s)" % (self.key or "...", self.summary[0:crop], self.priority)
@@ -474,7 +491,7 @@ class JiraIssue:
 
 	def UpdateFrom(self, issue):
 		if self.IsNotEmpty() and self.IsConnected:
-			self.soap.updateIssue(self.jiraAuth, self.key, [{"id": "type", "values": [issue.type]}, {"id": "priority", "values": [issue.priority]}, {"id": "summary", "values": [issue.summary]}, {"id": "description", "values": [issue.description]}])
+			self.soap.updateIssue(self.jiraAuth, self.key, [{"id": "type", "values": [issue.type]}, {"id": "priority", "values": [issue.priority]}, {"id": "summary", "values": [issue.summary]}, {"id": "description", "values": [issue.description]}, {"id": "assignee", "values": [issue.assignee]}])
 
 	def SetVersion(self, version):
 		if self.IsNotEmpty() and self.IsConnected:
