@@ -69,17 +69,20 @@ except:
 
 ## Getting queues consumers
 
-doc = libxml2.parseFile("queues.txt")
-queues = [q.prop("name") for q in doc.xpathNewContext().xpathEval("//queue/stats[@consumerCount='0']/parent::*")]
 subscribers = ""
-ours = re.compile("(tors|ras|cloud)", re.IGNORECASE)
+try:
+	doc = libxml2.parseFile("queues.txt")
+	queues = [q.prop("name") for q in doc.xpathNewContext().xpathEval("//queue/stats[@consumerCount='0']/parent::*")]
+	ours = re.compile("(tors|ras|cloud)", re.IGNORECASE)
 
-for q in queues:
-	if ours.search(q):
-		q = "{color:red}%s{color}" % q
-	if subscribers:
-		subscribers += ", "
-	subscribers += q
+	for q in queues:
+		if ours.search(q):
+			q = "{color:red}%s{color}" % q
+		if subscribers:
+			subscribers += ", "
+		subscribers += q
+except:
+	pass
 
 ## Getting deployed versions
 

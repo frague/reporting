@@ -4,13 +4,15 @@ cls
 
 if "%1" == "" goto ERROR
 
-wget %1 -Oqueues.txt -t1
-
-queues.py --profile=dcsm
+wget %1 -Oqueues.txt -t1 -T120
 
 goto END
 
 :ERROR
-echo Usage: queues PATH_TO_QUEUES_RSS
+
+del queues.txt
 
 :END
+
+queues.py --profile=dcsm
+
