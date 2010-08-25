@@ -6,3 +6,4 @@ csv/*
 bugs_*.txt
 queues.txt
 cache/*
+notify.bat
