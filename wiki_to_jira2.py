@@ -172,20 +172,23 @@ for index in range(len(wikiIssues)):
 
 	action = " "
 	if i.key:
+		seen.append(i.key)
 		if jiraIssuesByKey.has_key(i.key):
 			ji = jiraIssuesByKey[i.key] 
 			if ji.Equals(i):
 				# Issues are the same
-				action = "="
+				pass
 			else:
 				# Issues aren't equal - update to newer
-				WriteFile("1.txt", ji.description)
-				WriteFile("2.txt", i.description)
 				ji.UpdateFrom(i)
 				ji.SetVersion([versionId, backlogVersionId])
 				action = "@"
 		else:
-			action = "?"
+			# Reference to jira issue exists on the wiki but issue wasn't returned by request
+			# Need to request a single issue separately and set proper versions
+			i.Fetch()
+			i.SetVersion([versionId, backlogVersionId])
+			action = "v"
 	else:
 		action = "+"
 		# New issue - create
@@ -195,8 +198,12 @@ for index in range(len(wikiIssues)):
 		page["content"] = keyPageExpr.sub("|| JIRA | [%s@issues] |" % i.key, page["content"])
 		wikiServer.confluence1.storePage(wikiToken, page)
 
-
 	print "[%s] %s - %s (%s)" % (action, i.ToString(80), issue["Priority"], i.assignee)
 
-
+# Remove not met issues from sprint
+for key in jiraIssuesByKey.keys():
+	if not key in seen:
+		ji = jiraIssuesByKey[key]
+		ji.SetVersion([backlogVersionId])
+		print "[-] %s" % ji.ToString(80)
 

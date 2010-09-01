@@ -478,6 +478,12 @@ class JiraIssue:
 	def ToString(self, crop):
 		return "[%s] %s (%s)" % (self.key or "...", self.summary[0:crop], self.priority)
 	
+	def Fetch(self, key = ""):
+		if key:
+			self.key = key
+		if self.key and self.IsConnected:
+			self.Parse(self.soap.getIssue(self.jiraAuth, self.key))
+	
 	def Create(self):
 		if self.IsConnected:
 #			newIssue = self.soap.createIssue(self.jiraAuth, {"project": self.project, "type": self.type, "priority": self.priority, "summary": self.summary, "description": self.description, "assignee": self.assignee, "reporter": self.reporter})

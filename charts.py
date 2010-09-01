@@ -18,7 +18,7 @@ for set in [config["charts_burndown"], config["charts_bars"]]:
 
 			data[dataSet[0]] = GetAndSaveJiraVersionIssues(config["project_abbr"], dataSet[0])
 			
-			print "Filter %s data loaded." % dataSet[0]
+			print "jira version \"%s\" data loaded." % dataSet[0]
 #			print data[dataSet[0]]
 
 print "-- Bar charts: ---------------------------------------------------------"
