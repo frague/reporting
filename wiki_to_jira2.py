@@ -5,10 +5,13 @@ import xmlrpclib
 
 tableExpr = re.compile("<table[^>]*>(%s+)</table>" % NotEqualExpression("</table>"), re.MULTILINE)
 titleExpr = re.compile("title=\"([^\"]+)\"")
+urlExpr = re.compile("href=\"([^\"]+)\"")
 keyExpr = re.compile("\[([a-z]+\-\d+)@issues\]", re.IGNORECASE)
 keyPageExpr = re.compile("\|\| *JIRA *\|([^\|]*)\|", re.IGNORECASE)
 userExpr = re.compile("\[~([a-z]+)\]", re.IGNORECASE)
 assigneeExpr = re.compile("\|\|Implementation Owner\|([a-z\[\]\~]+)\|", re.IGNORECASE)
+
+wikiRef = "h6. Requirement on the wiki:"
 
 ################################################################################################################
 
@@ -148,6 +151,7 @@ seen = []
 for index in range(len(wikiIssues)):
 	issue = wikiIssues[index]
 	summary = GetMatchGroup(issue["Title"], titleExpr, 1)
+	url = GetMatchGroup(issue["Title"], urlExpr, 1)
 
 	pageName = deHtml(summary)
 	page = wikiServer.confluence1.getPage(wikiToken, config["project_abbr"], pageName)
@@ -160,7 +164,7 @@ for index in range(len(wikiIssues)):
 
 	i.project = config["project_abbr"]
 	i.summary = summary
-	i.description = LineEndings("%s\nh6. Detailed Description\n%s" % (issue["Description"], GetSection(page["content"], "h6.", "Detailed Description")))
+	i.description = LineEndings("%s\nh6. Detailed Description:\n%s\n%s\n%s%s" % (issue["Description"], GetSection(page["content"], "h6.", "Detailed Description"), wikiRef, config["wiki"]["server"], url))
 	# DeHTML
 	i.summary = i.summary.replace("&quot;", "\"")
 
@@ -200,10 +204,16 @@ for index in range(len(wikiIssues)):
 
 	print "[%s] %s - %s (%s)" % (action, i.ToString(80), issue["Priority"], i.assignee)
 
+print "\n-- Moving requirements removed from sprint to the Backlog:"
+
 # Remove not met issues from sprint
 for key in jiraIssuesByKey.keys():
 	if not key in seen:
+		action = " "
 		ji = jiraIssuesByKey[key]
-		ji.SetVersion([backlogVersionId])
-		print "[-] %s" % ji.ToString(80)
+		if wikiRef in ji.description:
+			ji.SetVersion([backlogVersionId])
+			action = "[-]"
+		print "[%s] %s" % (action, ji.ToString(80))
+
 
