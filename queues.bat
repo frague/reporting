@@ -13,6 +13,5 @@ goto END
 del queues.txt
 
 :END
-
-queues.py --profile=dcsm
-
+-
+queues.py --profile=ras

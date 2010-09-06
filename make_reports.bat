@@ -1,9 +1,7 @@
 @echo off
 cls
 
-charts.py --profile=cloud
-charts.py --profile=dcsm
+charts.py --profile=ras
 
-make_report.py --profile=cloud
-make_report.py --profile=dcsm
+make_report.py --profile=ras
 
