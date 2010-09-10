@@ -162,9 +162,10 @@ for index in range(len(wikiIssues)):
 	key = GetMatchGroup(page["content"], keyPageExpr, 1)
 	i.key = GetMatchGroup(key, keyExpr, 1)
 
+	i.issuetype = "6"
 	i.project = config["project_abbr"]
 	i.summary = summary
-	i.description = LineEndings("%s\nh6. Detailed Description:\n%s\n%s\n%s%s" % (issue["Description"], GetSection(page["content"], "h6.", "Detailed Description"), wikiRef, config["wiki"]["server"], url))
+	i.description = LineEndings("%s\nh6. Detailed Description:\n%s\n \n%s\n%s%s" % (issue["Description"], GetSection(page["content"], "h6.", "Detailed Description"), wikiRef, config["wiki"]["server"], url))
 	# DeHTML
 	i.summary = i.summary.replace("&quot;", "\"")
 
@@ -213,7 +214,7 @@ for key in jiraIssuesByKey.keys():
 		ji = jiraIssuesByKey[key]
 		if wikiRef in ji.description:
 			ji.SetVersion([backlogVersionId])
-			action = "[-]"
+			action = "-"
 		print "[%s] %s" % (action, ji.ToString(80))
 
 
