@@ -443,8 +443,12 @@ class JiraIssue:
 			return 0
 
 	def Parse(self, line):
+		self.Clear()
 		for key in line._keys():
 			setattr(self, key, line[key] or "")
+		if self.type:
+			self.issuetype = self.type
+
 	
 	def Clear(self):
 		self.id = 0
@@ -452,7 +456,8 @@ class JiraIssue:
 		self.summary = ""
 		self.description = ""
 		self.priority = "3"
-		self.type = "3"
+		self.type = ""
+		self.issuetype = "3"
 		self.assignee = ""
 		self.reporter = ""
 		self.fixVersions = []
@@ -468,6 +473,7 @@ class JiraIssue:
 	def Equals(self, issue):
 		result = True
 		result = result and self.AssertEqual(self.key, issue.key, "Key")
+		result = result and self.AssertEqual(self.issuetype, issue.issuetype, "Issue Type")
 		result = result and self.AssertEqual(self.summary, issue.summary, "Summary")
 		result = result and self.AssertEqual(self.description, issue.description, "Description")
 		result = result and self.AssertEqual(self.priority, issue.priority, "Priority")
@@ -486,8 +492,8 @@ class JiraIssue:
 	
 	def Create(self):
 		if self.IsConnected:
-#			newIssue = self.soap.createIssue(self.jiraAuth, {"project": self.project, "type": self.type, "priority": self.priority, "summary": self.summary, "description": self.description, "assignee": self.assignee, "reporter": self.reporter})
-			newIssue = self.soap.createIssue(self.jiraAuth, {"project": self.project, "type": self.type, "priority": self.priority, "summary": self.summary, "description": self.description, "reporter": self.reporter})
+#			newIssue = self.soap.createIssue(self.jiraAuth, {"project": self.project, "issuetype": self.issuetype, "priority": self.priority, "summary": self.summary, "description": self.description, "assignee": self.assignee, "reporter": self.reporter})
+			newIssue = self.soap.createIssue(self.jiraAuth, {"project": self.project, "type": self.issuetype, "priority": self.priority, "summary": self.summary, "description": self.description, "reporter": self.reporter})
 			self.key = newIssue.key
 			self.id = newIssue.id
 			
@@ -497,7 +503,7 @@ class JiraIssue:
 
 	def UpdateFrom(self, issue):
 		if self.IsNotEmpty() and self.IsConnected:
-			self.soap.updateIssue(self.jiraAuth, self.key, [{"id": "type", "values": [issue.type]}, {"id": "priority", "values": [issue.priority]}, {"id": "summary", "values": [issue.summary]}, {"id": "description", "values": [issue.description]}, {"id": "assignee", "values": [issue.assignee]}])
+			self.soap.updateIssue(self.jiraAuth, self.key, [{"id": "issuetype", "values": [issue.issuetype]}, {"id": "priority", "values": [issue.priority]}, {"id": "summary", "values": [issue.summary]}, {"id": "description", "values": [issue.description]}, {"id": "assignee", "values": [issue.assignee]}])
 
 	def SetVersion(self, version):
 		if self.IsNotEmpty() and self.IsConnected:
