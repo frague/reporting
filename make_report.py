@@ -43,6 +43,7 @@ else:
 		chunks["##%s##" % team] = BindTeamLogs(team, config["teams"], commits, workLogs, personTemplate)
 	page = FillTemplate(GetTemplate(config["report_template"]), chunks)
 
+	print "\n-- Publishing on wiki: -------------------------------------------------"
 	WriteFile("temp1.tmp", page)
 	#GetWiki({"action": "storePage", "space": config["personal_space"], "title": "gitlog + %s report template" % today, "file": "temp1.tmp", "parent": config["parent_page"]})
 	GetWiki({"action": "storeNews", "space": config["project_space"], "title": "%s Daily Status Update" % today.strftime("%Y-%m-%d"), "file": "temp1.tmp"})
