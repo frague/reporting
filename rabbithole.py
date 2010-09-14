@@ -454,6 +454,7 @@ class JiraIssue:
 		self.id = 0
 		self.key = ""
 		self.summary = ""
+		self.status = "1"
 		self.description = ""
 		self.priority = "3"
 		self.type = ""

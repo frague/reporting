@@ -10,15 +10,17 @@ keyExpr = re.compile("\[([a-z]+\-\d+)@issues\]", re.IGNORECASE)
 keyPageExpr = re.compile("\|\| *JIRA *\|([^\|]*)\|", re.IGNORECASE)
 userExpr = re.compile("\[~([a-z]+)\]", re.IGNORECASE)
 assigneeExpr = re.compile("\|\|Implementation Owner\|([a-z\[\]\~]+)\|", re.IGNORECASE)
+confidenceExpr = re.compile("\|\| *Confidence *\|([^\|]+)\|", re.IGNORECASE)
+statusExpr = re.compile("\|\| *Status *\|([^\|]+)\|", re.IGNORECASE)
 
 wikiRef = "h6. Requirement on the wiki:"
 
 ################################################################################################################
 
 
-crlf = re.compile("[\n\r]+")
+crlf = re.compile("[\n\r]{3,}")
 def LineEndings(text):
-	return crlf.sub("\n", text)
+	return crlf.sub("\n\n", text)
 
 # Creates regexp for section searching
 def MakeSectionRegexp(prefix, title=""):
@@ -165,7 +167,10 @@ for index in range(len(wikiIssues)):
 	i.issuetype = "6"
 	i.project = config["project_abbr"]
 	i.summary = summary
-	i.description = LineEndings("%s\nh6. Detailed Description:\n%s\n \n%s\n%s%s" % (issue["Description"], GetSection(page["content"], "h6.", "Detailed Description"), wikiRef, config["wiki"]["server"], url))
+	descr = GetSection(page["content"], "h6.", "Detailed Description")
+	if descr:
+		descr = descr.replace("{excerpt}", "")
+	i.description = LineEndings("%s\nh6. Detailed Description:\n%s\n \n%s\n%s%s" % (issue["Description"].replace("{excerpt}", ""), descr, wikiRef, config["wiki"]["server"], url))
 	# DeHTML
 	i.summary = i.summary.replace("&quot;", "\"")
 
@@ -178,22 +183,38 @@ for index in range(len(wikiIssues)):
 	action = " "
 	if i.key:
 		seen.append(i.key)
+
 		if jiraIssuesByKey.has_key(i.key):
 			ji = jiraIssuesByKey[i.key] 
+
+			confidence = GetMatchGroup(page["content"], confidenceExpr, 1)
+			if confidence and confidence.strip() != "(/)100%" and (ji.status == "5" or ji.status == "6"):
+				page["content"] = confidenceExpr.sub("|| Confidence | (/)100% |", page["content"])
+				page["content"] = statusExpr.sub("|| Status | Implemented |", page["content"])
+				wikiServer.confluence1.storePage(wikiToken, page)
+				action = "x"
+
 			if ji.Equals(i):
 				# Issues are the same
 				pass
 			else:
 				# Issues aren't equal - update to newer
-				ji.UpdateFrom(i)
-				ji.SetVersion([versionId, backlogVersionId])
 				action = "@"
+				try:
+					ji.UpdateFrom(i)
+					ji.SetVersion([versionId, backlogVersionId])
+				except:
+					action = "!"
+					
 		else:
 			# Reference to jira issue exists on the wiki but issue wasn't returned by request
 			# Need to request a single issue separately and set proper versions
 			i.Fetch()
-			i.SetVersion([versionId, backlogVersionId])
 			action = "v"
+			try:
+				i.SetVersion([versionId, backlogVersionId])
+			except:
+				action = "!"
 	else:
 		action = "+"
 		# New issue - create
