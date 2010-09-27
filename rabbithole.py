@@ -371,7 +371,7 @@ def GetWorkLogs(fromDate, tillDate):
 
 	# Getting Issues by Jql filter
 	updatedIssues = {}
-	issues = soap.getIssuesFromJqlSearch(jiraAuth, "project = %s AND updatedDate >= '%s 00:00' ORDER BY updated DESC" % (config["project_abbr"], fromDate.strftime("%Y/%m/%d")), 100)
+	issues = soap.getIssuesFromJqlSearch(jiraAuth, "project = '%s' AND updatedDate >= '%s 00:00' ORDER BY updated DESC" % (config["project_abbr"], fromDate.strftime("%Y/%m/%d")), 100)
 	for i in issues:
 		updatedIssues[i["key"]] = i["summary"]
 
