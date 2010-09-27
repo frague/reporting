@@ -83,6 +83,7 @@ try:
 		subscribers += q
 except:
 	print "[!] Error parsing queues"
+	exit(0)
 	pass
 
 ## Getting deployed versions
