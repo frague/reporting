@@ -9,7 +9,7 @@ urlExpr = re.compile("href=\"([^\"]+)\"")
 keyExpr = re.compile("\[([a-z]+\-\d+)@issues\]", re.IGNORECASE)
 keyPageExpr = re.compile("\|\| *JIRA *\|([^\|]*)\|", re.IGNORECASE)
 userExpr = re.compile("\[~([a-z]+)\]", re.IGNORECASE)
-assigneeExpr = re.compile("\|\|Implementation Owner\|([a-z\[\]\~]+)\|", re.IGNORECASE)
+assigneeExpr = re.compile("\|\| *Implementation Owner *\| *([a-z\[\]\~]+ *)\|", re.IGNORECASE)
 confidenceExpr = re.compile("\|\| *Confidence *\|([^\|]+)\|", re.IGNORECASE)
 statusExpr = re.compile("\|\| *Status *\|([^\|]+)\|", re.IGNORECASE)
 
@@ -18,8 +18,9 @@ wikiRef = "h6. Requirement on the wiki:"
 ################################################################################################################
 
 
-crlf = re.compile("[\n\r]{3,}")
+crlf = re.compile("\n{3,}")
 def LineEndings(text):
+	text = text.replace("\r", "")
 	return crlf.sub("\n\n", text)
 
 # Creates regexp for section searching
@@ -190,7 +191,7 @@ for index in range(len(wikiIssues)):
 			confidence = GetMatchGroup(page["content"], confidenceExpr, 1)
 			if confidence and confidence.strip() != "(/)100%" and (ji.status == "5" or ji.status == "6"):
 				page["content"] = confidenceExpr.sub("|| Confidence | (/)100% |", page["content"])
-				page["content"] = statusExpr.sub("|| Status | Implemented |", page["content"])
+				page["content"] = statusExpr.sub("|| Status | Closed |", page["content"])
 				wikiServer.confluence1.storePage(wikiToken, page)
 				action = "x"
 
