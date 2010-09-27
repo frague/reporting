@@ -11,18 +11,24 @@ re = config["reviewers"]
 l = len(re)
 
 page = GetTemplate("reviewers")
-offset = int(ReadFile(filename)) + 1
-if (offset % l) == 0:
-	offset = offset + 1
-WriteFile(filename, str(offset))
+wn = int(today.strftime("%U"))
+
+data = yaml.load(ReadFile(filename)) or {"week": 0, "offset": 0}
+if data["week"] != wn:
+	data["week"] = wn
+	data["offset"] += 1
+	if (data["offset"] % l) == 0:
+		data["offset"] += 1
+	WriteFile(filename, yaml.dump(data))
 
 reviewers = ""
 for i in range(0, l):
-	reviewers += "| [~%s] | [~%s] |\n" % (re[i], re[(i + offset) % l])
+	reviewers += "| [~%s] | should review | [~%s] |\n" % (re[i], re[(i + data["offset"]) % l])
 
 print reviewers
 
 print "--- Publishing to wiki"
+
 
 WriteFile("temp.tmp", FillTemplate(page, {"##REVIEWERS##": reviewers, "##UPDATED##": today.strftime("%A, %d %B, %Y")}))
 GetWiki({"action": "storePage", "space": config["project_space"], "title": config["reviewers_page"], "file": "temp.tmp"})
