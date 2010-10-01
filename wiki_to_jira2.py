@@ -12,6 +12,7 @@ userExpr = re.compile("\[~([a-z]+)\]", re.IGNORECASE)
 assigneeExpr = re.compile("\|\| *Implementation Owner *\| *([a-z\[\]\~]+ *)\|", re.IGNORECASE)
 confidenceExpr = re.compile("\|\| *Confidence *\|([^\|]+)\|", re.IGNORECASE)
 statusExpr = re.compile("\|\| *Status *\|([^\|]+)\|", re.IGNORECASE)
+descriptionExpr = re.compile("\|\| *Description *\|([^\|]+)\|", re.IGNORECASE)
 
 wikiRef = "h6. Requirement on the wiki:"
 
@@ -153,6 +154,7 @@ flag = True
 seen = []
 for index in range(len(wikiIssues)):
 	issue = wikiIssues[index]
+
 	summary = GetMatchGroup(issue["Title"], titleExpr, 1)
 	url = GetMatchGroup(issue["Title"], urlExpr, 1)
 
@@ -168,10 +170,14 @@ for index in range(len(wikiIssues)):
 	i.issuetype = "6"
 	i.project = config["project_abbr"]
 	i.summary = summary
+
 	descr = GetSection(page["content"], "h6.", "Detailed Description")
 	if descr:
 		descr = descr.replace("{excerpt}", "")
-	i.description = LineEndings("%s\nh6. Detailed Description:\n%s\n \n%s\n%s%s" % (issue["Description"].replace("{excerpt}", ""), descr, wikiRef, config["wiki"]["server"], url))
+
+	d = GetMatchGroup(page["content"], descriptionExpr, 1)
+	i.description = LineEndings("%s\nh6. Detailed Description:\n%s\n \n%s\n%s%s" % (d.replace("{excerpt}", ""), descr, wikiRef, config["wiki"]["server"], url))
+
 	# DeHTML
 	i.summary = i.summary.replace("&quot;", "\"")
 
