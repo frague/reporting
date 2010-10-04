@@ -485,6 +485,9 @@ class JiraIssue:
 	def ToString(self, crop):
 		return "[%s] %s (%s)" % (self.key or "...", self.summary[0:crop], self.priority)
 	
+	def ToStringFull(self, crop):
+		return "[%s] %s (%s)\n%s" % (self.key or "...", self.summary[0:crop], self.priority, self.description)
+	
 	def Fetch(self, key = ""):
 		if key:
 			self.key = key
@@ -494,7 +497,7 @@ class JiraIssue:
 	def Create(self):
 		if self.IsConnected:
 #			newIssue = self.soap.createIssue(self.jiraAuth, {"project": self.project, "issuetype": self.issuetype, "priority": self.priority, "summary": self.summary, "description": self.description, "assignee": self.assignee, "reporter": self.reporter})
-			newIssue = self.soap.createIssue(self.jiraAuth, {"project": self.project, "type": self.issuetype, "priority": self.priority, "summary": self.summary, "description": self.description, "reporter": self.reporter})
+			newIssue = self.soap.createIssue(self.jiraAuth, {"project": self.project, "type": self.issuetype, "priority": self.priority, "summary": self.summary, "description": self.description, "reporter": self.reporter, "assignee": self.assignee})
 			self.key = newIssue.key
 			self.id = newIssue.id
 			
