@@ -7,14 +7,17 @@ import sys
 import yaml
 import urllib
 import SOAPpy
+import urllib
 import getpass
+import libxml2
 import urllib2
+import httplib2
 import datetime
+import xmlrpclib
 import subprocess
 from skype import *
 from jabber import *
 from datetime import timedelta
-	
 
 
 # File operations
@@ -198,6 +201,47 @@ def CountJiraIssuesStatuses(project, version_name):
 			status[status_name] = 1
 	return status
 
+def GetChild(source, name, attr):
+	x = source.xpathEval(name)
+	if len(x) > 0:
+		return x[0].prop(attr)
+	return ""
+
+def CountJiraIssuesEstimates(project, version_name):
+	global config
+
+	url = config["jira"]["server"] + "/sr/jira.issueviews:searchrequest-xml/temp/SearchRequest.xml?jqlQuery=project+%3D+" + config["project_abbr"] + "+AND+fixVersion+%3D+%22" + urllib.quote(version_name) + "%22+ORDER+BY+updated+DESC%2C+priority+DESC%2C+created+ASC&tempMax=1000&os_username=" + config["jira"]["user"] + "&os_password=" + config["jira"]["password"]
+
+	http = httplib2.Http()
+	headers = {}
+	response, content = http.request(url, 'GET', headers=headers)
+
+	doc = libxml2.parseDoc(content)
+	root = doc.getRootElement()
+
+	originalEstimate = {}
+	remainEstimate = {}
+
+	totalOriginal = 0.0
+	totalRemaining = 0.0
+
+	for item in root.xpathEval("//item"):
+		key = item.xpathEval("key")[0].content
+		status = item.xpathEval("status")[0].content
+		original = GetChild(item, "timeoriginalestimate", "seconds") or GetChild(item, "aggregatetimeoriginalestimate", "seconds")
+		remaining = GetChild(item, "timeestimate", "seconds") or GetChild(item, "aggregatetimeremainingestimate", "seconds")
+		if status == "Closed" or status == "Resolved":
+			remaining = "0"
+
+		try:
+			totalOriginal += float(original)
+			totalRemaining += float(remaining)
+		except:
+			pass
+
+	doc.freeDoc()
+	return {"Original": totalOriginal / 86400, "Remaining": totalRemaining / 86400}
+
 
 # Reads template from filesystem
 def GetTemplate(template_name):
@@ -213,6 +257,11 @@ def FillTemplate(template, values):
 def GetAndSaveJiraVersionIssues(project, version_name):
 	status = CountJiraIssuesStatuses(project, version_name)
 	return SaveUpdates(project, version_name, status)
+
+# Retrieves data from jira by project and version name and appends storage file with it
+def GetAndSaveJiraVersionTimings(project, version_name):
+	status = CountJiraIssuesEstimates(project, version_name)
+	return SaveUpdates(project, version_name + "_timing", status)
 
 # Makes Wiki-syntax bar-chart markup for given data
 def MakeWikiBarChart(data, name=""):
@@ -230,21 +279,41 @@ def MakeWikiBarChart(data, name=""):
 	return result
 
 # Makes Wiki-syntax line (point) burndown markup for given data
-def MakeWikiBurndownLine(data, max_tasks, max_days=0):
-	max_days -= 1
+def MakeWikiBurndownLine(data, open_statuses):
 	result = ""
 	dates = data.keys()
 	dates.sort()
 	i = 0
 	for date in dates:
-		level = max_tasks
-		if data[date].has_key("Closed"):
-			if max_days > 0:
-				level = ((max_days - i - 0.0)/max_days) * max_tasks
-			else:
-				level -= int(data[date]["Closed"])
-		if data[date].has_key("Resolved"):
-			level -= int(data[date]["Resolved"])
+		level = 0
+		for status in open_statuses:
+			if data[date].has_key(status):
+				level += int(data[date][status])
+
+		result += "| %s | %s |\n" % (date.strftime("%d/%m"), level)
+		i += 1
+	return result
+
+# Makes ideal burndown straight guideline
+def MakeWikiStraightLine(data, max_value, deadline):
+	min_date = min([date for date in data.keys()])
+
+	date = min_date
+	flat = {};
+	while (date <= deadline):
+		if (not weekends.match(date.strftime("%a")) or date == deadline or data.has_key(date)):
+			flat[date] = True
+		date = date + timedelta(days = 1)
+
+	max_days = len(flat) - 1
+	result = ""
+	dates = flat.keys()
+	dates.sort()
+	i = 0
+	for date in dates:
+		level = max_value
+		if max_days > 0:
+			level = ((max_days - i - 0.0)/max_days) * max_value
 
 		result += "| %s | %s |\n" % (date.strftime("%d/%m"), level)
 		i += 1
@@ -255,21 +324,24 @@ def MakeWikiBurndownChart(data, deadline, name=""):
 	print "- Create chart %s - %s line(s)" % (name, len(data))
 
 	max_tasks = max([sum(data[date].values()) for date in data.keys()])
-	min_date = min([date for date in data.keys()])
-
-	date = min_date
-	flat = {};
-	days = 0;
-	while (date <= deadline):
-		if (not weekends.match(date.strftime("%a")) or date == deadline or data.has_key(date)):
-			flat[date] = {"Closed": 0}
-			days += 1
-		date = date + timedelta(days = 1)
 
 	result = "|| Day || Guideline ||\n"
-	result += MakeWikiBurndownLine(flat, max_tasks, days)
+	result += MakeWikiStraightLine(data, max_tasks, deadline)
 	result += "\n|| Day || Burndown chart ||\n"
-	result += MakeWikiBurndownLine(data, max_tasks)
+	result += MakeWikiBurndownLine(data, ["Open", "In Progress", "Reopened"])
+
+	return result
+	
+# Makes Wiki-syntax burndown markup for given data
+def MakeWikiTimingChart(data, deadline, name=""):
+	print "- Create timing chart %s - %s line(s)" % (name, len(data))
+
+	max_tasks = max([data[date]["Original"] for date in data.keys()])
+
+	result = "|| Day || Guideline ||\n"
+	result += MakeWikiStraightLine(data, max_tasks, deadline)
+	result += "\n|| Day || Burndown chart ||\n"
+	result += MakeWikiBurndownLine(data, ["Remaining"])
 
 	return result
 	
@@ -385,7 +457,7 @@ def GetWorkLogs(fromDate, tillDate):
 			if startDate.date() >= fromDate and startDate.date() < tillDate:
 				value = "[%s@issues] (%s) %s - %s" % (issueKey, WikiSlash(updatedIssues[issueKey]), WikiSlash(i["comment"].strip(" \n\r")), i["timeSpent"])
 				AppendSubSet(workLogs, i["author"], value)
-				print " + %s: %s (%s)" % (i["author"], i["comment"].strip(" \n\r"), i["timeSpent"])
+				print " [+] %s: %s (%s)" % (i["author"], i["comment"].strip(" \n\r"), i["timeSpent"])
 				#found[i["author"]] = True
 
 	return workLogs
@@ -412,10 +484,10 @@ def RequestWorklogs(fromDate, worklogs, notifiee, engine, commits, ignore = []):
 					if commits.has_key(email):
 						commit = "\n- " + "\n- ".join(commits[email])
 
-					print " - %s" % login
+					print " [+] %s" % login
 					engine.SendMessage(notifiee[login], FillTemplate(notification, {"##DATE##": date, "##COMMITS##": commit}))
 			else:
-				print " - %s (ignored)" % login
+				print " [-] %s (ignored)" % login
 
 		engine.Disconnect()
 
