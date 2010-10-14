@@ -194,11 +194,14 @@ def CountJiraIssuesStatuses(project, version_name):
 	for i in soap.getIssuesFromJqlSearch(jiraAuth, "project = '%s' AND fixVersion = '%s'" % (project, version_name), 1000):
 		issue = JiraIssue()
 		issue.Parse(i)
-		status_name = config["statuses"][int(issue.status)]
-		if status.has_key(status_name):
-			status[status_name] += 1
-		else:
-			status[status_name] = 1
+		try:
+			status_name = config["statuses"][int(issue.status)]
+			if status.has_key(status_name):
+				status[status_name] += 1
+			else:
+				status[status_name] = 1
+		except:
+			pass		# Not standard status
 	return status
 
 def GetChild(source, name, attr):
@@ -240,7 +243,7 @@ def CountJiraIssuesEstimates(project, version_name):
 			pass
 
 	doc.freeDoc()
-	return {"Original": totalOriginal / 86400, "Remaining": totalRemaining / 86400}
+	return {"Original": totalOriginal / 86400, "Remaining": totalRemaining / 86400, "Spent": (totalOriginal - totalRemaining) / 86400}
 
 
 # Reads template from filesystem
@@ -278,22 +281,6 @@ def MakeWikiBarChart(data, name=""):
 		 		result += " 0 |"
 	return result
 
-# Makes Wiki-syntax line (point) burndown markup for given data
-def MakeWikiBurndownLine(data, open_statuses):
-	result = ""
-	dates = data.keys()
-	dates.sort()
-	i = 0
-	for date in dates:
-		level = 0
-		for status in open_statuses:
-			if data[date].has_key(status):
-				level += int(data[date][status])
-
-		result += "| %s | %s |\n" % (date.strftime("%d/%m"), level)
-		i += 1
-	return result
-
 # Makes ideal burndown straight guideline
 def MakeWikiStraightLine(data, max_value, deadline):
 	min_date = min([date for date in data.keys()])
@@ -319,6 +306,33 @@ def MakeWikiStraightLine(data, max_value, deadline):
 		i += 1
 	return result
 
+# Makes Wiki-syntax line (point) burndown markup for given data
+def MakeWikiBurndownLine(data, statuses, initial_level, statuses_to_calc_total = []):
+	result = ""
+	dates = data.keys()
+	dates.sort()
+	i = 0
+	for date in dates:
+		level = initial_level
+
+		max_delta = 0
+#		if len(statuses_to_calc_total) == 0:
+#			max_delta = initial_level - sum([int(i) for i in data[date].values()])
+#		else:
+#			max_delta = initial_level - sum([int(data[date][s]) for s in statuses_to_calc_total])
+
+		for status in statuses:
+			if data[date].has_key(status):
+				if initial_level > 0:
+					level -= int(data[date][status])
+				else:
+					level += int(data[date][status])
+
+		level -= max_delta
+		result += "| %s | %s |\n" % (date.strftime("%d/%m"), level)
+		i += 1
+	return result
+
 # Makes Wiki-syntax burndown markup for given data
 def MakeWikiBurndownChart(data, deadline, name=""):
 	print "- Create chart %s - %s line(s)" % (name, len(data))
@@ -328,7 +342,7 @@ def MakeWikiBurndownChart(data, deadline, name=""):
 	result = "|| Day || Guideline ||\n"
 	result += MakeWikiStraightLine(data, max_tasks, deadline)
 	result += "\n|| Day || Burndown chart ||\n"
-	result += MakeWikiBurndownLine(data, ["Open", "In Progress", "Reopened"])
+	result += MakeWikiBurndownLine(data, ["Closed", "Resolved"], max_tasks)
 
 	return result
 	
@@ -336,12 +350,12 @@ def MakeWikiBurndownChart(data, deadline, name=""):
 def MakeWikiTimingChart(data, deadline, name=""):
 	print "- Create timing chart %s - %s line(s)" % (name, len(data))
 
-	max_tasks = max([data[date]["Original"] for date in data.keys()])
+	max_length = max([data[date]["Original"] for date in data.keys()])
 
 	result = "|| Day || Guideline ||\n"
-	result += MakeWikiStraightLine(data, max_tasks, deadline)
+	result += MakeWikiStraightLine(data, max_length, deadline)
 	result += "\n|| Day || Burndown chart ||\n"
-	result += MakeWikiBurndownLine(data, ["Remaining"])
+	result += MakeWikiBurndownLine(data, ["Spent"], max_length, ["Original"])
 
 	return result
 	

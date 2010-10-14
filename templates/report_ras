@@ -14,6 +14,6 @@ h3. Risks dynamics:
 {metadata:Risks}
 
 {metadata}
-{jiraissues:title=Open Risks|url=https://issues.griddynamics.net/sr/jira.issueviews:searchrequest-xml/temp/SearchRequest.xml?jqlQuery=project+%3D+##ABBR##+AND+issuetype+%3D+Risk+AND+component+%3D+EMPTY+AND+status+in+(Open%2C+"In+Progress"%2C+Reopened)+ORDER+BY+priority+DESC%2C+key+DESC&tempMax=20|renderMode=static|columns=Summary,Assignee,Reporter,Priority,Due}
+{jiraissues:title=Open Risks|url=https://issues.griddynamics.net/sr/jira.issueviews:searchrequest-xml/temp/SearchRequest.xml?jqlQuery=project+%3D+##ABBR##+AND+issuetype+%3D+Risk+AND+component+%3D+EMPTY+AND+status+in+(Open%2C+"In+Progress"%2C+Reopened%2C+"Identified")+ORDER+BY+priority+DESC%2C+key+DESC&tempMax=20|renderMode=static|columns=Summary,Assignee,Reporter,Priority,Due}
 
 (i) More detailed risks information including closed risks can be found on the [Risks] page.
