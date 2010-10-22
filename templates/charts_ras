@@ -1,35 +1,35 @@
 {section}
 {column:width=33%}
 
-{chart:type=bar|width=300|height=300|xLabel=Date|yLabel=Issues #|categoryLabelPosition=down45|stacked=true|title=Sprint: issues bar chart|colors=#78BC13,#97C61D,#DEE439,#F7863F,#EB6A33}
+{chart:type=bar|width=300|height=300|xLabel=Date|yLabel=Issues #|categoryLabelPosition=down45|stacked=true|title=Sprint issues|colors=#78BC13,#97C61D,#DEE439,#F7863F,#EB6A33}
 ##SPRINT_BAR_CHART##
 {chart}
 
 {column}
 {column:width=33%}
 
-{chart:type=line|width=300|height=300|xLabel=Date|yLabel=Issues #|title=Sprint: issues burn-down diagram|dataOrientation=vertical|rangeAxisLowerBound=0|categoryLabelPosition=down45|domainaxisrotateticklabel=false|colors=#EB6A33,#78BC13}
+{chart:type=line|width=300|height=300|xLabel=Date|yLabel=Issues #|title=Sprint issues|dataOrientation=vertical|rangeAxisLowerBound=0|categoryLabelPosition=down45|domainaxisrotateticklabel=false|colors=#EB6A33,#78BC13}
 ##SPRINT_BURN_CHART##
 {chart}
 
 {column}
 {column:width=33%}
 
-{chart:type=line|width=300|height=300|xLabel=Date|yLabel=Work days|title=Sprint: timing burn-down diagram|dataOrientation=vertical|rangeAxisLowerBound=0|categoryLabelPosition=down45|domainaxisrotateticklabel=false|colors=#EB6A33,#78BC13}
+{chart:type=line|width=300|height=300|xLabel=Date|yLabel=Work days|title=Sprint time spent|dataOrientation=vertical|rangeAxisLowerBound=0|categoryLabelPosition=down45|domainaxisrotateticklabel=false|colors=#EB6A33,#78BC13}
 ##SPRINT_BURN_TIMING##
 {chart}
 
 {column}
 {section}
 
-{chart:type=bar|width=800|height=320|xLabel=Date|yLabel=Issues #|categoryLabelPosition=down45|stacked=true|title=Phase: issues bar chart|colors=#78BC13,#97C61D,#DEE439,#F7863F,#EB6A33}
+{chart:type=bar|width=800|height=320|xLabel=Date|yLabel=Issues #|categoryLabelPosition=down45|stacked=true|title=Phase issues|colors=#78BC13,#97C61D,#DEE439,#F7863F,#EB6A33}
 ##PHASE_BAR_CHART##
 {chart}
 
-{chart:type=line|width=800|height=320|xLabel=Date|yLabel=Issues #|title=Phase: issues burn-down diagram|dataOrientation=vertical|rangeAxisLowerBound=0|categoryLabelPosition=down45|domainaxisrotateticklabel=false|colors=#EB6A33,#78BC13|showShapes=false}
+{chart:type=line|width=800|height=320|xLabel=Date|yLabel=Issues #|title=Phase issues|dataOrientation=vertical|rangeAxisLowerBound=0|categoryLabelPosition=down45|domainaxisrotateticklabel=false|colors=#EB6A33,#78BC13|showShapes=false}
 ##PHASE_BURN_CHART##
 {chart}
 
-{chart:type=line|width=800|height=320|xLabel=Date|yLabel=Work days|title=Phase: timing burn-down diagram|dataOrientation=vertical|rangeAxisLowerBound=0|categoryLabelPosition=down45|domainaxisrotateticklabel=false|colors=#EB6A33,#78BC13|showShapes=false}
+{chart:type=line|width=800|height=320|xLabel=Date|yLabel=Work days|title=Phase time spent|dataOrientation=vertical|rangeAxisLowerBound=0|categoryLabelPosition=down45|domainaxisrotateticklabel=false|colors=#EB6A33,#78BC13|showShapes=false}
 ##PHASE_BURN_TIMING##
 {chart}
