@@ -29,7 +29,9 @@ print reviewers
 
 print "--- Publishing to wiki"
 
+wikiServer = xmlrpclib.ServerProxy(config["wiki_xmlrpc"])
+wikiToken = wikiServer.confluence1.login(config["wiki"]["user"], config["wiki"]["password"])
 
-WriteFile("temp.tmp", FillTemplate(page, {"##REVIEWERS##": reviewers, "##UPDATED##": today.strftime("%A, %d %B, %Y")}))
-GetWiki({"action": "storePage", "space": config["project_space"], "title": config["reviewers_page"], "file": "temp.tmp"})
-os.remove("temp.tmp")
+SaveWikiPage(wikiServer, wikiToken, config["project_space"], config["reviewers_page"], FillTemplate(page, {"##REVIEWERS##": reviewers, "##UPDATED##": today.strftime("%A, %d %B, %Y")}))
+
+print "Done."

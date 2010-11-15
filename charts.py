@@ -46,8 +46,11 @@ for key in timings.keys():
 
 
 print "Publishing to wiki"
-WriteFile("temp.tmp", page)
-GetWiki({"action": "storePage", "space": config["personal_space"], "title": "%s %s Progress Charts" % (config["project_abbr"], today), "file": "temp.tmp", "parent": config["parent_page"]})
-os.remove("temp.tmp")
+
+wikiServer = xmlrpclib.ServerProxy(config["wiki_xmlrpc"])
+wikiToken = wikiServer.confluence1.login(config["wiki"]["user"], config["wiki"]["password"])
+
+SaveWikiPage(wikiServer, wikiToken, config["personal_space"], "%s %s Progress Charts" % (config["project_abbr"], today), page, config["parent_page"])
+
 
 print "Done"

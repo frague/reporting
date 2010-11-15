@@ -173,6 +173,21 @@ def GetWiki(add_params = {}):
 def GetJira(add_params = {}):
 	return GetPage("jira.bat", config["jira"], add_params)
 
+def SaveWikiPage(wikiServer, wikiToken, space, title, content, parentPage = ""):
+	try:
+		page = wikiServer.confluence1.getPage(wikiToken, space, title)
+		if parentPage:
+			parent = wikiServer.confluence1.getPage(wikiToken, space, parentPage)
+			page["parentId"] = parent["id"]
+	except:
+		page = {"space": space, "title": title}
+	page["content"] = content
+	return wikiServer.confluence1.storePage(wikiToken, page)
+
+def SaveWikiNews(wikiServer, wikiToken, space, title, content):
+	entry = {"space": space, "title": title, "content": content}
+	return wikiServer.confluence1.storeBlogEntry(wikiToken, entry)
+
 # Update cache file with received data
 # Returns updated dictionary
 def SaveUpdates(project, version_name, status):
@@ -589,7 +604,10 @@ class JiraIssue:
 			
 	def Update(self, changes):
 		if self.IsNotEmpty() and self.IsConnected:
-			self.soap.updateIssue(self.jiraAuth, self.key, changes)
+			try:
+				self.soap.updateIssue(self.jiraAuth, self.key, changes)
+			except:
+				print "[!] Error updating issue %s" % self.key
 
 	def UpdateFrom(self, issue):
 		if self.IsNotEmpty() and self.IsConnected:

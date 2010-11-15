@@ -61,8 +61,11 @@ def ProcessRule(file):
 
 print "Publishing to wiki"
 
-page = FillTemplate(mainTemplate, {"##UPDATED##": datetime.datetime.today().strftime("%b %d, %Y (%H:%M)"), "##RULES##": "".join([FillTemplate(typeTemplate, {"##TYPE##": types[type], "##RULES##": "".join(result[type])}) for type in result.keys()])})
+content = FillTemplate(mainTemplate, {"##UPDATED##": datetime.datetime.today().strftime("%b %d, %Y (%H:%M)"), "##RULES##": "".join([FillTemplate(typeTemplate, {"##TYPE##": types[type], "##RULES##": "".join(result[type])}) for type in result.keys()])})
 
-WriteFile("rules_cat.tmp", page)
-GetWiki({"action": "storePage", "space": config["personal_space"], "title": "%s Rules Catalog (generated)" % config["project_abbr"], "file": "rules_cat.tmp", "parent": "Home"})
-os.remove("rules_cat.tmp")
+wikiServer = xmlrpclib.ServerProxy(config["wiki_xmlrpc"])
+wikiToken = wikiServer.confluence1.login(config["wiki"]["user"], config["wiki"]["password"])
+
+SaveWikiPage(wikiServer, wikiToken, config["personal_space"], "%s Rules Catalog (generated)" % config["project_abbr"], content, "Home")
+
+print "Done."

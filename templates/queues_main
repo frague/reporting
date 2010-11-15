@@ -1,4 +1,4 @@
-Current distribution of ActiveMQ queues on deployed builds in eBay (both DCSM & eBCloud projects):
+Current distribution of ActiveMQ queues on deployed builds in eBay (DCSM, eBCloud and RAS projects):
 
 {table:class=confluenceTable}
 {tr}

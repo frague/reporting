@@ -6,9 +6,9 @@ ProfileNeeded()
 chunks = {"##TODAY##": today.strftime("%Y-%m-%d"), "##TOMORROW##": tomorrow.strftime("%Y-%m-%d"), "##ABBR##": config["project_abbr"]}
 page = FillTemplate(GetTemplate(config["report_template"]), chunks)
 
-WriteFile("temp1.tmp", page)
-#GetWiki({"action": "storePage", "space": config["personal_space"], "title": "gitlog + %s report template" % today, "file": "temp1.tmp", "parent": config["parent_page"]})
-GetWiki({"action": "storeNews", "space": config["project_space"], "title": "%s Daily Status Update" % today.strftime("%Y-%m-%d"), "file": "temp1.tmp"})
-os.remove("temp1.tmp")
+wikiServer = xmlrpclib.ServerProxy(config["wiki_xmlrpc"])
+wikiToken = wikiServer.confluence1.login(config["wiki"]["user"], config["wiki"]["password"])
 
-print "Done"
+SaveWikiPage(wikiServer, wikiToken, config["project_space"], "%s Daily Status Update" % today.strftime("%Y-%m-%d"), page)
+
+print "Done."
