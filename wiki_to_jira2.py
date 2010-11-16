@@ -201,6 +201,10 @@ for index in range(len(wikiIssues)):
 				wikiServer.confluence1.storePage(wikiToken, page)
 				action = "x"
 
+			if ji.status == "10068":
+				# If issue is in "To Be Reviewed" status - ignore re-assignments
+				ji.assignee = i.assignee
+			
 			if ji.Equals(i):
 				# Issues are the same
 				pass
