@@ -43,7 +43,7 @@ jiraAuth = soap.login(config["jira"]["user"], config["jira"]["password"])
 
 issue = JiraIssue()
 issue.Connect(soap, jiraAuth)
-issues = soap.getIssuesFromJqlSearch(jiraAuth, "project = %s AND fixVersion = '%s'" % (config["project_abbr"], config["QAVersionId"]), 100)
+issues = soap.getIssuesFromJqlSearch(jiraAuth, "project = %s AND fixVersion = '%s'" % (config["project_abbr"], config["QAVersionId"]), 300)
 
 for i in issues:
 	issue.Parse(i)

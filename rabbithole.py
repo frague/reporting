@@ -331,10 +331,8 @@ def MakeWikiBurndownLine(data, statuses, initial_level, statuses_to_calc_total =
 		level = initial_level
 
 		max_delta = 0
-#		if len(statuses_to_calc_total) == 0:
-#			max_delta = initial_level - sum([int(i) for i in data[date].values()])
-#		else:
-#			max_delta = initial_level - sum([int(data[date][s]) for s in statuses_to_calc_total])
+#		if len(statuses_to_calc_total) > 0:
+#			level = initial_level - sum([int(data[date][s]) for s in statuses_to_calc_total])
 
 		for status in statuses:
 			if data[date].has_key(status):
