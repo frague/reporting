@@ -30,6 +30,9 @@ def appendIssue(matchObj):
 
 #############################################################
 
+print
+print
+
 
 ProfileNeeded()
 
@@ -48,25 +51,38 @@ issues = soap.getIssuesFromJqlSearch(jiraAuth, "project = %s AND fixVersion = '%
 for i in issues:
 	issue.Parse(i)
 	action = " "
+	resolution = ""
 #	print "--- %s, %s" % (issue.status, issue.summary[0:line])
-	if (cqIssues.has_key(issue.summary)):	# Existing issue
-		if issue.status != "6" and issue.status != "5":	# Not closed issues
-			i = cqIssues[issue.summary]
-			if i["State"] == "Closed" or i["State"] == "Verify":
+	if (cqIssues.has_key(issue.summary)):	
+		# For issues that exist in both CQ and jira
+		i = cqIssues[issue.summary]
+		if i["State"] == "Closed" or i["State"] == "Verify":
+			# ClearQuest Issue is closed
+			if issue.status != "6" and issue.status != "5" and issue.status != "4":
+				# Should be closed in jira also (if not closed already or reopened)
 				action = "-"
 				issue.Resolve()
+		else:
+			# ClearQuest Issue is not closed
+			if issue.status == "6" or issue.status == "5":
+				# Issue is closed in jira while not in CQ!
+				action = "x"
+				resolution = "[%s] " % config["resolutions"][issue.resolution]
 		del cqIssues[issue.summary]
 
-	print "[%s] %s" % (action, issue.summary[0:line])
+	if action != " ":
+		print "[%s] %s%s" % (action, resolution, issue.summary[0:line])
 
 
 # Create new issues
 for i in cqIssues.keys():
 	v = cqIssues[i]
 
-	if v["State"] != "Closed":
+	if v["State"] != "Closed" and v["State"] != "Verify":
 		descr = re.sub("([^>])(\n<)", "\\1{code}\\2", v["Steps_Description"])
 		descr = re.sub("(>\n)([ \t\n]*[^< \t\n])", "\\1{code}\\2", descr)
+		if descr.count("{code}") % 2 != 0:
+			descr += "{code}"
 
 		print "[+] %s: %s" % (v["id"], v["Title"][0:line])
 #		print descr

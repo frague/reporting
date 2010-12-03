@@ -209,8 +209,16 @@ def CountJiraIssuesStatuses(project, version_name):
 	for i in soap.getIssuesFromJqlSearch(jiraAuth, "project = '%s' AND fixVersion = '%s'" % (project, version_name), 1000):
 		issue = JiraIssue()
 		issue.Parse(i)
+
+		if issue.type == "5":
+			# Skip subtasks
+			continue
+
 		try:
 			status_name = config["statuses"][int(issue.status)]
+			if status_name == "To Be Reviewed" or status_name == "To Be Accepted":
+				status_name = "Resolved"
+
 			if status.has_key(status_name):
 				status[status_name] += 1
 			else:
@@ -561,6 +569,7 @@ class JiraIssue:
 		self.assignee = ""
 		self.reporter = ""
 		self.fixVersions = []
+		self.resolution = "-1"
 
 	def IsNotEmpty(self):
 		return self.key and self.id
