@@ -27,6 +27,7 @@ ProfileNeeded()
 stats = {}
 queueExpr = re.compile("<td>activemq.queue</td>[^<]*<td[^>]*>([^<]*)</td>", re.MULTILINE)
 versionExpr = re.compile("<p><b>Version</b><br/>([^<]+)</p>", re.MULTILINE)
+stateExpr = re.compile("<p><b>System State</b><br/>([^<]+)</p>", re.MULTILINE)
 
 
 page = GetTemplate("queues_main")
@@ -40,6 +41,7 @@ def GetDeployedQueue(url):
 
 	match = None
 	version = "_N/A_"
+	state = "_N/A_"
 	try:
 		page = GetWebPage(url)
 
@@ -47,19 +49,23 @@ def GetDeployedQueue(url):
 		if ver:
 			version = ver.group(1).strip()
 
+		st = stateExpr.search(page)
+		if st:
+			state = st.group(1).strip()
+
 		match = queueExpr.search(page)
 
 	except:
-		return {"queue": "_N/A_", "version": version}
+		return {"queue": "_N/A_", "version": version, "state": state}
 
 	if match:
 		key = match.group(1)
 		if used.has_key(key):
 			key = "{color:red}%s{color}" % key
 		used[key] = True
-		return {"queue": key, "version": version}
+		return {"queue": key, "version": version, "state": state}
 
-	return {"queue": "", "version": version}
+	return {"queue": "", "version": version, "state": state}
 
 print "--- Check if connected..."
 try:
@@ -96,7 +102,7 @@ for set in config["deployments"].keys():
 		url = "http://%s/info" % config["deployments"][set][env]
 		parsed = GetDeployedQueue(url)
 		print "%s (ver. %s) uses queue %s" % (env, parsed["version"], parsed["queue"])
-		result.append(FillTemplate(lineTemplate, {"##TITLE##": env, "##URL##": url, "##COMMENT##": parsed["queue"], "##VERSION##": parsed["version"]}))
+		result.append(FillTemplate(lineTemplate, {"##TITLE##": env, "##URL##": url, "##COMMENT##": parsed["queue"], "##VERSION##": parsed["version"], "##STATE##": parsed["state"]}))
 	queues += FillTemplate(setTemplate, {"##TITLE##": set, "##INSTANCES##": "".join(result)}) + "\n";
 
 print "--- Publishing to wiki"

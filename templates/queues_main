@@ -2,7 +2,7 @@ Current distribution of ActiveMQ queues on deployed builds in eBay (DCSM, eBClou
 
 {table:class=confluenceTable}
 {tr}
-{th:class=confluenceTh} Environment {th}{th:class=confluenceTh} URL {th}{th:class=confluenceTh} Queue/Comments {th}{th:class=confluenceTh} Build version {th}
+{th:class=confluenceTh} Environment {th}{th:class=confluenceTh} URL {th}{th:class=confluenceTh} Queue/Comments {th}{th:class=confluenceTh} Build version {th}{th:class=confluenceTh} State {th}
 ##QUEUES##
 {table}
 
