@@ -66,6 +66,6 @@ content = FillTemplate(mainTemplate, {"##UPDATED##": datetime.datetime.today().s
 wikiServer = xmlrpclib.ServerProxy(config["wiki_xmlrpc"])
 wikiToken = wikiServer.confluence1.login(config["wiki"]["user"], config["wiki"]["password"])
 
-SaveWikiPage(wikiServer, wikiToken, config["personal_space"], "%s Rules Catalog (generated)" % config["project_abbr"], content, "Home")
+SaveWikiPage(wikiServer, wikiToken, config["project_space"], "Rules Catalogue", content, "Rules Specification")
 
 print "Done."
