@@ -8,6 +8,10 @@ ProfileNeeded()
 print "-- Updating progress charts: -------------------------------------------"
 print "Reading templates"
 
+if weekends.match(today.strftime("%a")):
+	print "Weekend - exiting"
+	exit(0)
+
 page = GetTemplate(config["charts_template"])
 sprint = GetTemplate("single_burndown")
 
