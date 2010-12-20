@@ -96,7 +96,7 @@ except:
 ## Getting deployed versions
 
 queues = ""
-for set in config["deployments"].keys():
+for set in sorted(config["deployments"].keys()):
 	result = []
 	for env in sorted(config["deployments"][set].keys()):
 		url = "http://%s/info" % config["deployments"][set][env]
