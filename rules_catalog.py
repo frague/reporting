@@ -18,7 +18,10 @@ useInFilterExpr = re.compile("/useinfilter=[\"\']{0,1}true[\"\']{0,1}/", re.IGNO
 result = {}
 
 def ProcessTags(tags):
-	return ", ".join([tag.content.replace("*", "\\*") for tag in tags])
+	result = "* " + "\n* ".join([tag.content.replace("*", "\\*") for tag in tags])
+	if result != "* ":
+		return result
+	return ""
 
 def ProcessRule(file):
 	mtime = time.strftime("%Y-%m-%d,&nbsp;%H:%M", time.localtime(os.path.getmtime(file)))
