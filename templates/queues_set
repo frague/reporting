@@ -1,2 +1,2 @@
-{tr}{th:class=confluenceTh|colspan=5}h6. ##TITLE##{th}{tr}
+{tr:class=Aligned}{th:class=confluenceTh|colspan=5}h6. ##TITLE##{th}{tr}
 ##INSTANCES##
