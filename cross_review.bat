@@ -1,12 +1,12 @@
 rem Cross review table
 
-rem cross_review.py --profile=ras
+cross_review.py --profile=ras
 
 
 
 rem Progress charts update
 
-rem charts.py --profile=ras
+charts.py --profile=ras
 
 
 rem Rules catalogue
@@ -16,3 +16,8 @@ call git fetch dmaslennikov
 call git reset dmaslennikov/ebcloud --hard
 cd "D:\dev\reporting"
 rules_catalog.py --profile=ras
+
+
+rem Tests coverage
+
+tests_coverage.py --profile=ras
