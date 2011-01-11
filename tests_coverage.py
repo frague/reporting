@@ -3,7 +3,8 @@
 from rabbithole import *
 
 stats = {}
-percents = re.compile("<th align=\"left\">([^<]+)</th><td align=\"right\">(\d+)%</td>", re.MULTILINE)
+#percents = re.compile("<th align=\"left\">([^<]+)</th><td align=\"right\">(\d+)%</td>", re.MULTILINE)
+percents = re.compile("<strong>([^<]+)</strong>[^&]*&nbsp;[^\d]*(\d+)%", re.MULTILINE)
 
 def collectStat(matchObj):
 	global stats
@@ -11,6 +12,8 @@ def collectStat(matchObj):
 	measure = matchObj.group(1)
 	value = matchObj.group(2)
 	stats[measure] = value
+
+	print "- %s = %s%%" % (measure, value)
 
 	return ""
 
