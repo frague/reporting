@@ -54,11 +54,13 @@ def GetParameter(name):
 	else:
 		return ""
 
+
 # Load profile if passed as parameter
 profile = GetParameter("profile")
 if profile != "":
 	config.update(yaml.load(ReadFile("profiles/%s" % profile)))
 
+dayOffs = config["day_offs"]
 
 ###################################################################
 # Precompiled regexps
@@ -291,7 +293,7 @@ def GetAndSaveJiraVersionTimings(project, version_name):
 
 # Makes Wiki-syntax bar-chart markup for given data
 def MakeWikiBarChart(data, name=""):
-	print "- Create chart %s - %s line(s)" % (name, len(data))
+	print " * Create chart %s - %s line(s)" % (name, len(data))
 	dates = data.keys()
 	dates.sort()
 	result = "|| || %s ||" % " || ".join(date.strftime("%d/%m") for date in dates)
@@ -311,7 +313,7 @@ def MakeWikiStraightLine(data, max_value, deadline):
 	date = min_date
 	flat = {};
 	while (date <= deadline):
-		if (not weekends.match(date.strftime("%a")) or date == deadline or data.has_key(date)):
+		if date not in dayOffs and (not weekends.match(date.strftime("%a")) or date == deadline or data.has_key(date)):
 			flat[date] = True
 		date = date + timedelta(days = 1)
 
@@ -336,6 +338,9 @@ def MakeWikiBurndownLine(data, statuses, initial_level, statuses_to_calc_total =
 	dates.sort()
 	i = 0
 	for date in dates:
+		if date in dayOffs:
+			continue
+
 		level = initial_level
 
 		max_delta = 0
@@ -356,7 +361,7 @@ def MakeWikiBurndownLine(data, statuses, initial_level, statuses_to_calc_total =
 
 # Makes Wiki-syntax burndown markup for given data
 def MakeWikiBurndownChart(data, deadline, name=""):
-	print "- Create chart %s - %s line(s)" % (name, len(data))
+	print " * Create chart %s - %s line(s)" % (name, len(data))
 
 	max_tasks = max([sum(data[date].values()) for date in data.keys()])
 
@@ -369,7 +374,7 @@ def MakeWikiBurndownChart(data, deadline, name=""):
 	
 # Makes Wiki-syntax burndown markup for given data
 def MakeWikiTimingChart(data, deadline, name=""):
-	print "- Create timing chart %s - %s line(s)" % (name, len(data))
+	print " * Create timing chart %s - %s line(s)" % (name, len(data))
 
 	max_length = max([data[date]["Original"] for date in data.keys()])
 
@@ -382,7 +387,7 @@ def MakeWikiTimingChart(data, deadline, name=""):
 	
 # Makes Wiki-progress chart
 def MakeWikiProgressChart(data):
-	print "- Create progress chart (%s line(s))" % len(data)
+	print " * Create progress chart (%s line(s))" % len(data)
 	dates = data.keys()
 	dates.sort()
 	result = ""
@@ -411,14 +416,14 @@ def WikiSlash(text):
 #####################################################################################
 # GIT Logs
 
-def AddCommit(line, commits):
+def AddCommit(line, commits, lastWorkingDay):
 	l = line.split("|")
 	if (len(l) != 4):
 		return
 
 	[commitDate, email, commit, authorDate] = l
 #	print "%s - %s" % (commitDate[:10], authorDate[:10])
-	if (commitDate[:10] != authorDate[:10]):
+	if (authorDate[:10] != lastWorkingDay):
 		return
 
 	commit = project_issue.sub("[%s-\\1@issues] " % config["project_abbr"], WikiSlash(commit))

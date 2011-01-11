@@ -21,10 +21,11 @@ for team in config["teams"].keys():
 	[GetStdoutOf("fetchrep.bat", "%s %s" % (rep, rep_path)) for rep in config["teams"][team]]
 
 # Getting log
-text = GetStdoutOf("gitlog.bat", "%s %s" % (lastWorkday.strftime("%Y-%m-%d"), today.strftime("%Y-%m-%d")))
-# Split into lines and treat each
-[AddCommit(line, commits) for line in text.split("\n")]
+lastWorkingDay = lastWorkday.strftime("%Y-%m-%d")
+text = GetStdoutOf("gitlog.bat", lastWorkingDay)
 
+# Split into lines and treat each
+[AddCommit(line, commits, lastWorkingDay) for line in text.split("\n")]
 
 ######################################################################################
 # Jira worklogs
