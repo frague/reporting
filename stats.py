@@ -18,13 +18,6 @@ class ExternalData:
 	def Init(self):
 		pass
 	
-	def WgetPage(self, url):
-		name = str(uuid.uuid1())
-		os.system("wget %s -O %s" % (url, name))
-		result = ReadFile(name)
-		os.remove(name)
-		return result
-		
 	def FetchData(self):
 		print "(!) No fetching logic is defined!"
 		return {}
@@ -94,7 +87,7 @@ class TestsCoverage(ExternalData):
 		self.stats = {}
 		percents = re.compile("<strong>([^<]+)</strong>[^&]*&nbsp;[^\d]*(\d+)%", re.MULTILINE)
 
-		percents.sub(self.collectStat, self.WgetPage(self.Url))
+		percents.sub(self.collectStat, WgetPage(self.Url))
 		return SaveUpdates(config["project_abbr"], self.CacheName, self.stats)
 
 
@@ -103,7 +96,7 @@ class TestsCoverage(ExternalData):
 
 class HudsonReport(ExternalData):
 	def FetchData(self):
-		markup = GetMatchGroup(self.WgetPage(self.Url), re.compile("<table[^>]*id=\"analysis\.summary\"[^>]*>(([^<]|<[^/]|</[^t]|</t[^a])+)</table>"), 1)
+		markup = GetMatchGroup(WgetPage(self.Url), re.compile("<table[^>]*id=\"analysis\.summary\"[^>]*>(([^<]|<[^/]|</[^t]|</t[^a])+)</table>"), 1)
 
 		if not markup:
 			return False
@@ -156,6 +149,6 @@ class TestsRunReport(ExternalData):
 		resultsExpr = re.compile("\nResults :\n\nTests run: (\d+), Failures: (\d+), Errors: (\d+), Skipped: (\d+)", re.MULTILINE)
 		self.tests = {"Tests run": 0, "Failures": 0, "Errors": 0, "Skipped": 0}
 
-		resultsExpr.sub(self.collectTests, self.WgetPage(self.Url))
+		resultsExpr.sub(self.collectTests, WgetPage(self.Url))
 		return SaveUpdates(config["project_abbr"], self.CacheName, self.tests)
 

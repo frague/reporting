@@ -1,16 +1,19 @@
 {section}
-{column:width=50%}
+{column}
 
 {chart:type=line|width=400|height=300|xLabel=Date|yLabel=Issues #|title=Sprint issues|dataOrientation=vertical|rangeAxisLowerBound=0|categoryLabelPosition=down45|domainaxisrotateticklabel=false|colors=#EB6A33,#78BC13}
 ##SPRINT_BURN_CHART##
 {chart}
 
 {column}
-{column:width=50%}
+{column}
 
 {chart:type=line|width=400|height=300|xLabel=Date|yLabel=Work days|title=Sprint time spent|dataOrientation=vertical|rangeAxisLowerBound=0|categoryLabelPosition=down45|domainaxisrotateticklabel=false|colors=#EB6A33,#78BC13}
 ##SPRINT_BURN_TIMING##
 {chart}
-
 {column}
+
+{column:width=100%}
+{column}
+
 {section}

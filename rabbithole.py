@@ -170,6 +170,13 @@ def GetStdoutOf(process, params):
 def GetPage(page, params, add_params):
 	return GetStdoutOf(page, MakeParamsWithLogin(params, add_params))
 
+def WgetPage(url):
+	name = str(uuid.uuid1())
+	os.system("wget %s -t1 -T120 -O %s" % (url, name))
+	result = ReadFile(name)
+	os.remove(name)
+	return result
+
 def GetWiki(add_params = {}):
 	return GetPage("confluence.bat", config["wiki"], add_params)
 

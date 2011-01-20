@@ -74,24 +74,32 @@ except:
 	print "[!] Not connected to VPN!"
 	exit(0)
 
+#############################################################################################################
 ## Getting queues consumers
 
-subscribers = ""
-try:
-	doc = libxml2.parseFile("queues.txt")
-	queues = [q.prop("name") for q in doc.xpathNewContext().xpathEval("//queue/stats[@consumerCount='0']/parent::*")]
-	ours = re.compile("(tors|ras|cloud)", re.IGNORECASE)
-
-	for q in queues:
-		if ours.search(q):
-			q = "{color:red}%s{color}" % q
-		if subscribers:
-			subscribers += ", "
-		subscribers += q
-except:
-	print "[!] Error parsing queues"
+url = GetParameter("url") or config["queues"]
+if not url:
+	print "[!] URL is not provided. Usage: queues.py --profile=<Profile> --url=<Queues Page URL>"
 	exit(0)
-	pass
+
+keepTrying = True
+while keepTrying:
+	try:
+		subscribers = ""
+		doc = libxml2.parseDoc(WgetPage(url))
+		queues = [q.prop("name") for q in doc.xpathNewContext().xpathEval("//queue/stats[@consumerCount='0']/parent::*")]
+		ours = re.compile("(tors|ras|cloud)", re.IGNORECASE)
+
+		for q in queues:
+			if ours.search(q):
+				q = "{color:red}%s{color}" % q
+			if subscribers:
+				subscribers += ", "
+			subscribers += q
+		keepTrying = False
+	except:
+		print "[!] Error parsing queues. Re-attempting in 5 seconds."
+		time.sleep(5)
 
 ## Getting deployed versions
 
