@@ -61,28 +61,6 @@ def GetHtmlSection(text, level, title=""):
 	return ""
 
 
-# Parses table with header into a set of dectionaries, one per each row
-def ParseHeadedTable(markup):
-	cols = []
-	result = []
-	isHeader = False
-	for row in markup.strip().split("<tr>"):
-		if not row:
-			continue
-		values = re.split("</t[dh]>", re.sub("</t[dh]>$", "", re.sub("<(/tr|td|th)>", "", row).strip()))
-		if not isHeader:
-			cols = values
-			isHeader = True
-		else:
-			item = {}
-			for i in range(len(cols)):
-				if cols[i] == "Priority":
-					values[i] = long(values[i])
-				item[cols[i]] = values[i]
-			result.append(item)
-	return result
-				
-
 ################################################################################################################
 
 
