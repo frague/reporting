@@ -18,6 +18,6 @@ cd "D:\dev\reporting"
 rules_catalog.py --profile=ras
 
 
-rem Tests coverage
+rem Daily statistics
 
-tests_coverage.py --profile=ras
+kpis.py --profile=ras
