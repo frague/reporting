@@ -5,6 +5,7 @@ import os
 import re
 import sys
 import yaml
+import uuid
 import urllib
 import SOAPpy
 import urllib
@@ -256,8 +257,8 @@ def CountJiraIssuesEstimates(project, version_name):
 	for item in root.xpathEval("//item"):
 		key = item.xpathEval("key")[0].content
 		status = item.xpathEval("status")[0].content
-		original = GetChild(item, "timeoriginalestimate", "seconds") or GetChild(item, "aggregatetimeoriginalestimate", "seconds")
-		remaining = GetChild(item, "timeestimate", "seconds") or GetChild(item, "aggregatetimeremainingestimate", "seconds")
+		original = GetChild(item, "aggregatetimeoriginalestimate", "seconds") or GetChild(item, "timeoriginalestimate", "seconds")
+		remaining = GetChild(item, "aggregatetimeremainingestimate", "seconds") or GetChild(item, "timeestimate", "seconds")
 		if status == "Closed" or status == "Resolved":
 			remaining = "0"
 
@@ -493,11 +494,12 @@ def GetWorkLogs(fromDate, tillDate):
 		issues = soap.getWorklogs(jiraAuth, issueKey)
 		for i in issues:
 			# + 3 hours for England
+			comment = i["comment"] or ""
 			startDate = DateFromSet(i["startDate"]) + timedelta(hours = 3)
 			if startDate.date() >= fromDate and startDate.date() < tillDate:
-				value = "[%s@issues] (%s) %s - %s" % (issueKey, WikiSlash(updatedIssues[issueKey]), WikiSlash(i["comment"].strip(" \n\r")), i["timeSpent"])
+				value = "[%s@issues] (%s) %s - %s" % (issueKey, WikiSlash(updatedIssues[issueKey]), WikiSlash(comment.strip(" \n\r")), i["timeSpent"])
 				AppendSubSet(workLogs, i["author"], value)
-				print " [+] %s: %s (%s)" % (i["author"], i["comment"].strip(" \n\r"), i["timeSpent"])
+				print " [+] %s: %s (%s)" % (i["author"], comment.strip(" \n\r"), i["timeSpent"])
 				#found[i["author"]] = True
 
 	return workLogs
@@ -507,6 +509,8 @@ def GetWorkLogs(fromDate, tillDate):
 # Worklog notifications
 
 def RequestWorklogs(fromDate, worklogs, notifiee, engine, commits, ignore = []):
+	global config 
+
 	if (len(notifiee) > 0):
 
 		notification = GetTemplate("notification")
@@ -525,7 +529,7 @@ def RequestWorklogs(fromDate, worklogs, notifiee, engine, commits, ignore = []):
 						commit = "\n- " + "\n- ".join(commits[email])
 
 					print " [+] %s" % login
-					engine.SendMessage(notifiee[login], FillTemplate(notification, {"##DATE##": date, "##COMMITS##": commit}))
+					engine.SendMessage(notifiee[login], FillTemplate(notification, {"##DATE##": date, "##COMMITS##": commit, "##SPRINT##": config["currentSprint"]}))
 			else:
 				print " [-] %s (ignored)" % login
 
@@ -639,6 +643,38 @@ class JiraIssue:
 
 ######################################################################################
 # Text transforming methods
+
+tagExpr = re.compile("<[^<]+>")
+def DeTag(text):
+	return tagExpr.sub("", text)
+
+# Parses table with header into a set of dectionaries, one per each row
+def ParseHeadedTable(markup, de_tag = False):
+	markup = re.sub("</{0,1}tbody>", "", markup)	
+
+	cols = []
+	result = []
+	isHeader = False
+	for row in markup.strip().split("<tr>"):
+		if not row:
+			continue
+		values = re.split("</t[dh]>", re.sub("</t[dh]>$", "", re.sub("<(/tr|td|th)>", "", row).strip()))
+		if de_tag:
+			values = [DeTag(i).strip() for i in values]
+
+		if not isHeader:
+			cols = values
+			isHeader = True
+		else:
+			item = {}
+			for i in range(len(cols)):
+#				if cols[i] in ["Priority", "Total", "Low Priority", "Normal Priority", "High Priority"]:
+				if cols[i] in ["Priority"]:
+					values[i] = long(values[i])
+				item[cols[i]] = values[i]
+			result.append(item)
+	return result
+				
 
 cellExpression = re.compile("(<t[rdh])[^>]*>", re.IGNORECASE)
 def CleanHtmlTable(markup):

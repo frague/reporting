@@ -97,6 +97,7 @@ except:
 
 queues = ""
 for set in sorted(config["deployments"].keys()):
+	print "--- %s" % set
 	result = []
 	for env in sorted(config["deployments"][set].keys()):
 		url = "http://%s/info" % config["deployments"][set][env]

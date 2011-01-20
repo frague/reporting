@@ -1,0 +1,3 @@
+{chart:title=Tests|type=line|width=800|height=350|xLabel=Date|yLabel=Tests #|dataOrientation=vertical|rangeAxisLowerBound=0|domainaxisrotateticklabel=false|categoryLabelPosition=down45|colors=#309018,#F58723,#FF358B,#0079D6,#7E8AA2|showShapes=false}
+##CHART##
+{chart}
