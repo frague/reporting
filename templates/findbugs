@@ -1,4 +1,4 @@
-{chart:title=FindBugs Warnings|type=line|width=800|height=350|xLabel=Date|yLabel=Warnings #|dataOrientation=vertical|rangeAxisLowerBound=0|domainaxisrotateticklabel=false|categoryLabelPosition=down45|colors=#FF358B,#F58723,#309018,#0079D6,#7E8AA2|showShapes=false}
+{chart:title=FindBugs Warnings|type=line|width=800|height=350|xLabel=Date|yLabel=Warnings #|dataOrientation=vertical|rangeAxisLowerBound=0|domainaxisrotateticklabel=false|categoryLabelPosition=down45|colors=#EA1A00,#EA7000,#309018,#000000|showShapes=false}
 ##CHART##
 {chart}
 

@@ -13,6 +13,8 @@ class ExternalData:
 		self.wikiServer = wikiServer
 		self.wikiToken = wikiToken
 		self.PostFix = ""
+		self.ChartAdd = ""
+		self.Order = []
 		self.Init()
 
 	def Init(self):
@@ -29,15 +31,17 @@ class ExternalData:
 		headers = "|| "
 		columns = "| "
 		lastValues = self.GetLastValues(data)
-		for key, value in sorted(lastValues.iteritems(), key=lambda (k,v): (v,k)):
+#		for key, value in sorted(lastValues.iteritems(), key=lambda (k,v): (v,k)):
+		keys = self.Order or sorted(lastValues.keys())
+		for key in keys:
 			headers += "%s || " % key
-			columns += "%s%s | " % (value, self.PostFix)
+			columns += "%s%s | " % (lastValues[key], self.PostFix)
 		print "(i) Last values: %s" % lastValues
 		return "%s\n%s" % (headers, columns)
 
    	def MakeContent(self, data):
 		print "(!) Updating wiki %s report page (with no notification)" % self.PageName
-		return FillTemplate(GetTemplate(self.Template), {"##UPDATED##": datetime.datetime.today().strftime("%b %d, %Y (%H:%M)"), "##LASTVALUES##": self.BuildLastValuesTable(data), "##CHART##": MakeWikiProgressChart(data)})
+		return FillTemplate(GetTemplate(self.Template), {"##UPDATED##": datetime.datetime.today().strftime("%b %d, %Y (%H:%M)"), "##LASTVALUES##": self.BuildLastValuesTable(data), "##CHART##": MakeWikiProgressChart(data, self.ChartAdd, self.Order)})
 
 	def UpdatePage(self, content):
 #		print "[x] Saving is disabled for now...\n"
@@ -74,6 +78,7 @@ class TestsCoverage(ExternalData):
 		self.PageName = "Code Coverage"
 		self.CacheName = "cobertura"
 		self.PostFix = "%"
+		self.ChartAdd = "\n\n|| Day || ||\n| %s | 100 |" % MakeChartDate(datetime.date.today())
 
 	def collectStat(self, matchObj):
 		measure = matchObj.group(1)
@@ -115,6 +120,7 @@ class PMDReport(HudsonReport):
 		self.Template = "pmd"
 		self.PageName = "PMD"
 		self.CacheName = "pmd"
+		self.Order = ["High Priority", "Normal Priority", "Low Priority", "Total"]
 
 
 ######################################################################################
@@ -126,6 +132,7 @@ class FindBugsReport(HudsonReport):
 		self.Template = "findbugs"
 		self.PageName = "FindBugs"
 		self.CacheName = "findbugs"
+		self.Order = ["High Priority", "Normal Priority", "Low Priority", "Total"]
 
 
 ######################################################################################
@@ -137,6 +144,7 @@ class TestsRunReport(ExternalData):
 		self.Template = "tests"
 		self.PageName = "Tests Run"
 		self.CacheName = "tests"
+		self.Order = ["Errors", "Failures", "Skipped", "Tests run"]
 
 	def collectTests(self, matchObj):
 		self.tests["Tests run"] += int(matchObj.group(1))

@@ -151,6 +151,10 @@ def PrintableDate(date):
 # Returns datetime object formatted for printing
 def PrintableDateTime(date):
 	return date.strftime("%Y-%m-%d, %H:%M")
+
+# Formats date for charts
+def MakeChartDate(date):
+	return date.strftime("%Y/%m/%d")
 	
 # Making parameters line w/ login & password
 def MakeParamsWithLogin(params, add_params):
@@ -304,7 +308,7 @@ def MakeWikiBarChart(data, name=""):
 	print " * Create chart %s - %s line(s)" % (name, len(data))
 	dates = data.keys()
 	dates.sort()
-	result = "|| || %s ||" % " || ".join(date.strftime("%d/%m") for date in dates)
+	result = "|| || %s ||" % " || ".join(MakeChartDate(date) for date in dates)
 	for status in config["statuses_order"]:
 	 	result += "\n| %s | " % status
 	 	for date in dates:
@@ -335,7 +339,7 @@ def MakeWikiStraightLine(data, max_value, deadline):
 		if max_days > 0:
 			level = ((max_days - i - 0.0)/max_days) * max_value
 
-		result += "| %s | %s |\n" % (date.strftime("%d/%m"), level)
+		result += "| %s | %s |\n" % (MakeChartDate(date), level)
 		i += 1
 	return result
 
@@ -363,7 +367,7 @@ def MakeWikiBurndownLine(data, statuses, initial_level, statuses_to_calc_total =
 					level += int(data[date][status])
 
 		level -= max_delta
-		result += "| %s | %s |\n" % (date.strftime("%d/%m"), level)
+		result += "| %s | %s |\n" % (MakeChartDate(date), level)
 		i += 1
 	return result
 
@@ -394,7 +398,7 @@ def MakeWikiTimingChart(data, deadline, name=""):
 	return result
 	
 # Makes Wiki-progress chart
-def MakeWikiProgressChart(data):
+def MakeWikiProgressChart(data, postfix="", order=[]):
 	print " * Create progress chart (%s line(s))" % len(data)
 	dates = data.keys()
 	dates.sort()
@@ -403,16 +407,19 @@ def MakeWikiProgressChart(data):
 	if len(data) == 0:
 		return result
 
-	areas = data[data.keys()[0]].keys()
+	areas = order or data[data.keys()[0]].keys()
 
 	for area in areas:
 		result += "\n\n|| Day || %s ||" % area
 	 	for date in dates:
-	 		result += "\n| %s " % date.strftime("%d/%m")
+	 		result += "\n| %s " % MakeChartDate(date)
 	 		if data[date].has_key(area):
 	 			result += "| %s |" % data[date][area]
 		 	else:
 	 			result += "| 0 |"
+
+	result += postfix
+	
 	return result
 
 
