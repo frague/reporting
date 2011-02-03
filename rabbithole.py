@@ -247,6 +247,11 @@ def GetChild(source, name, attr):
 		return x[0].prop(attr)
 	return ""
 
+def NonEmptyFrom(v1, v2):
+	if v1:
+		return v1
+	return v2
+
 def CountJiraIssuesEstimates(project, version_name):
 	global config
 
@@ -266,10 +271,18 @@ def CountJiraIssuesEstimates(project, version_name):
 	totalRemaining = 0.0
 
 	for item in root.xpathEval("//item"):
+		type = item.xpathEval("type")[0].content
+
+		if (type == "Sub-Task"):
+			continue
+
 		key = item.xpathEval("key")[0].content
+		title = item.xpathEval("title")[0].content
 		status = item.xpathEval("status")[0].content
-		original = GetChild(item, "aggregatetimeoriginalestimate", "seconds") or GetChild(item, "timeoriginalestimate", "seconds")
-		remaining = GetChild(item, "aggregatetimeremainingestimate", "seconds") or GetChild(item, "timeestimate", "seconds")
+
+		original = NonEmptyFrom(GetChild(item, "aggregatetimeoriginalestimate", "seconds"), GetChild(item, "timeoriginalestimate", "seconds"))
+		remaining = NonEmptyFrom(GetChild(item, "aggregatetimeremainingestimate", "seconds"), GetChild(item, "timeestimate", "seconds"))
+		
 		if status == "Closed" or status == "Resolved":
 			remaining = "0"
 
@@ -279,8 +292,12 @@ def CountJiraIssuesEstimates(project, version_name):
 		except:
 			pass
 
+#	print "[%s] Original=%s, Spent=%s, Remaining=%s" % (key, totalOriginal, totalSpent, totalRemaining)
+
 	doc.freeDoc()
-	return {"Original": totalOriginal / 86400, "Remaining": totalRemaining / 86400, "Spent": (totalOriginal - totalRemaining) / 86400}
+
+	# Jira day = 8 hours (28800 seconds) !!!
+	return {"Original": totalOriginal / 28800, "Remaining": totalRemaining / 28800, "Spent": (totalOriginal - totalRemaining) / 28800}
 
 
 # Reads template from filesystem

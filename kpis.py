@@ -13,15 +13,14 @@ def CreateReports(postfix=""):
 
 	for i in [TestsCoverage, PMDReport, FindBugsReport, TestsRunReport]:
 		t = i(wikiServer, wikiToken)
-		t.CacheName += postfix
+		if postfix:
+			t.CacheName = "%s_%s" % (t.CacheName, postfix)
+			t.PageName = "%s %s" % (t.PageName, postfix)
 		t.Run()
-
-print config["sprintEnd"] == today
-exit(0)
 
 CreateReports()
 
 if config["sprintEnd"] == today:
 	print "######################## Sprint has ended ########################"
-	CreateReports("_sprint")
+	CreateReports("sprints")
 	
