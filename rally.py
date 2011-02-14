@@ -1,31 +1,37 @@
 from rabbithole import *
-from suds.client import Client
-from suds.xsd.doctor import ImportDoctor, Import
-from suds.transport.http import HttpAuthenticated
-
-#username=config["rally"]["user"], password=config["rally"]["password"]
-
-t = HttpAuthenticated(username=config["rally"]["user"], password=config["rally"]["password"])
-
-pm = urllib2.HTTPPasswordMgrWithDefaultRealm()
-pm.add_password(None, config["rally_soap"], config["rally"]["user"], config["rally"]["password"])
-
-t.handler = urllib2.HTTPBasicAuthHandler(pm) 
-t.urlopener = urllib2.build_opener(t.handler) 
-
-imp = Import("http://schemas.xmlsoap.org/soap/encoding/")
-imp.filter.add("http://rallydev.com/webservice/v1_22/domain") 
-
-doctor = ImportDoctor(imp)
-client = Client(config["rally_soap"], doctor=doctor, transport=t, cache=None)
 
 
+class RallyObject():
+	def __init__(self, node = None):
+		if node:
+			self.ParseFromXml(node)
+
+	def ParseFromXml(self, node):
+		self.ref = node.prop("ref")
+		self.Name = node.prop("Name")
+		self.Type = node.prop("Type")
 
 
-#print client.service.getCurrentSubscription()
+class RallyRESTFacade():
+	def __init__(self):
+		pm = urllib2.HTTPPasswordMgrWithDefaultRealm()
+		pm.add_password(None, config["rally"]["rest"], config["rally"]["user"], config["rally"]["password"])
+		handler = urllib2.HTTPBasicAuthHandler(pm)
 
-data = client.service.query({"Project": "RAS"})
-print data
+		opener = urllib2.build_opener(handler)
+		urllib2.install_opener(opener)
 
+	def ParseObjects(self, entity, text):
+		doc = libxml2.parseDoc(text)
+		return [RallyObject(q) for q in doc.xpathNewContext().xpathEval("//Results/Object[@type='%s']" % entity)]
 
-#ns0:Workspace workspace, ns0:Project project, xs:boolean projectScopeUp, xs:boolean projectScopeDown, xs:string artifactType, xs:string query, xs:string order, xs:boolean fetch, xs:long start, xs:long pagesize,
+	def AskFor(self, entity, query, fetch = False):
+		request = urllib2.Request("%s%s?fetch=false&query=(%s)" % (config["rally"]["rest"], entity, urllib.quote(query)))
+		return self.ParseObjects(entity, urllib2.urlopen(request).read())
+
+	def AskForIterations(self, project, fetch = False):
+		return self.AskFor("Iteration", "Project.Name = \"%s\"" % (project), fetch)
+
+rf = RallyRESTFacade()
+print rf.AskForIterations("RAS")
+
