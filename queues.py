@@ -28,6 +28,7 @@ stats = {}
 queueExpr = re.compile("<td>activemq.queue</td>[^<]*<td[^>]*>([^<]*)</td>", re.MULTILINE)
 versionExpr = re.compile("<p><b>Version</b><br/>([^<]+)</p>", re.MULTILINE)
 stateExpr = re.compile("<p><b>System State</b><br/>([^<]+)</p>", re.MULTILINE)
+zoneExpr = re.compile("<td>rules.placeholder.zone</td>[^<]*<td[^>]*>([^<]*)</td>", re.MULTILINE)
 
 
 page = GetTemplate("queues_main")
@@ -42,6 +43,7 @@ def GetDeployedQueue(url):
 	match = None
 	version = "_N/A_"
 	state = "_N/A_"
+	zone = "_N/A_"
 	try:
 		page = GetWebPage(url)
 
@@ -53,19 +55,23 @@ def GetDeployedQueue(url):
 		if st:
 			state = st.group(1).strip()
 
+		zo = zoneExpr.search(page)
+		if zo:
+			zone = zo.group(1).strip()
+
 		match = queueExpr.search(page)
 
 	except:
-		return {"queue": "_N/A_", "version": version, "state": state}
+		return {"queue": "_N/A_", "version": version, "state": state, "zone": zone}
 
 	if match:
 		key = match.group(1)
 		if used.has_key(key):
 			key = "{color:red}%s{color}" % key
 		used[key] = True
-		return {"queue": key, "version": version, "state": state}
+		return {"queue": key, "version": version, "state": state, "zone": zone}
 
-	return {"queue": "", "version": version, "state": state}
+	return {"queue": "", "version": version, "state": state, "zone": zone}
 
 print "--- Check if connected..."
 try:
@@ -111,7 +117,7 @@ for set in sorted(config["deployments"].keys()):
 		url = "http://%s/info" % config["deployments"][set][env]
 		parsed = GetDeployedQueue(url)
 		print "%s (ver. %s) uses queue %s" % (env, parsed["version"], parsed["queue"])
-		result.append(FillTemplate(lineTemplate, {"##TITLE##": env, "##URL##": url, "##COMMENT##": parsed["queue"], "##VERSION##": parsed["version"], "##STATE##": parsed["state"]}))
+		result.append(FillTemplate(lineTemplate, {"##TITLE##": env, "##URL##": url, "##COMMENT##": parsed["queue"], "##VERSION##": parsed["version"], "##STATE##": parsed["state"], "##ZONE##": parsed["zone"]}))
 	queues += FillTemplate(setTemplate, {"##TITLE##": set, "##INSTANCES##": "".join(result)}) + "\n";
 
 print "--- Publishing to wiki"
