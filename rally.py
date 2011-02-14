@@ -66,16 +66,59 @@ class RallyRESTFacade(object):
 	def AskForUserStoryTasks(self, user_story, fetch = False):
 		return self.AskFor("Task", "WorkProduct = \"%s\"" % (user_story.ref), fetch)
 
+def CreateJiraIssueFrom(rally_issue, parentIssueId):
+	global soap, jiraAuth, config
 
+	i = JiraIssue()
+	i.Connect(soap, jiraAuth)
 
+	i.parentIssueId = parentIssueId
+	i.issuetype = "6"	# TODO!
+
+	i.project = config["project_abbr"]
+	i.summary = "(%s) %s" % (rally_issue.Id, rally_issue.Name)
+	i.description = rally_issue.Description
+
+	i.Create()
+	
 ###################################################################################################################
+
+ProfileNeeded()
 
 print "--- Reading jira tasks -------------------------------------"
 
+rallyIssueExpr = re.compile("^\(((US|TA)\d+)\) ")
+jiraIssues = {}
 
-print "--- Reading rally tasks ------------------------------------"
+soap = SOAPpy.WSDL.Proxy(config["jira_soap"])
+jiraAuth = soap.login(config["jira"]["user"], config["jira"]["password"])
 
 
+versionId = None
+backlogVersionId = None
+for v in soap.getVersions(jiraAuth, config["project_abbr"]):
+	if v["name"] == config["current_version"]:
+		versionId = v["id"]
+	if v["name"] == "Product Backlog":
+		backlogVersionId = v["id"]
+
+if not versionId or not backlogVersionId:
+	print "[!] jira version is not found!"
+	exit(0)
+
+
+for i in soap.getIssuesFromJqlSearch(jiraAuth, "project = '%s' AND fixVersion = '%s'" % (config["project_abbr"], config["current_version"]), 1000):
+	issue = JiraIssue()
+	issue.Parse(i)
+
+	key = GetMatchGroup(issue.summary, rallyIssueExpr, 1)
+	if key:
+		jiraIssues[key] = issue
+		print "[ ] %s" % issue.summary
+
+
+
+print "\n--- Reading rally tasks ------------------------------------"
 
 rf = RallyRESTFacade()
 iterations = rf.AskForIterations("RAS")
@@ -83,7 +126,20 @@ stories = rf.AskForUserStories(iterations["Sprint 1 (2/7 - 2/18)"], True)
 
 for us in stories:
 	story = stories[us]
-	print "[?] %s" % story
+	parentIssueId = None
+	action = " "
+	if not jiraIssues.has_key(tasks[task].Id):
+		action = "+"
+	else:
+		parentIssueId = jiraIssues[tasks[task].Id].id
+
+	print "[%s] %s (%s)" % (action, story, parentIssueId)
+
 	tasks = rf.AskForUserStoryTasks(story, True)
 	for task in tasks:
-		print " [?] %s" % tasks[task]
+		action = " "
+		if not jiraIssues.has_key(tasks[task].Id):
+			action = "+"
+			#CreateJiraIssueFrom(tasks[task], parentIssueId)
+
+		print " [%s] %s" % (action, tasks[task])
