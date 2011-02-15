@@ -615,6 +615,9 @@ class JiraIssue:
 	def IsNotEmpty(self):
 		return self.key and self.id
 
+	def IsClosed(self):
+		return self.IsNotEmpty() and (self.status == "5" or self.status == "6")
+
 	def AssertEqual(self, a, b, msg):
 #		if a != b:
 #			print "%s: \"%s\" <> \"%s\"" % (msg, a, b)
@@ -680,6 +683,9 @@ class JiraIssue:
 	def Resolve(self):
 		if self.IsNotEmpty() and self.IsConnected:
 			self.soap.progressWorkflowAction(self.jiraAuth, self.key, '2', [{"id": "resolution", "values": "2"}])
+
+	def Close(self):
+		self.Resolve()
 
 	def Delete(self):
 		if self.IsNotEmpty() and self.IsConnected:

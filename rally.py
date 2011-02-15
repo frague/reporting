@@ -10,11 +10,16 @@ class RallyObject(object):
 		sub = node.xpathEval(name)
 		if sub:
 			return sub[0].content
+		return ""
 
 	def SubnodeProp(self, node, name, prop):
 		sub = node.xpathEval(name)
 		if sub:
 			return sub[0].prop(prop)
+		return ""
+
+	def IsCompleted(self):
+		return self.Status == "completed" or self.Status == "accepted"
 	
 	def ParseFromXml(self, node):
 		self.Node = node
@@ -31,7 +36,8 @@ class RallyObject(object):
 			self.Owner = config["names_logins"][self.Owner]
 		else:
 			self.Owner = ""
-		self.Status = self.SubnodeValue(node, "TaskStatus")
+
+		self.Status = (self.SubnodeValue(node, "TaskStatus") or self.SubnodeValue(node, "State")).lower()
 		self.Description = self.SubnodeValue(node, "Description")
 
 	def __repr__(self):
@@ -108,6 +114,42 @@ def CreateJiraIssueFrom(rally_issue, parentIssueKey = "", issueType = None, vers
 
 	return i
 
+
+def ProcessTasksFor(story, kind):
+	global versionId, backlogVersionId, parentIssueId, jiraIssues
+
+	if kind:
+		tasks = rf.AskForUserStoryTasks(story, True)
+	else:
+		tasks = rf.AskForUserStoryDefects(story, True)
+
+	for t in tasks:
+		task = tasks[t]
+		action = " "
+		if not jiraIssues.has_key(task.Id):
+			action = "+"
+			if kind:
+				issue = CreateJiraIssueFrom(task, parentIssueId, None, [versionId, backlogVersionId])
+			else:
+				issue = CreateJiraIssueFrom(task, "", "1", [backlogVersionId])
+
+			if not issue.key:
+				action = "!"
+		else:
+			ji = jiraIssues[task.Id]
+#			print "%s vs. %s"  % (task.IsCompleted(), ji.IsClosed())
+
+			if task.IsCompleted() and not ji.IsClosed():
+				ji.Close()
+				action = "x"
+			if not task.IsCompleted() and ji.IsClosed():
+				action = "?"
+
+		print " [%s] %s (%s)" % (action, task, task.Status)
+
+
+
+
 	
 ###################################################################################################################
 
@@ -147,6 +189,10 @@ for i in soap.getIssuesFromJqlSearch(jiraAuth, "project = '%s' AND (fixVersion =
 
 
 
+
+
+
+
 print "\n--- Reading rally tasks ------------------------------------"
 
 rf = RallyRESTFacade()
@@ -164,31 +210,10 @@ for us in stories:
 	print "\n[%s] %s (%s)" % (action, story, parentIssueId)
 
 ###### Tasks ######################################################################################	
-	tasks = rf.AskForUserStoryTasks(story, True)
-	for t in tasks:
-		task = tasks[t]
-		action = " "
-		if not jiraIssues.has_key(task.Id):
-			action = "+"
-			issue = CreateJiraIssueFrom(task, parentIssueId, None, [versionId, backlogVersionId])
-			if not issue.key:
-				action = "!"
-
-		print " [%s] %s" % (action, task)
+	ProcessTasksFor(story, 1)
 
 ###### Defects ####################################################################################	
-	defects = rf.AskForUserStoryDefects(story, True)
-	for d in defects:
-		defect = defects[d]
-		action = " "
-		if not jiraIssues.has_key(defect.Id):
-			action = "+"
-			defect.Description = ReformatDescription(defect.Description)
-			issue = CreateJiraIssueFrom(defect, "", "1", [backlogVersionId])
-			if not issue.key:
-				action = "!"
-
-		print " [%s] %s" % (action, defect)
+	ProcessTasksFor(story, 0)
 
 
 print "\nDone!"
