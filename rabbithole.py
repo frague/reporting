@@ -167,7 +167,7 @@ def MakeParams(params):
 
 # Getting output of executable w/ parameters
 def GetStdoutOf(process, params):
-	p = subprocess.Popen("%s %s" % (process, params), stdout=subprocess.PIPE, shell=False).stdout
+	p = subprocess.Popen("%s %s" % (process, params), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=False).stdout
 	return p.read()
 
 # Getting single line from Jira or Wiki
@@ -619,6 +619,12 @@ class JiraIssue:
 #		if a != b:
 #			print "%s: \"%s\" <> \"%s\"" % (msg, a, b)
 		return a == b
+
+	def MakeCodeSections(self):
+		self.description = re.sub("([^>])(\n<)", "\\1{code}\\2", self.description)
+		self.description = re.sub("(>\n)([ \t\n]*[^< \t\n])", "\\1{code}\\2", self.description)
+		if self.description.count("{code}") % 2 != 0:
+			self.description += "{code}"
 	
 	def Equals(self, issue):
 		result = True
@@ -653,7 +659,8 @@ class JiraIssue:
 	def CreateSubtask(self, parent_key):
 		# Subtask creation available through CLI only (((
 		if parent_key:
-			GetJira({"action": "createIssue", "project": self.project, "type": "Sub-task", "priority": self.priority, "summary": self.summary, "description": self.description, "reporter": self.reporter, "assignee": self.assignee, "parent": parent_key})
+			output = GetJira({"action": "createIssue", "project": self.project, "type": "Sub-task", "priority": self.priority, "summary": self.summary, "description": self.description, "reporter": self.reporter, "assignee": self.assignee, "parent": parent_key})
+			self.key = GetMatchGroup(output, re.compile("^Issue ([A-Z0-9]+-\d+) created as subtask of"), 1)
 			
 	def Update(self, changes):
 		if self.IsNotEmpty() and self.IsConnected:

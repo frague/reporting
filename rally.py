@@ -27,6 +27,10 @@ class RallyObject(object):
 		# Extended properties
 		self.Id = self.SubnodeValue(node, "FormattedID")
 		self.Owner = self.SubnodeProp(node, "Owner", "refObjectName")
+		if self.Owner and config["names_logins"].has_key(self.Owner):
+			self.Owner = config["names_logins"][self.Owner]
+		else:
+			self.Owner = ""
 		self.Status = self.SubnodeValue(node, "TaskStatus")
 		self.Description = self.SubnodeValue(node, "Description")
 
@@ -66,31 +70,53 @@ class RallyRESTFacade(object):
 	def AskForUserStoryTasks(self, user_story, fetch = False):
 		return self.AskFor("Task", "WorkProduct = \"%s\"" % (user_story.ref), fetch)
 
-def CreateJiraIssueFrom(rally_issue, parentIssueKey = ""):
+	def AskForUserStoryDefects(self, user_story, fetch = False):
+		return self.AskFor("Defect", "Requirement = \"%s\"" % (user_story.ref), fetch)
+
+
+replaces = {"&nbsp;": " ", "&lt;": "<", "&gt;": ">", "&amp;": "&"}
+def ReformatDescription(text):
+	text = re.sub("<br[^>]*>", "\n", text)
+
+	text = DeTag(text)
+	for needle in replaces:
+		text = text.replace(needle, replaces[needle])
+
+	return text
+
+def CreateJiraIssueFrom(rally_issue, parentIssueKey = "", issueType = None, versions = []):
 	global soap, jiraAuth, config
 
 	i = JiraIssue()
 
 	i.project = config["project_abbr"]
+	i.assignee = rally_issue.Owner
+
 	i.summary = "(%s) %s" % (rally_issue.Id, rally_issue.Name)
 	i.description = rally_issue.Description
+	i.MakeCodeSections()
 
-	if re.search("^\(US", rally_issue.Id):		# UserStory = Supertask
-		i.issuetype = "6"
+	if re.search("^TA", rally_issue.Id):		# UserStory = Supertask
+		i.CreateSubtask(parentIssueKey)
+	else:
+		i.issuetype = issueType or "6"
 		i.Connect(soap, jiraAuth)
 		i.Create()
-	else:
-		i.CreateSubtask(parentIssueKey)
+
+	if i.key:
+		i.SetVersion(versions)
+
 	return i
 
 	
 ###################################################################################################################
 
+
 ProfileNeeded()
 
 print "--- Reading jira tasks -------------------------------------"
 
-rallyIssueExpr = re.compile("^\(((US|TA)\d+)\) ")
+rallyIssueExpr = re.compile("^\(((US|TA|DE)\d+)\) ")
 jiraIssues = {}
 
 soap = SOAPpy.WSDL.Proxy(config["jira_soap"])
@@ -110,14 +136,14 @@ if not versionId or not backlogVersionId:
 	exit(0)
 
 
-for i in soap.getIssuesFromJqlSearch(jiraAuth, "project = '%s' AND fixVersion = '%s'" % (config["project_abbr"], config["current_version"]), 1000):
+for i in soap.getIssuesFromJqlSearch(jiraAuth, "project = '%s' AND (fixVersion = '%s' OR fixVersion = 'Product Backlog')" % (config["project_abbr"], config["current_version"]), 1000):
 	issue = JiraIssue()
 	issue.Parse(i)
 
 	key = GetMatchGroup(issue.summary, rallyIssueExpr, 1)
 	if key:
 		jiraIssues[key] = issue
-		print "[ ] %s" % issue.summary
+#		print "[ ] %s" % issue.summary
 
 
 
@@ -135,14 +161,34 @@ for us in stories:
 		jiraIssues[story.Id] = CreateJiraIssueFrom(story)
 		action = "+"
 	parentIssueId = jiraIssues[story.Id].key
+	print "\n[%s] %s (%s)" % (action, story, parentIssueId)
 
-	print "[%s] %s (%s)" % (action, story, parentIssueId)
-
+###### Tasks ######################################################################################	
 	tasks = rf.AskForUserStoryTasks(story, True)
-	for task in tasks:
+	for t in tasks:
+		task = tasks[t]
 		action = " "
-		if not jiraIssues.has_key(tasks[task].Id):
+		if not jiraIssues.has_key(task.Id):
 			action = "+"
-			CreateJiraIssueFrom(tasks[task], parentIssueId)
+			issue = CreateJiraIssueFrom(task, parentIssueId, None, [versionId, backlogVersionId])
+			if not issue.key:
+				action = "!"
 
-		print " [%s] %s" % (action, tasks[task])
+		print " [%s] %s" % (action, task)
+
+###### Defects ####################################################################################	
+	defects = rf.AskForUserStoryDefects(story, True)
+	for d in defects:
+		defect = defects[d]
+		action = " "
+		if not jiraIssues.has_key(defect.Id):
+			action = "+"
+			defect.Description = ReformatDescription(defect.Description)
+			issue = CreateJiraIssueFrom(defect, "", "1", [backlogVersionId])
+			if not issue.key:
+				action = "!"
+
+		print " [%s] %s" % (action, defect)
+
+
+print "\nDone!"
