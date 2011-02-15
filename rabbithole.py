@@ -610,6 +610,7 @@ class JiraIssue:
 		self.reporter = ""
 		self.fixVersions = []
 		self.resolution = "-1"
+		self.parentIssueId = ""
 
 	def IsNotEmpty(self):
 		return self.key and self.id
@@ -648,6 +649,11 @@ class JiraIssue:
 			newIssue = self.soap.createIssue(self.jiraAuth, {"project": self.project, "type": self.issuetype, "priority": self.priority, "summary": self.summary, "description": self.description, "reporter": self.reporter, "assignee": self.assignee})
 			self.key = newIssue.key
 			self.id = newIssue.id
+
+	def CreateSubtask(self, parent_key):
+		# Subtask creation available through CLI only (((
+		if parent_key:
+			GetJira({"action": "createIssue", "project": self.project, "type": "Sub-task", "priority": self.priority, "summary": self.summary, "description": self.description, "reporter": self.reporter, "assignee": self.assignee, "parent": parent_key})
 			
 	def Update(self, changes):
 		if self.IsNotEmpty() and self.IsConnected:

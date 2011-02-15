@@ -66,20 +66,23 @@ class RallyRESTFacade(object):
 	def AskForUserStoryTasks(self, user_story, fetch = False):
 		return self.AskFor("Task", "WorkProduct = \"%s\"" % (user_story.ref), fetch)
 
-def CreateJiraIssueFrom(rally_issue, parentIssueId):
+def CreateJiraIssueFrom(rally_issue, parentIssueKey = ""):
 	global soap, jiraAuth, config
 
 	i = JiraIssue()
-	i.Connect(soap, jiraAuth)
-
-	i.parentIssueId = parentIssueId
-	i.issuetype = "6"	# TODO!
 
 	i.project = config["project_abbr"]
 	i.summary = "(%s) %s" % (rally_issue.Id, rally_issue.Name)
 	i.description = rally_issue.Description
 
-	i.Create()
+	if re.search("^\(US", rally_issue.Id):		# UserStory = Supertask
+		i.issuetype = "6"
+		i.Connect(soap, jiraAuth)
+		i.Create()
+	else:
+		i.CreateSubtask(parentIssueKey)
+	return i
+
 	
 ###################################################################################################################
 
@@ -128,10 +131,10 @@ for us in stories:
 	story = stories[us]
 	parentIssueId = None
 	action = " "
-	if not jiraIssues.has_key(tasks[task].Id):
+	if not jiraIssues.has_key(story.Id):
+		jiraIssues[story.Id] = CreateJiraIssueFrom(story)
 		action = "+"
-	else:
-		parentIssueId = jiraIssues[tasks[task].Id].id
+	parentIssueId = jiraIssues[story.Id].key
 
 	print "[%s] %s (%s)" % (action, story, parentIssueId)
 
@@ -140,6 +143,6 @@ for us in stories:
 		action = " "
 		if not jiraIssues.has_key(tasks[task].Id):
 			action = "+"
-			#CreateJiraIssueFrom(tasks[task], parentIssueId)
+			CreateJiraIssueFrom(tasks[task], parentIssueId)
 
 		print " [%s] %s" % (action, tasks[task])
