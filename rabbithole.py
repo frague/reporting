@@ -505,7 +505,17 @@ def InitJiraSOAP():
 	jiraAuth = soap.login(config["jira"]["user"], config["jira"]["password"])
 
 
-def GetWorkLogs(fromDate, tillDate):
+rallyIssueExpr = re.compile("^\(((US|TA|DE)\d+)\) ")
+
+def WorklogForRally(collector, issueTitle, issue):
+	# We can potentially separate by author
+	key = GetMatchGroup(issueTitle, rallyIssueExpr, 1)
+	if key:
+		AppendSubSet(collector, key, issue["timeSpent"])
+		print " + %s" % issue["timeSpent"]
+
+
+def GetWorkLogs(fromDate, tillDate, collectMethod = None):
 	global soap, jiraAuth
 
 	#found = {}
@@ -519,7 +529,7 @@ def GetWorkLogs(fromDate, tillDate):
 	for i in issues:
 		updatedIssues[i["key"]] = i["summary"]
 
-	workLogs = {}
+	worklogs = {}
 	for issueKey in updatedIssues.keys():
 		print "%s: \"%s\":" % (issueKey, updatedIssues[issueKey])
 		issues = soap.getWorklogs(jiraAuth, issueKey)
@@ -528,12 +538,16 @@ def GetWorkLogs(fromDate, tillDate):
 			comment = i["comment"] or ""
 			startDate = DateFromSet(i["startDate"]) + timedelta(hours = 3)
 			if startDate.date() >= fromDate and startDate.date() < tillDate:
-				value = "[%s@issues] (%s) %s - %s" % (issueKey, WikiSlash(updatedIssues[issueKey]), WikiSlash(comment.strip(" \n\r")), i["timeSpent"])
-				AppendSubSet(workLogs, i["author"], value)
-				print " [+] %s: %s (%s)" % (i["author"], comment.strip(" \n\r"), i["timeSpent"])
+				if collectMethod:
+					collectMethod(worklogs, updatedIssues[issueKey], i)
+				else:
+					value = "[%s@issues] (%s) %s - %s" % (issueKey, WikiSlash(updatedIssues[issueKey]), WikiSlash(comment.strip(" \n\r")), i["timeSpent"])
+					AppendSubSet(worklogs, i["author"], value)
+					print " [+] %s: %s (%s)" % (i["author"], comment.strip(" \n\r"), i["timeSpent"])
+
 				#found[i["author"]] = True
 
-	return workLogs
+	return worklogs
 
 
 #####################################################################################
@@ -685,7 +699,12 @@ class JiraIssue:
 			self.soap.progressWorkflowAction(self.jiraAuth, self.key, '2', [{"id": "resolution", "values": "2"}])
 
 	def Close(self):
-		self.Resolve()
+		if self.IsNotEmpty() and self.IsConnected:
+			action = "2"
+			if self.status == "10078" or self.status == "10068":
+				# For "To Be Reviewed" and "To Be Accepted" statuses there is custom Close action
+				action = "721"
+			self.soap.progressWorkflowAction(self.jiraAuth, self.key, action, [{"id": "resolution", "values": "1"}])
 
 	def Delete(self):
 		if self.IsNotEmpty() and self.IsConnected:

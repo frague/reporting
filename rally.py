@@ -39,9 +39,15 @@ class RallyObject(object):
 
 		self.Status = (self.SubnodeValue(node, "TaskStatus") or self.SubnodeValue(node, "State")).lower()
 		self.Description = self.SubnodeValue(node, "Description")
+		self.RevisionHistory = self.SubnodeProp(node, "RevisionHistory", "ref")
+		self.CreationDate = self.SubnodeValue(node, "CreationDate")
+		if self.CreationDate:
+			self.CreationDate = datetime.datetime.strptime(self.CreationDate, "%Y-%m-%dT%H:%M:%S.%fZ").date()
+
+		self.User = self.SubnodeProp(node, "User", "refObjectName")
 
 	def __repr__(self):
-		return "[%s] %s" % (self.Id, self.Name)
+		return "[%s] %s (%s)" % (self.Id, self.Name, self.ref)
 
 
 class RallyRESTFacade(object):
@@ -54,18 +60,44 @@ class RallyRESTFacade(object):
 		urllib2.install_opener(opener)
 
 	def ParseObjects(self, entity, text):
-#		print text
 		doc = libxml2.parseDoc(text)
 		result = {}
 		for o in [RallyObject(q) for q in doc.xpathNewContext().xpathEval("//Results/Object[@type='%s']" % entity)]:
 			result[o.Name] = o 
 		return result	
 
-	def AskFor(self, entity, query, fetch = False):
-		url = "%s%s?fetch=%s&query=(%s)" % (config["rally"]["rest"], entity, str(fetch).lower(), urllib.quote(query))
-#		print url
+	def ParseCollectionObjects(self, path, text):
+		doc = libxml2.parseDoc(text)
+		result = {}
+		for o in [RallyObject(q) for q in doc.xpathNewContext().xpathEval(path)]:
+			result[o.ref] = o
+		return result	
+
+	def ParseFetchedXml(self, entity, url, debug = False):
 		request = urllib2.Request(url)
-		return self.ParseObjects(entity, urllib2.urlopen(request).read())
+		text = urllib2.urlopen(request).read()
+		if debug:
+			#print url
+			print text
+		return self.ParseObjects(entity, text)
+	
+	def ParseFetchedCollectionXml(self, entity, url, debug = False):
+		request = urllib2.Request(url)
+		text = urllib2.urlopen(request).read()
+		if debug:
+			#print url
+			print text
+		return self.ParseCollectionObjects(entity, text)
+	
+
+	
+	
+	
+	def AskFor(self, entity, query, fetch = False):
+		return self.ParseFetchedXml(entity, "%s%s?fetch=%s&query=(%s)" % (config["rally"]["rest"], entity, str(fetch).lower(), urllib.quote(query)))
+
+
+
 
 	def AskForIterations(self, project, fetch = False):
 		return self.AskFor("Iteration", "Project.Name = \"%s\"" % (project), fetch)
@@ -78,6 +110,9 @@ class RallyRESTFacade(object):
 
 	def AskForUserStoryDefects(self, user_story, fetch = False):
 		return self.AskFor("Defect", "Requirement = \"%s\"" % (user_story.ref), fetch)
+
+	def GetRevisionHistory(self, ref):
+		return self.ParseFetchedCollectionXml("//RevisionHistory/Revisions/Revision[@type='Revision']", ref, True)
 
 
 replaces = {"&nbsp;": " ", "&lt;": "<", "&gt;": ">", "&amp;": "&"}
@@ -115,8 +150,8 @@ def CreateJiraIssueFrom(rally_issue, parentIssueKey = "", issueType = None, vers
 	return i
 
 
-def ProcessTasksFor(story, kind):
-	global versionId, backlogVersionId, parentIssueId, jiraIssues
+def ProcessTasksFor(story, issue, kind):
+	global versionId, backlogVersionId, parentIssueId, jiraIssues, soap, jiraAuth, worklogs, rf
 
 	if kind:
 		tasks = rf.AskForUserStoryTasks(story, True)
@@ -128,24 +163,41 @@ def ProcessTasksFor(story, kind):
 		action = " "
 		if not jiraIssues.has_key(task.Id):
 			action = "+"
-			if kind:
-				issue = CreateJiraIssueFrom(task, parentIssueId, None, [versionId, backlogVersionId])
+			if issue.IsClosed():
+				action = "/"
 			else:
-				issue = CreateJiraIssueFrom(task, "", "1", [backlogVersionId])
+				if kind:
+					i = CreateJiraIssueFrom(task, parentIssueId, None, [versionId, backlogVersionId])
+				else:
+					i = CreateJiraIssueFrom(task, "", "1", [backlogVersionId])
 
-			if not issue.key:
-				action = "!"
+				if not i.key:
+					action = "!"
 		else:
 			ji = jiraIssues[task.Id]
 #			print "%s vs. %s"  % (task.IsCompleted(), ji.IsClosed())
 
-			if task.IsCompleted() and not ji.IsClosed():
-				ji.Close()
-				action = "x"
-			if not task.IsCompleted() and ji.IsClosed():
-				action = "?"
+			if task.IsCompleted():
+				if not ji.IsClosed():
+					ji.Connect(soap, jiraAuth)
+					ji.Close()
+					action = "x"
+				else:
+					action = "v"
+			else:
+				if ji.IsClosed():
+					action = "?"
+
+		if action != "+" and worklogs.has_key(task.Id) and task.RevisionHistory:
+			# Checking worklogs
+			print "  In jira: %s" % worklogs[task.Id]
+			history = rf.GetRevisionHistory(task.RevisionHistory)
+			print "  %s" % history
+
+
 
 		print " [%s] %s (%s)" % (action, task, task.Status)
+#		print "      %s" % (task.RevisionHistory)
 
 
 
@@ -156,9 +208,12 @@ def ProcessTasksFor(story, kind):
 
 ProfileNeeded()
 
-print "--- Reading jira tasks -------------------------------------"
+print "--- Reading jira worklogs ----------------------------------"
+worklogs = GetWorkLogs(lastWorkday, today, WorklogForRally)
 
-rallyIssueExpr = re.compile("^\(((US|TA|DE)\d+)\) ")
+
+print "\n--- Reading jira tasks -------------------------------------"
+
 jiraIssues = {}
 
 soap = SOAPpy.WSDL.Proxy(config["jira_soap"])
@@ -189,10 +244,6 @@ for i in soap.getIssuesFromJqlSearch(jiraAuth, "project = '%s' AND (fixVersion =
 
 
 
-
-
-
-
 print "\n--- Reading rally tasks ------------------------------------"
 
 rf = RallyRESTFacade()
@@ -204,16 +255,18 @@ for us in stories:
 	parentIssueId = None
 	action = " "
 	if not jiraIssues.has_key(story.Id):
-		jiraIssues[story.Id] = CreateJiraIssueFrom(story)
+		jiraIssues[story.Id] = CreateJiraIssueFrom(story, "", "6", [versionId, backlogVersionId])
 		action = "+"
-	parentIssueId = jiraIssues[story.Id].key
+
+	issue = jiraIssues[story.Id]
+	parentIssueId = issue.key
 	print "\n[%s] %s (%s)" % (action, story, parentIssueId)
 
 ###### Tasks ######################################################################################	
-	ProcessTasksFor(story, 1)
+	ProcessTasksFor(story, issue, 1)
 
 ###### Defects ####################################################################################	
-	ProcessTasksFor(story, 0)
+	ProcessTasksFor(story, issue, 0)
 
 
 print "\nDone!"
