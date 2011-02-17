@@ -46,6 +46,9 @@ class RallyObject(object):
 
 		self.User = self.SubnodeProp(node, "User", "refObjectName")
 
+		self.Actuals = float(self.SubnodeValue(node, "Actuals") or "0")
+		self.ToDo = float(self.SubnodeValue(node, "ToDo") or "0")
+
 	def __repr__(self):
 		return "[%s] %s (%s)" % (self.Id, self.Name, self.ref)
 
@@ -59,20 +62,18 @@ class RallyRESTFacade(object):
 		opener = urllib2.build_opener(handler)
 		urllib2.install_opener(opener)
 
-	def ParseObjects(self, entity, text):
-		doc = libxml2.parseDoc(text)
-		result = {}
-		for o in [RallyObject(q) for q in doc.xpathNewContext().xpathEval("//Results/Object[@type='%s']" % entity)]:
-			result[o.Name] = o 
-		return result	
-
-	def ParseCollectionObjects(self, path, text):
+	def ParseObjectsBase(self, path, text):
 		doc = libxml2.parseDoc(text)
 		result = {}
 		for o in [RallyObject(q) for q in doc.xpathNewContext().xpathEval(path)]:
 			result[o.ref] = o
 		return result	
 
+	def ParseObjects(self, entity, text):
+		return self.ParseObjectsBase("//Results/Object[@type='%s']" % entity, text)
+
+
+	
 	def ParseFetchedXml(self, entity, url, debug = False):
 		request = urllib2.Request(url)
 		text = urllib2.urlopen(request).read()
@@ -87,14 +88,13 @@ class RallyRESTFacade(object):
 		if debug:
 			#print url
 			print text
-		return self.ParseCollectionObjects(entity, text)
-	
-
+		return self.ParseObjectsBase(entity, text)
 	
 	
 	
-	def AskFor(self, entity, query, fetch = False):
-		return self.ParseFetchedXml(entity, "%s%s?fetch=%s&query=(%s)" % (config["rally"]["rest"], entity, str(fetch).lower(), urllib.quote(query)))
+	
+	def AskFor(self, entity, query, fetch = False, debug = False):
+		return self.ParseFetchedXml(entity, "%s%s?fetch=%s&query=(%s)" % (config["rally"]["rest"], entity, str(fetch).lower(), urllib.quote(query)), debug)
 
 
 
@@ -112,7 +112,7 @@ class RallyRESTFacade(object):
 		return self.AskFor("Defect", "Requirement = \"%s\"" % (user_story.ref), fetch)
 
 	def GetRevisionHistory(self, ref):
-		return self.ParseFetchedCollectionXml("//RevisionHistory/Revisions/Revision[@type='Revision']", ref, True)
+		return self.ParseFetchedCollectionXml("//RevisionHistory/Revisions/Revision[@type='Revision']", ref)
 
 
 replaces = {"&nbsp;": " ", "&lt;": "<", "&gt;": ">", "&amp;": "&"}
@@ -148,6 +148,39 @@ def CreateJiraIssueFrom(rally_issue, parentIssueKey = "", issueType = None, vers
 		i.SetVersion(versions)
 
 	return i
+
+actualsAddedExpr 	= re.compile("ACTUALS added \[(\d+\.\d+) Hours{0,1}\]")
+actualsChangedExpr 	= re.compile("ACTUALS changed from \[(\d+\.\d+) Hours{0,1}\] to \[(\d+\.\d+) Hours{0,1}\]")
+todoAddedExpr 		= re.compile("TO DO added \[(\d+\.\d+) Hours{0,1}\]")
+todoChangedExpr 	= re.compile("TO DO changed from \[(\d+\.\d+) Hours{0,1}\] to \[(\d+\.\d+) Hours{0,1}\]")
+
+def UpdateProgressFor(task, task_history, reported_in_jira):
+	global lastWorkingDay
+
+	progressDateExpr	= re.compile("Progress for (%s)" % lastWorkingDay)
+	jiraWork = float(reported_in_jira) / 3600	# Logged work in hours
+
+	syncReported = 0
+
+	# Calculate Rally progress
+	for ref in task_history:
+		rev = task_history[ref]
+
+		spent = float(GetMatchGroup(rev.Description, actualsAddedExpr, 1) or "0")
+		if not spent:
+			m = actualsChangedExpr.search(rev.Description)
+			if m:
+				spent = float(m.group(2)) - float(m.group(1))
+		
+		#print " * (%s)	%s [%s, %s]" % (spent, rev.Description, rev.CreationDate.strftime("%Y-%m-%d"), lastWorkingDay)
+		if progressDateExpr.search(rev.Description):
+			syncReported += spent
+
+	print "  --- Worklogs: synced=%s hrs., jira=%s hrs." % (syncReported, jiraWork)
+	if jiraWork > syncReported:
+		# Update task with the difference (jiraWork - syncReported) Hours
+		delta = jiraWork - syncReported
+		print "  [@] Updating item %s: ACTUALS changed from [%s] to [%s], TODO changed from [%s] to [%s]" % (task.Id, task.Actuals, task.Actuals + delta, task.ToDo, task.ToDo - delta)
 
 
 def ProcessTasksFor(story, issue, kind):
@@ -188,22 +221,20 @@ def ProcessTasksFor(story, issue, kind):
 				if ji.IsClosed():
 					action = "?"
 
+		print " [%s] %s (%s)" % (action, task, task.Status)
+
 		if action != "+" and worklogs.has_key(task.Id) and task.RevisionHistory:
 			# Checking worklogs
-			print "  In jira: %s" % worklogs[task.Id]
+			#print "  jira worklog: %s sec." % worklogs[task.Id]
 			history = rf.GetRevisionHistory(task.RevisionHistory)
-			print "  %s" % history
-
-
-
-		print " [%s] %s (%s)" % (action, task, task.Status)
-#		print "      %s" % (task.RevisionHistory)
-
-
+			UpdateProgressFor(task, history, worklogs[task.Id])
 
 
 	
 ###################################################################################################################
+
+
+lastWorkingDay = lastWorkday.strftime("%Y-%m-%d")
 
 
 ProfileNeeded()
@@ -248,19 +279,39 @@ print "\n--- Reading rally tasks ------------------------------------"
 
 rf = RallyRESTFacade()
 iterations = rf.AskForIterations("RAS")
-stories = rf.AskForUserStories(iterations["Sprint 1 (2/7 - 2/18)"], True)
+
+currentIteration = None
+for ref in iterations:
+	if iterations[ref].Name == config["current_iteration"]:
+		currentIteration = iterations[ref]
+		break;
+	
+if not currentIteration:
+	print "[!] Current iteration (%s) wasn't found in Rally!" % config["current_iteration"]
+	exit(0);
+
+stories = rf.AskForUserStories(currentIteration, True)
 
 for us in stories:
 	story = stories[us]
 	parentIssueId = None
 	action = " "
 	if not jiraIssues.has_key(story.Id):
-		jiraIssues[story.Id] = CreateJiraIssueFrom(story, "", "6", [versionId, backlogVersionId])
+		# Create new user story
+		jiraIssues[story.Id] = CreateJiraIssueFrom(story, "", "8", [versionId, backlogVersionId])
 		action = "+"
+	else:
+		ji = jiraIssues[story.Id]
+		if story.IsCompleted():
+			action = "v"
+			if not ji.IsClosed():
+				ji.Connect(soap, jiraAuth)
+				#ji.Close()
+				action = "x"
 
 	issue = jiraIssues[story.Id]
 	parentIssueId = issue.key
-	print "\n[%s] %s (%s)" % (action, story, parentIssueId)
+	print "\n[%s] %s (%s) - %s" % (action, story, parentIssueId, story.Status)
 
 ###### Tasks ######################################################################################	
 	ProcessTasksFor(story, issue, 1)

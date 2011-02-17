@@ -511,8 +511,11 @@ def WorklogForRally(collector, issueTitle, issue):
 	# We can potentially separate by author
 	key = GetMatchGroup(issueTitle, rallyIssueExpr, 1)
 	if key:
-		AppendSubSet(collector, key, issue["timeSpent"])
-		print " + %s" % issue["timeSpent"]
+		if collector.has_key(key):
+			collector[key] += issue["timeSpentInSeconds"]
+		else:
+			collector[key] = issue["timeSpentInSeconds"]
+		print " + %s (%s sec.)" % (issue["timeSpent"], issue["timeSpentInSeconds"])
 
 
 def GetWorkLogs(fromDate, tillDate, collectMethod = None):
