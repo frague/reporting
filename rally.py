@@ -19,10 +19,10 @@ class RallyObject(object):
 		return ""
 
 	def IsCompleted(self):
-		return self.Status == "completed" or self.Status == "accepted"
+		return self.Status == "COMPLETED" or self.Status == "ACCEPTED" or self.Status == "Completed" or self.Status == "Accepted"
 	
 	def ParseFromXml(self, node):
-		self.Node = node
+		self.node = node
 
 		# Basic properties
 		self.ref = node.prop("ref")
@@ -37,7 +37,7 @@ class RallyObject(object):
 		else:
 			self.Owner = ""
 
-		self.Status = (self.SubnodeValue(node, "TaskStatus") or self.SubnodeValue(node, "State")).lower()
+		self.Status = (self.SubnodeValue(node, "TaskStatus") or self.SubnodeValue(node, "State"))
 		self.Description = self.SubnodeValue(node, "Description")
 		self.RevisionHistory = self.SubnodeProp(node, "RevisionHistory", "ref")
 		self.CreationDate = self.SubnodeValue(node, "CreationDate")
@@ -49,6 +49,31 @@ class RallyObject(object):
 		self.Actuals = float(self.SubnodeValue(node, "Actuals") or "0")
 		self.ToDo = float(self.SubnodeValue(node, "ToDo") or "0")
 
+	def Save(self, fields):
+		if not self.ref or not self.Type:
+			return False
+
+		doc = libxml2.newDoc("1.0")
+		root = doc.newChild(None, self.Type, None)
+		root.setNsProp(None, "ref", self.ref)
+		
+		for field in fields:
+			root.newChild(None, field, str(getattr(self, field)))
+
+		#print doc
+		headers = {"Content-type": "text/xml"}
+		request = urllib2.Request(self.ref, str(doc), headers)
+
+		text = urllib2.urlopen(request).read()
+		#doc = libxml2.parseDoc(text) 
+		return text
+
+	def Close(self):
+		self.Status = "Completed"
+		if re.search("^[A-Z\- ]+$", self.Status):
+			self.Status = "COMPLETED"
+		self.Save(["Status"])
+		
 	def __repr__(self):
 		return "[%s] %s (%s)" % (self.Id, self.Name, self.ref)
 
@@ -62,19 +87,24 @@ class RallyRESTFacade(object):
 		opener = urllib2.build_opener(handler)
 		urllib2.install_opener(opener)
 
-	def ParseObjectsBase(self, path, text):
+
+	
+	# Parse Objects from XML
+	def ParseObjectsBase(self, entity, path, text):
 		doc = libxml2.parseDoc(text)
 		result = {}
 		for o in [RallyObject(q) for q in doc.xpathNewContext().xpathEval(path)]:
+			if not o.Type:
+				o.Type = entity
 			result[o.ref] = o
 		return result	
 
 	def ParseObjects(self, entity, text):
-		return self.ParseObjectsBase("//Results/Object[@type='%s']" % entity, text)
+		return self.ParseObjectsBase(entity, "//Results/Object[@type='%s']" % entity, text)
 
 
-	
-	def ParseFetchedXml(self, entity, url, debug = False):
+	# Requesting xml representation of object(s)
+	def RequestXml(self, entity, url, debug = False):
 		request = urllib2.Request(url)
 		text = urllib2.urlopen(request).read()
 		if debug:
@@ -82,22 +112,20 @@ class RallyRESTFacade(object):
 			print text
 		return self.ParseObjects(entity, text)
 	
-	def ParseFetchedCollectionXml(self, entity, url, debug = False):
+	# Requesting xml representation of object(s) by custom path
+	def RequestCollectionXml(self, entity, url, path, debug = False):
 		request = urllib2.Request(url)
 		text = urllib2.urlopen(request).read()
 		if debug:
 			#print url
 			print text
-		return self.ParseObjectsBase(entity, text)
+		return self.ParseObjectsBase(entity, path, text)
 	
 	
 	
-	
+	# Asking for specific types of objects
 	def AskFor(self, entity, query, fetch = False, debug = False):
-		return self.ParseFetchedXml(entity, "%s%s?fetch=%s&query=(%s)" % (config["rally"]["rest"], entity, str(fetch).lower(), urllib.quote(query)), debug)
-
-
-
+		return self.RequestXml(entity, "%s%s?fetch=%s&query=(%s)" % (config["rally"]["rest"], entity, str(fetch).lower(), urllib.quote(query)), debug)
 
 	def AskForIterations(self, project, fetch = False):
 		return self.AskFor("Iteration", "Project.Name = \"%s\"" % (project), fetch)
@@ -112,9 +140,10 @@ class RallyRESTFacade(object):
 		return self.AskFor("Defect", "Requirement = \"%s\"" % (user_story.ref), fetch)
 
 	def GetRevisionHistory(self, ref):
-		return self.ParseFetchedCollectionXml("//RevisionHistory/Revisions/Revision[@type='Revision']", ref)
+		return self.RequestCollectionXml("Revision", ref, "//RevisionHistory/Revisions/Revision[@type='Revision']")
 
 
+# Reformats issue description
 replaces = {"&nbsp;": " ", "&lt;": "<", "&gt;": ">", "&amp;": "&"}
 def ReformatDescription(text):
 	text = re.sub("<br[^>]*>", "\n", text)
@@ -125,6 +154,7 @@ def ReformatDescription(text):
 
 	return text
 
+# Creates jira issue from Rally issue
 def CreateJiraIssueFrom(rally_issue, parentIssueKey = "", issueType = None, versions = []):
 	global soap, jiraAuth, config
 
@@ -135,7 +165,8 @@ def CreateJiraIssueFrom(rally_issue, parentIssueKey = "", issueType = None, vers
 
 	i.summary = "(%s) %s" % (rally_issue.Id, rally_issue.Name)
 	i.description = rally_issue.Description
-	i.MakeCodeSections()
+	i.description = ReformatDescription(i.description)
+	i.MakeCodeSections("xml")
 
 	if re.search("^TA", rally_issue.Id):		# UserStory = Supertask
 		i.CreateSubtask(parentIssueKey)
@@ -154,6 +185,7 @@ actualsChangedExpr 	= re.compile("ACTUALS changed from \[(\d+\.\d+) Hours{0,1}\]
 todoAddedExpr 		= re.compile("TO DO added \[(\d+\.\d+) Hours{0,1}\]")
 todoChangedExpr 	= re.compile("TO DO changed from \[(\d+\.\d+) Hours{0,1}\] to \[(\d+\.\d+) Hours{0,1}\]")
 
+# Progresses/closes single task by its jira representation
 def UpdateProgressFor(task, task_history, reported_in_jira):
 	global lastWorkingDay
 
@@ -172,17 +204,28 @@ def UpdateProgressFor(task, task_history, reported_in_jira):
 			if m:
 				spent = float(m.group(2)) - float(m.group(1))
 		
-		#print " * (%s)	%s [%s, %s]" % (spent, rev.Description, rev.CreationDate.strftime("%Y-%m-%d"), lastWorkingDay)
 		if progressDateExpr.search(rev.Description):
 			syncReported += spent
+		#print " * (%s) Synced=%s	%s [%s, %s]" % (spent, syncReported, rev.Description, rev.CreationDate.strftime("%Y-%m-%d"), lastWorkingDay)
 
-	print "  --- Worklogs: synced=%s hrs., jira=%s hrs." % (syncReported, jiraWork)
 	if jiraWork > syncReported:
 		# Update task with the difference (jiraWork - syncReported) Hours
 		delta = jiraWork - syncReported
+
+		print "      Reported to Rally %s hrs., to jira %s hrs. Delta %s hrs." % (syncReported, jiraWork, delta)
+
 		print "  [@] Updating item %s: ACTUALS changed from [%s] to [%s], TODO changed from [%s] to [%s]" % (task.Id, task.Actuals, task.Actuals + delta, task.ToDo, task.ToDo - delta)
+		task.Actuals += delta
+		task.ToDo -= delta
+		if task.ToDo < 0:
+			task.ToDo = 0
+		task.Notes = "Progress for %s (%s)" % (lastWorkingDay, datetime.datetime.now().strftime("%H:%M:%S"))
+		task.Save(["Actuals", "ToDo", "Notes"])
+	else:
+		print "      Reported times match."
 
 
+# Processes (progress/close) tasks and defects related to given user story
 def ProcessTasksFor(story, issue, kind):
 	global versionId, backlogVersionId, parentIssueId, jiraIssues, soap, jiraAuth, worklogs, rf
 
@@ -196,7 +239,7 @@ def ProcessTasksFor(story, issue, kind):
 		action = " "
 		if not jiraIssues.has_key(task.Id):
 			action = "+"
-			if issue.IsClosed():
+			if issue.IsClosed() and kind:
 				action = "/"
 			else:
 				if kind:
@@ -210,16 +253,16 @@ def ProcessTasksFor(story, issue, kind):
 			ji = jiraIssues[task.Id]
 #			print "%s vs. %s"  % (task.IsCompleted(), ji.IsClosed())
 
+			action = "v"
 			if task.IsCompleted():
 				if not ji.IsClosed():
 					ji.Connect(soap, jiraAuth)
 					ji.Close()
 					action = "x"
-				else:
-					action = "v"
 			else:
 				if ji.IsClosed():
-					action = "?"
+					task.Close()
+					action = "X"
 
 		print " [%s] %s (%s)" % (action, task, task.Status)
 

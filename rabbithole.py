@@ -640,8 +640,11 @@ class JiraIssue:
 #			print "%s: \"%s\" <> \"%s\"" % (msg, a, b)
 		return a == b
 
-	def MakeCodeSections(self):
-		self.description = re.sub("([^>])(\n<)", "\\1{code}\\2", self.description)
+	def MakeCodeSections(self, type = ""):
+		if type:
+			type = ":" + type
+
+		self.description = re.sub("([^>])(\n<)", ("\\1{code%s}\\2" % type), self.description)
 		self.description = re.sub("(>\n)([ \t\n]*[^< \t\n])", "\\1{code}\\2", self.description)
 		if self.description.count("{code}") % 2 != 0:
 			self.description += "{code}"
