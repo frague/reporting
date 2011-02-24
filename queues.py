@@ -34,6 +34,8 @@ zoneExpr = re.compile("<td>rules.placeholder.zone</td>[^<]*<td[^>]*>([^<]*)</td>
 page = GetTemplate("queues_main")
 setTemplate = GetTemplate("queues_set")
 lineTemplate = GetTemplate("queues_line")
+hostTemplate = GetTemplate("queues_host")
+emptyTemplate = GetTemplate("queues_empty")
 
 used = {}
 
@@ -109,15 +111,37 @@ while keepTrying:
 
 ## Getting deployed versions
 
+ports = ["", ":8080"]
+contexts = ["ras", "ebcloud"]
+
 queues = ""
 for set in sorted(config["deployments"].keys()):
 	print "--- %s" % set
 	result = []
 	for env in sorted(config["deployments"][set].keys()):
-		url = "http://%s/info" % config["deployments"][set][env]
-		parsed = GetDeployedQueue(url)
-		print "%s (ver. %s) uses queue %s" % (env, parsed["version"], parsed["queue"])
-		result.append(FillTemplate(lineTemplate, {"##TITLE##": env, "##URL##": url, "##COMMENT##": parsed["queue"], "##VERSION##": parsed["version"], "##STATE##": parsed["state"], "##ZONE##": parsed["zone"]}))
+		rows = 0
+		sub_result = []
+		for port in ports:
+			for context in contexts:
+				url = "http://%s%s/%s/info" % (config["deployments"][set][env], port, context)
+
+				parsed = GetDeployedQueue(url)
+				print "%s %s (ver. %s) uses queue %s" % (env, url, parsed["version"], parsed["queue"])
+				if parsed["version"] != "_N/A_":
+					t = lineTemplate
+					if rows:
+						t = hostTemplate
+
+					sub_result.append(FillTemplate(t, {"##TITLE##": env, "##URL##": url, "##COMMENT##": parsed["queue"], "##VERSION##": parsed["version"], "##STATE##": parsed["state"], "##ZONE##": parsed["zone"]}))
+					rows += 1
+
+		if rows == 0:
+			sub_result = [FillTemplate(emptyTemplate, {"##TITLE##": env, "##URL##": config["deployments"][set][env]})]
+		else:
+			sub_result[0] = sub_result[0].replace("##ROWS##", str(rows))
+
+		result += sub_result
+
 	queues += FillTemplate(setTemplate, {"##TITLE##": set, "##INSTANCES##": "".join(result)}) + "\n";
 
 print "--- Publishing to wiki"
