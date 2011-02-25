@@ -161,9 +161,13 @@ def MakeParamsWithLogin(params, add_params):
 	params.update(add_params)
 	return MakeParams(params)
 
+def FormatParam(value):
+	result = value.replace("\"", "\\\"").replace("\n", "\\\\n")
+	return result
+
 # Making parameters line
 def MakeParams(params):
-	return " ".join('--%s "%s"' % (key, params[key]) for key in params.keys())
+	return " ".join('--%s "%s"' % (key, FormatParam(params[key])) for key in params.keys())
 
 # Getting output of executable w/ parameters
 def GetStdoutOf(process, params):
@@ -172,7 +176,9 @@ def GetStdoutOf(process, params):
 
 # Getting single line from Jira or Wiki
 def GetPage(page, params, add_params):
-	return GetStdoutOf(page, MakeParamsWithLogin(params, add_params))
+	params = MakeParamsWithLogin(params, add_params)
+	#print "Params: %s" % params
+	return GetStdoutOf(page, params)
 
 def WgetPage(url):
 	name = str(uuid.uuid1())
@@ -646,8 +652,8 @@ class JiraIssue:
 
 		self.description = re.sub("([^>])(\n<)", ("\\1{code%s}\\2" % type), self.description)
 		self.description = re.sub("(>\n)([ \t\n]*[^< \t\n])", "\\1{code}\\2", self.description)
-		if self.description.count("{code}") % 2 != 0:
-			self.description += "{code}"
+		if self.description.count("{code") % 2 != 0:
+			self.description += "{code"
 	
 	def Equals(self, issue):
 		result = True
@@ -682,7 +688,11 @@ class JiraIssue:
 	def CreateSubtask(self, parent_key):
 		# Subtask creation available through CLI only (((
 		if parent_key:
-			output = GetJira({"action": "createIssue", "project": self.project, "type": "Sub-task", "priority": self.priority, "summary": self.summary, "description": self.description, "reporter": self.reporter, "assignee": self.assignee, "parent": parent_key})
+   			WriteFile("new_subtask.tmp", self.description)
+			output = GetJira({"action": "createIssue", "project": self.project, "type": "Sub-task", "priority": self.priority, "summary": self.summary, "file": "new_subtask.tmp", "reporter": self.reporter, "assignee": self.assignee, "parent": parent_key})
+			os.remove("new_subtask.tmp")
+
+			print "   Creation output: %s" % output
 			self.key = GetMatchGroup(output, re.compile("^Issue ([A-Z0-9]+-\d+) created as subtask of"), 1)
 			
 	def Update(self, changes):

@@ -125,13 +125,14 @@ class RallyRESTFacade(object):
 	
 	# Asking for specific types of objects
 	def AskFor(self, entity, query, fetch = False, debug = False):
-		return self.RequestXml(entity, "%s%s?fetch=%s&query=(%s)" % (config["rally"]["rest"], entity, str(fetch).lower(), urllib.quote(query)), debug)
+		url = "%s%s?fetch=%s&query=(%s)" % (config["rally"]["rest"], entity, str(fetch).lower(), urllib.quote(query))
+		return self.RequestXml(entity, url, debug)
 
 	def AskForIterations(self, project, fetch = False):
 		return self.AskFor("Iteration", "Project.Name = \"%s\"" % (project), fetch)
 
-	def AskForUserStories(self, iteration, fetch = False):
-		return self.AskFor("HierarchicalRequirement", "Iteration = \"%s\"" % (iteration.ref), fetch)
+	def AskForUserStories(self, iteration, project, fetch = False):
+		return self.AskFor("HierarchicalRequirement", "(Iteration = \"%s\") AND (Project.Name = \"%s\")" % (iteration.ref, project), fetch)
 
 	def AskForUserStoryTasks(self, user_story, fetch = False):
 		return self.AskFor("Task", "WorkProduct = \"%s\"" % (user_story.ref), fetch)
@@ -236,6 +237,7 @@ def ProcessTasksFor(story, issue, kind):
 
 	for t in tasks:
 		task = tasks[t]
+
 		action = " "
 		if not jiraIssues.has_key(task.Id):
 			action = "+"
@@ -253,7 +255,7 @@ def ProcessTasksFor(story, issue, kind):
 			ji = jiraIssues[task.Id]
 #			print "%s vs. %s"  % (task.IsCompleted(), ji.IsClosed())
 
-			action = "v"
+			action = " "
 			if task.IsCompleted():
 				if not ji.IsClosed():
 					ji.Connect(soap, jiraAuth)
@@ -333,7 +335,7 @@ if not currentIteration:
 	print "[!] Current iteration (%s) wasn't found in Rally!" % config["current_iteration"]
 	exit(0);
 
-stories = rf.AskForUserStories(currentIteration, True)
+stories = rf.AskForUserStories(currentIteration, "RAS", True)
 
 for us in stories:
 	story = stories[us]
