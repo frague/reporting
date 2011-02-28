@@ -66,16 +66,29 @@ class RallyObject(object):
 
 		text = urllib2.urlopen(request).read()
 		#doc = libxml2.parseDoc(text) 
+
 		return text
 
 	def Close(self):
+		if self.Type == "Task":
+			# Task
+			self.State = "Completed"
+			self.Save(["State"])
+		else:
+			if self.Type == "Defect":
+				# Defect
+				self.State = "Closed"
+				self.Save(["State"])
+		   	else:
+		   		# UserStory - Hierarchical Requirement
+				self.TaskStatus = "COMPLETED"
+				self.Save(["TaskStatus"])
+
 		self.Status = "Completed"
-		if re.search("^[A-Z\- ]+$", self.Status):
-			self.Status = "COMPLETED"
-		self.Save(["Status"])
-		
+
 	def __repr__(self):
-		return "[%s] %s (%s)" % (self.Id, self.Name, self.ref)
+		return "[%s] %s" % (self.Id, self.Name)
+		#return "[%s] %s (%s)" % (self.Id, self.Name, self.ref)
 
 
 class RallyRESTFacade(object):
