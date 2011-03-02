@@ -21,3 +21,8 @@ rules_catalog.py --profile=ras
 rem Daily statistics
 
 kpis.py --profile=ras
+
+
+rem jira to Rally sync
+
+rally.py --profile=ras

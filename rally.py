@@ -19,7 +19,7 @@ class RallyObject(object):
 		return ""
 
 	def IsCompleted(self):
-		return self.Status == "COMPLETED" or self.Status == "ACCEPTED" or self.Status == "Completed" or self.Status == "Accepted"
+		return self.Status in ["COMPLETED", "ACCEPTED", "Completed", "Accepted", "Closed"]
 	
 	def ParseFromXml(self, node):
 		self.node = node
@@ -37,7 +37,7 @@ class RallyObject(object):
 		else:
 			self.Owner = ""
 
-		self.Status = (self.SubnodeValue(node, "TaskStatus") or self.SubnodeValue(node, "State"))
+		self.Status = (self.SubnodeValue(node, "State") or self.SubnodeValue(node, "TaskStatus"))
 		self.Description = self.SubnodeValue(node, "Description")
 		self.RevisionHistory = self.SubnodeProp(node, "RevisionHistory", "ref")
 		self.CreationDate = self.SubnodeValue(node, "CreationDate")
@@ -78,7 +78,8 @@ class RallyObject(object):
 			if self.Type == "Defect":
 				# Defect
 				self.State = "Closed"
-				self.Save(["State"])
+				self.ScheduleState = "Completed"
+				print self.Save(["State", "ScheduleState"])
 		   	else:
 		   		# UserStory - Hierarchical Requirement
 				self.TaskStatus = "COMPLETED"
@@ -236,7 +237,8 @@ def UpdateProgressFor(task, task_history, reported_in_jira):
 		task.Notes = "Progress for %s (%s)" % (lastWorkingDay, datetime.datetime.now().strftime("%H:%M:%S"))
 		task.Save(["Actuals", "ToDo", "Notes"])
 	else:
-		print "      Reported times match."
+		#print "      Reported times match."
+		pass
 
 
 # Processes (progress/close) tasks and defects related to given user story
@@ -276,10 +278,11 @@ def ProcessTasksFor(story, issue, kind):
 					action = "x"
 			else:
 				if ji.IsClosed():
+					print task.Status
 					task.Close()
 					action = "X"
 
-		print " [%s] %s (%s)" % (action, task, task.Status)
+		print " [%s] %s (%s)" % (action, str(task)[0:80], task.Status)
 
 		if action != "+" and worklogs.has_key(task.Id) and task.RevisionHistory:
 			# Checking worklogs
