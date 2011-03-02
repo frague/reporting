@@ -325,15 +325,27 @@ if not versionId or not backlogVersionId:
 	exit(0)
 
 
-for i in soap.getIssuesFromJqlSearch(jiraAuth, "project = '%s' AND (fixVersion = '%s' OR fixVersion = 'Product Backlog')" % (config["project_abbr"], config["current_version"]), 1000):
+subTasks = {}
+syncedIssues = {}
+
+# Reading all User Stories from jira
+for i in soap.getIssuesFromJqlSearch(jiraAuth, "project = \"%s\" AND issuetype = \"User Story\" AND fixVersion = \"%s\"" % (config["project_abbr"], config["current_version"]), 1000):
 	issue = JiraIssue()
 	issue.Parse(i)
 
 	key = GetMatchGroup(issue.summary, rallyIssueExpr, 1)
 	if key:
-		jiraIssues[key] = issue
-#		print "[ ] %s" % issue.summary
+		syncedIssues[key] = issue
+	
+	# Gettings sub-tasks
+	for j in soap.getIssuesFromJqlSearch(jiraAuth, "parent = \"%s\"" % issue.key, 50):
+		sub_issue = JiraIssue()
+		sub_issue.Parse(j)
+		AppendSubSet(subTasks, issue.key, sub_issue)
 
+		key = GetMatchGroup(sub_issue.summary, rallyIssueExpr, 1)
+		if key:
+			syncedIssues[key] = sub_issue
 
 
 print "\n--- Reading rally tasks ------------------------------------"
@@ -357,20 +369,31 @@ for us in stories:
 	story = stories[us]
 	parentIssueId = None
 	action = " "
-	if not jiraIssues.has_key(story.Id):
-		# Create new user story
-		jiraIssues[story.Id] = CreateJiraIssueFrom(story, "", "8", [versionId, backlogVersionId])
+
+	# Checking if Rally User Story exists in jira
+	if not syncedIssues.has_key(story.Id):
+		# create new user story in jira if doesn't
+		syncedIssues[story.Id] = CreateJiraIssueFrom(story, "", "8", [versionId, backlogVersionId])
 		action = "+"
 	else:
-		ji = jiraIssues[story.Id]
+		ji = syncedIssues[story.Id]
+		# or synchronize all subtasks created in jira to Rally
+		if subTasks.has_key(ji.key):
+			for st in subTasks[ji.key]:
+				# TODO: Create task in Rally, get KEY, update existing task summary
+				#       with Rally task KEY.
+				#       Make sure to add these tasks to syncedIssues as well.
+				pass
+
+		# or close jira issue if it is closed in Rally
 		if story.IsCompleted():
 			action = "v"
 			if not ji.IsClosed():
 				ji.Connect(soap, jiraAuth)
-				#ji.Close()
+				ji.Close()
 				action = "x"
 
-	issue = jiraIssues[story.Id]
+	issue = syncedIssues[story.Id]
 	parentIssueId = issue.key
 	print "\n[%s] %s (%s) - %s" % (action, story, parentIssueId, story.Status)
 
