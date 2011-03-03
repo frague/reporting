@@ -540,7 +540,7 @@ def GetWorkLogs(fromDate, tillDate, collectMethod = None):
 
 	worklogs = {}
 	for issueKey in updatedIssues.keys():
-		print "%s: \"%s\":" % (issueKey, updatedIssues[issueKey])
+		print "%s: \"%s\":" % (issueKey, updatedIssues[issueKey][0:80])
 		issues = soap.getWorklogs(jiraAuth, issueKey)
 		for i in issues:
 			# + 3 hours for England
@@ -692,7 +692,7 @@ class JiraIssue:
 			output = GetJira({"action": "createIssue", "project": self.project, "type": "Sub-task", "priority": self.priority, "summary": self.summary, "file": "new_subtask.tmp", "reporter": self.reporter, "assignee": self.assignee, "parent": parent_key})
 			os.remove("new_subtask.tmp")
 
-			print "   Creation output: %s" % output
+			#print "   Creation output: %s" % output
 			self.key = GetMatchGroup(output, re.compile("^Issue ([A-Z0-9]+-\d+) created as subtask of"), 1)
 			
 	def Update(self, changes):

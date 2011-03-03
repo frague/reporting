@@ -21,6 +21,7 @@ class RallyObject(object):
 	def IsCompleted(self):
 		return self.Status in ["COMPLETED", "ACCEPTED", "Completed", "Accepted", "Closed"]
 	
+	# Fills the instance from given xml representation
 	def ParseFromXml(self, node):
 		self.node = node
 
@@ -46,29 +47,81 @@ class RallyObject(object):
 
 		self.User = self.SubnodeProp(node, "User", "refObjectName")
 
+		self.Project = self.SubnodeProp(node, "Project", "ref")
+		self.ProjectName = self.SubnodeProp(node, "Project", "refObjectName")
+
 		self.Actuals = float(self.SubnodeValue(node, "Actuals") or "0")
 		self.ToDo = float(self.SubnodeValue(node, "ToDo") or "0")
 
+	# Fills the instance from given dictionary
+	def FillFromDict(self, d):
+		for key in d:
+			setattr(self, key, d[key])
+
+	# Creates xml from instance's properties by given fieldset
+	def CreateXml(self, fields):
+		doc = libxml2.newDoc("1.0")
+		root = doc.newChild(None, self.Type, None)
+		
+		for field in fields:
+			if field.find("@") >= 0:
+				(field, prop) = field.split("@", 2)
+				node = root.newChild(None, field, None)
+				node.setNsProp(None, prop, str(getattr(self, field)))
+			else:
+				root.newChild(None, field, str(getattr(self, field)))
+		return doc
+
+	# Sends request to Rally API
+	def RequestApi(self, url, xml=None):
+		if xml:
+			headers = {"Content-type": "text/xml"}
+			request = urllib2.Request(url, str(xml), headers)
+		else:
+			request = urllib2.Request(url)
+
+		text = urllib2.urlopen(request).read()
+		return text
+	
+	# Re-requests instance data by ref
+	def ReRequest(self):
+		if not self.ref:
+			return False
+		doc = libxml2.parseDoc(self.RequestApi(self.ref))
+		self.ParseFromXml(doc.children)
+
+		return True
+		
+	# Saves the instance
 	def Save(self, fields):
 		if not self.ref or not self.Type:
 			return False
 
-		doc = libxml2.newDoc("1.0")
-		root = doc.newChild(None, self.Type, None)
+		doc = self.CreateXml(fields)
+		root = doc.children
 		root.setNsProp(None, "ref", self.ref)
 		
-		for field in fields:
-			root.newChild(None, field, str(getattr(self, field)))
+		return self.RequestApi(self.ref, doc)
 
-		#print doc
-		headers = {"Content-type": "text/xml"}
-		request = urllib2.Request(self.ref, str(doc), headers)
+	# Creates new instance in Rally with given fieldset
+   	def Create(self, fields, base_url):
+		if not self.Type:
+			return False
 
-		text = urllib2.urlopen(request).read()
-		#doc = libxml2.parseDoc(text) 
+		# Parsing the response
+		text = self.RequestApi("%s%s/create" % (base_url, self.Type.lower()), self.CreateXml(fields))
 
-		return text
+		# Re-Reading resulting object
+		doc = libxml2.parseDoc(text)
+		node = doc.xpathNewContext().xpathEval("//CreateResult/Object")
 
+		try:
+			self.ref = node[0].prop("ref")
+			return self.ReRequest()
+		except:
+			return False
+
+	# Closes issue in Rally
 	def Close(self):
 		if self.Type == "Task":
 			# Task
@@ -87,9 +140,12 @@ class RallyObject(object):
 
 		self.Status = "Completed"
 
+	# String representation
 	def __repr__(self):
 		return "[%s] %s" % (self.Id, self.Name)
 		#return "[%s] %s (%s)" % (self.Id, self.Name, self.ref)
+
+
 
 
 class RallyRESTFacade(object):
@@ -100,8 +156,6 @@ class RallyRESTFacade(object):
 
 		opener = urllib2.build_opener(handler)
 		urllib2.install_opener(opener)
-
-
 	
 	# Parse Objects from XML
 	def ParseObjectsBase(self, entity, path, text):
@@ -122,25 +176,19 @@ class RallyRESTFacade(object):
 		request = urllib2.Request(url)
 		text = urllib2.urlopen(request).read()
 		if debug:
-			#print url
 			print text
-		return self.ParseObjects(entity, text)
+		return text
 	
-	# Requesting xml representation of object(s) by custom path
-	def RequestCollectionXml(self, entity, url, path, debug = False):
-		request = urllib2.Request(url)
-		text = urllib2.urlopen(request).read()
-		if debug:
-			#print url
-			print text
-		return self.ParseObjectsBase(entity, path, text)
-	
-	
-	
-	# Asking for specific types of objects
-	def AskFor(self, entity, query, fetch = False, debug = False):
+
+	def BaseAsk(self, entity, query, fetch = False, debug = False):
 		url = "%s%s?fetch=%s&query=(%s)" % (config["rally"]["rest"], entity, str(fetch).lower(), urllib.quote(query))
 		return self.RequestXml(entity, url, debug)
+		
+	# Asking for specific types of objects
+	def AskFor(self, entity, query, fetch = False, debug = False):
+		text = self.BaseAsk(entity, query, fetch, debug)
+		return self.ParseObjects(entity, text)
+
 
 	def AskForIterations(self, project, fetch = False):
 		return self.AskFor("Iteration", "Project.Name = \"%s\"" % (project), fetch)
@@ -154,8 +202,56 @@ class RallyRESTFacade(object):
 	def AskForUserStoryDefects(self, user_story, fetch = False):
 		return self.AskFor("Defect", "Requirement = \"%s\"" % (user_story.ref), fetch)
 
+	def AskForUser(self, name, fetch = False):
+		text = self.BaseAsk("User", "DisplayName = \"%s\"" % name, fetch)
+		users = self.ParseObjectsBase("User", "//QueryResult/Results/Object[@type='User']", text)
+		if users:
+			return users[users.keys()[0]]
+		return False
+
 	def GetRevisionHistory(self, ref):
-		return self.RequestCollectionXml("Revision", ref, "//RevisionHistory/Revisions/Revision[@type='Revision']")
+		text = self.RequestXml("Revision", ref)
+		return self.ParseObjectsBase("Revision", "//RevisionHistory/Revisions/Revision[@type='Revision']", text)
+
+	# Gets User ref by short name (ivasilyev) and caches it
+	usersRefs = {}
+	def GetUserRef(self, name):
+		global config
+
+		if self.usersRefs.has_key(name):
+			return self.usersRefs[name]
+
+		user = self.AskForUser(config["logins_names"][name])
+		if user:
+			self.usersRefs[name] = user.ref
+			return user.ref
+		return ""
+
+	# Creates Rally item from jira issue
+	jiraTypes = {"5": "Task", "1": "Defect", "8": "HierarchicalRequirement"}
+	def CreateRallyIssueFrom(self, jira_issue, project, iteration, parent = ""):
+		result = RallyObject()
+		try:
+			result.Type = self.jiraTypes[jira_issue.type]
+		except:
+			result.Type = self.jiraTypes[jira_issue.issuetype]
+
+		result.Name = jira_issue.summary
+		result.Description = jira_issue.description
+
+		result.Owner = self.GetUserRef(jira_issue.assignee)
+
+		result.Project = project
+		result.Iteration = iteration
+		result.WorkProduct = parent
+
+		result.ToDo = "8"
+		result.Actuals = "0"
+	
+		if result.Create(["Name", "Description", "Owner@ref", "Project@ref", "Iteration@ref", "WorkProduct@ref", "ToDo", "Actuals"], config["rally"]["rest"]):
+			return result
+		return False
+
 
 
 # Reformats issue description
@@ -195,6 +291,8 @@ def CreateJiraIssueFrom(rally_issue, parentIssueKey = "", issueType = None, vers
 
 	return i
 
+
+
 actualsAddedExpr 	= re.compile("ACTUALS added \[(\d+\.\d+) Hours{0,1}\]")
 actualsChangedExpr 	= re.compile("ACTUALS changed from \[(\d+\.\d+) Hours{0,1}\] to \[(\d+\.\d+) Hours{0,1}\]")
 todoAddedExpr 		= re.compile("TO DO added \[(\d+\.\d+) Hours{0,1}\]")
@@ -227,9 +325,9 @@ def UpdateProgressFor(task, task_history, reported_in_jira):
 		# Update task with the difference (jiraWork - syncReported) Hours
 		delta = jiraWork - syncReported
 
-		print "      Reported to Rally %s hrs., to jira %s hrs. Delta %s hrs." % (syncReported, jiraWork, delta)
+		print "   | Reported to Rally %s hrs., to jira %s hrs. Delta %s hrs." % (syncReported, jiraWork, delta)
 
-		print "  [@] Updating item %s: ACTUALS changed from [%s] to [%s], TODO changed from [%s] to [%s]" % (task.Id, task.Actuals, task.Actuals + delta, task.ToDo, task.ToDo - delta)
+		print "   | Updating item %s: ACTUALS changed from [%s] to [%s], TODO changed from [%s] to [%s]" % (task.Id, task.Actuals, task.Actuals + delta, task.ToDo, task.ToDo - delta)
 		task.Actuals += delta
 		task.ToDo -= delta
 		if task.ToDo < 0:
@@ -243,7 +341,7 @@ def UpdateProgressFor(task, task_history, reported_in_jira):
 
 # Processes (progress/close) tasks and defects related to given user story
 def ProcessTasksFor(story, issue, kind):
-	global versionId, backlogVersionId, parentIssueId, jiraIssues, soap, jiraAuth, worklogs, rf
+	global versionId, backlogVersionId, parentIssueId, syncedIssues, soap, jiraAuth, worklogs, rf
 
 	if kind:
 		tasks = rf.AskForUserStoryTasks(story, True)
@@ -254,7 +352,7 @@ def ProcessTasksFor(story, issue, kind):
 		task = tasks[t]
 
 		action = " "
-		if not jiraIssues.has_key(task.Id):
+		if not syncedIssues.has_key(task.Id):
 			action = "+"
 			if issue.IsClosed() and kind:
 				action = "/"
@@ -267,7 +365,7 @@ def ProcessTasksFor(story, issue, kind):
 				if not i.key:
 					action = "!"
 		else:
-			ji = jiraIssues[task.Id]
+			ji = syncedIssues[task.Id]
 #			print "%s vs. %s"  % (task.IsCompleted(), ji.IsClosed())
 
 			action = " "
@@ -278,7 +376,6 @@ def ProcessTasksFor(story, issue, kind):
 					action = "x"
 			else:
 				if ji.IsClosed():
-					print task.Status
 					task.Close()
 					action = "X"
 
@@ -300,13 +397,14 @@ lastWorkingDay = lastWorkday.strftime("%Y-%m-%d")
 
 ProfileNeeded()
 
+subTasks = {}
+syncedIssues = {}
+
 print "--- Reading jira worklogs ----------------------------------"
 worklogs = GetWorkLogs(lastWorkday, today, WorklogForRally)
 
 
 print "\n--- Reading jira tasks -------------------------------------"
-
-jiraIssues = {}
 
 soap = SOAPpy.WSDL.Proxy(config["jira_soap"])
 jiraAuth = soap.login(config["jira"]["user"], config["jira"]["password"])
@@ -325,11 +423,8 @@ if not versionId or not backlogVersionId:
 	exit(0)
 
 
-subTasks = {}
-syncedIssues = {}
-
 # Reading all User Stories from jira
-for i in soap.getIssuesFromJqlSearch(jiraAuth, "project = \"%s\" AND issuetype = \"User Story\" AND fixVersion = \"%s\"" % (config["project_abbr"], config["current_version"]), 1000):
+for i in soap.getIssuesFromJqlSearch(jiraAuth, "project = \"%s\" AND ((issuetype = \"User Story\" AND fixVersion = \"%s\") OR issuetype = \"Bug\")" % (config["project_abbr"], config["current_version"]), 1000):
 	issue = JiraIssue()
 	issue.Parse(i)
 
@@ -337,21 +432,24 @@ for i in soap.getIssuesFromJqlSearch(jiraAuth, "project = \"%s\" AND issuetype =
 	if key:
 		syncedIssues[key] = issue
 	
-	# Gettings sub-tasks
-	for j in soap.getIssuesFromJqlSearch(jiraAuth, "parent = \"%s\"" % issue.key, 50):
-		sub_issue = JiraIssue()
-		sub_issue.Parse(j)
-		AppendSubSet(subTasks, issue.key, sub_issue)
+	# If not a bug
+	if not issue.type == "1":
+		# Gettings sub-tasks
+		for j in soap.getIssuesFromJqlSearch(jiraAuth, "parent = \"%s\"" % issue.key, 50):
+			sub_issue = JiraIssue()
+			sub_issue.Parse(j)
+			AppendSubSet(subTasks, issue.key, sub_issue)
 
-		key = GetMatchGroup(sub_issue.summary, rallyIssueExpr, 1)
-		if key:
-			syncedIssues[key] = sub_issue
+			key = GetMatchGroup(sub_issue.summary, rallyIssueExpr, 1)
+			if key:
+				syncedIssues[key] = sub_issue
 
 
 print "\n--- Reading rally tasks ------------------------------------"
 
 rf = RallyRESTFacade()
-iterations = rf.AskForIterations("RAS")
+
+iterations = rf.AskForIterations("RAS", True)
 
 currentIteration = None
 for ref in iterations:
@@ -362,6 +460,17 @@ for ref in iterations:
 if not currentIteration:
 	print "[!] Current iteration (%s) wasn't found in Rally!" % config["current_iteration"]
 	exit(0);
+
+
+
+
+#rt = RallyObject()
+#rt.FillFromDict({"Type": "HierarchicalRequirement", "Name": "Test Story", "Description": "Test Description", "Owner": ur, "Project": currentIteration.Project, "Iteration": currentIteration.ref})
+#print rt.Create(["Name", "Description", "Owner@ref", "Project@ref", "Iteration@ref"], config["rally"]["rest"])
+
+
+
+
 
 stories = rf.AskForUserStories(currentIteration, "RAS", True)
 
@@ -380,10 +489,14 @@ for us in stories:
 		# or synchronize all subtasks created in jira to Rally
 		if subTasks.has_key(ji.key):
 			for st in subTasks[ji.key]:
-				# TODO: Create task in Rally, get KEY, update existing task summary
-				#       with Rally task KEY.
-				#       Make sure to add these tasks to syncedIssues as well.
-				pass
+				key = GetMatchGroup(st.summary, rallyIssueExpr, 1)
+				if not key:
+					ri = rf.CreateRallyIssueFrom(st, currentIteration.Project, currentIteration, story.ref)
+					if ri and ri.Id:
+						st.Connect(soap, jiraAuth)
+						st.summary = "(%s) %s" % (ri.Id, st.summary)
+						st.Update([{"id": "summary", "values": st.summary}])
+						syncedIssues[ri.Id] = st
 
 		# or close jira issue if it is closed in Rally
 		if story.IsCompleted():
