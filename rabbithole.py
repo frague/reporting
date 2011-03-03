@@ -717,9 +717,14 @@ class JiraIssue:
 	def Close(self):
 		if self.IsNotEmpty() and self.IsConnected:
 			action = "2"
-			if self.status == "10078" or self.status == "10068":
+			if self.status == "10078":
 				# For "To Be Reviewed" and "To Be Accepted" statuses there is custom Close action
-				action = "721"
+				action = "761"
+			else:
+				if self.status == "10068":
+					# For "To Be Reviewed" and "To Be Accepted" statuses there is custom Close action
+					action = "721"
+
 			self.soap.progressWorkflowAction(self.jiraAuth, self.key, action, [{"id": "resolution", "values": "1"}])
 
 	def Delete(self):

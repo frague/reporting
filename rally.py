@@ -221,6 +221,9 @@ class RallyRESTFacade(object):
 		if self.usersRefs.has_key(name):
 			return self.usersRefs[name]
 
+		if not name:
+			return name
+		
 		user = self.AskForUser(config["logins_names"][name])
 		if user:
 			self.usersRefs[name] = user.ref
