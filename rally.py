@@ -126,7 +126,7 @@ class RallyObject(object):
 		if self.Type == "Task":
 			# Task
 			self.State = "Completed"
-			fields = ["Satate"]
+			fields = ["State"]
 		else:
 			if self.Type == "Defect":
 				# Defect
@@ -138,7 +138,7 @@ class RallyObject(object):
 				self.TaskStatus = "COMPLETED"
 				fields = ["TaskStatus"]
 
-		self ToDo = "0"
+		self.ToDo = "0"
 		fields.append("ToDo")
 
 		if assignee:
