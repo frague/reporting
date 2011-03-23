@@ -122,22 +122,27 @@ class RallyObject(object):
 			return False
 
 	# Closes issue in Rally
-	def Close(self):
+	def Close(self, assignee = ""):
 		if self.Type == "Task":
 			# Task
 			self.State = "Completed"
-			self.Save(["State"])
+			fields = ["Satate"]
 		else:
 			if self.Type == "Defect":
 				# Defect
 				self.State = "Closed"
 				self.ScheduleState = "Completed"
-				print self.Save(["State", "ScheduleState"])
+				fields = ["State", "ScheduleState"]
 		   	else:
 		   		# UserStory - Hierarchical Requirement
 				self.TaskStatus = "COMPLETED"
-				self.Save(["TaskStatus"])
+				fields = ["TaskStatus"]
 
+		if assignee:
+			self.Owner = assignee
+			fields.append("Owner@ref")
+
+		self.Save(fields)
 		self.Status = "Completed"
 
 	# String representation
@@ -379,7 +384,7 @@ def ProcessTasksFor(story, issue, kind):
 					action = "x"
 			else:
 				if ji.IsClosed():
-					task.Close()
+					task.Close(rf.GetUserRef(ji.assignee))
 					action = "X"
 
 		print " [%s] %s (%s)" % (action, str(task)[0:80], task.Status)
