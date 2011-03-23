@@ -138,6 +138,9 @@ class RallyObject(object):
 				self.TaskStatus = "COMPLETED"
 				fields = ["TaskStatus"]
 
+		self ToDo = "0"
+		fields.append("ToDo")
+
 		if assignee:
 			self.Owner = assignee
 			fields.append("Owner@ref")
