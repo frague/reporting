@@ -108,11 +108,11 @@ def NotEqualExpression(word):
 
 # Searches haystack for expression, trying to return requested group string
 # if not found - emty string will be returned
-def GetMatchGroup(haystack, expr, group):
+def GetMatchGroup(haystack, expr, group, default = ""):
 	a = expr.search(haystack)
 	if a:
 		return a.group(group)
-	return ""
+	return default
 
 
 # Exits if no profile passed as parameter
