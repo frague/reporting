@@ -27,15 +27,19 @@ def GetAndUpdateStatistics():
 		for key in set.keys():
 			dataSet = set[key]
 
+			z = dataSet[0]
+			if z == "%current%":
+				z = config["current_version"]
+			
 			if key.find("TIMING") >= 0:
-				charts_data[key] = GetAndSaveJiraVersionTimings(config["project_abbr"], dataSet[0])
+				charts_data[key] = GetAndSaveJiraVersionTimings(config["project_abbr"], z)
 			else:
 				if len(dataSet) > 0:
-					if not data.has_key(dataSet[0]):
-						data[dataSet[0]] = GetAndSaveJiraVersionIssues(config["project_abbr"], dataSet[0])
-					charts_data[key] = data[dataSet[0]]
+					if not data.has_key(z):
+						data[z] = GetAndSaveJiraVersionIssues(config["project_abbr"], z)
+					charts_data[key] = data[z]
 
-			print " * jira version \"%s\" data loaded for %s." % (dataSet[0], key)
+			print " * jira version \"%s\" data loaded for %s." % (z, key)
 	return charts_data
 
 # Fills given template with given sets of charts
