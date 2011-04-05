@@ -211,7 +211,7 @@ def SaveWikiNews(wikiServer, wikiToken, space, title, content):
 # Update cache file with received data
 # Returns updated dictionary
 def SaveUpdates(project, version_name, status):
-	name = re.sub(" ", "", "cache/%s_%s.yaml" % (project, version_name))
+	name = re.sub(" ", "", "cache/%s_%s.yaml" % (project, re.sub("[^a-zA-Z0-9]", "_", version_name)))
 	existing = yaml.load(ReadFile(name)) or {}
 	existing.update({datetime.date.today(): status})
 	WriteFile(name, yaml.dump(existing))
