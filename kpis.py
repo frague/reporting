@@ -11,7 +11,7 @@ wikiToken = wikiServer.confluence1.login(config["wiki"]["user"], config["wiki"][
 def CreateReports(postfix=""):
 	global wikiServer, wikiToken
 
-	for i in [TestsCoverage, PMDReport, FindBugsReport, TestsRunReport]:
+	for i in [EmmaTestsCoverage, PMDReport, FindBugsReport, TestsRunReport]:
 		t = i(wikiServer, wikiToken)
 		if postfix:
 			t.CacheName = "%s_%s" % (t.CacheName, postfix)

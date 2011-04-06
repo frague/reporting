@@ -71,11 +71,11 @@ class ExternalData:
 ######################################################################################
 # Code coverage w/ tests (Cobertura-based)
 
-class TestsCoverage(ExternalData):
+class CoberturaTestsCoverage(ExternalData):
 	def Init(self):
 		self.Url = config["cobertura"]
 		self.Template = "coverage"
-		self.PageName = "Code Coverage"
+		self.PageName = "Cobertura Code Coverage"
 		self.CacheName = "cobertura"
 		self.PostFix = "%"
 		self.ChartAdd = "\n\n|| Day || ||\n| %s | 100 |" % MakeChartDate(datetime.date.today())
@@ -93,6 +93,49 @@ class TestsCoverage(ExternalData):
 		percents = re.compile("<strong>([^<]+)</strong>[^&]*&nbsp;[^\d]*(\d+)%", re.MULTILINE)
 
 		percents.sub(self.collectStat, WgetPage(self.Url))
+		return SaveUpdates(config["project_abbr"], self.CacheName, self.stats)
+
+######################################################################################
+# Code coverage w/ tests (Emma-based)
+
+class EmmaTestsCoverage(ExternalData):
+	def Init(self):
+		self.Url = config["emma"]
+		self.Template = "coverage"
+		self.PageName = "Emma Code Coverage"
+		self.CacheName = "emma"
+		self.PostFix = "%"
+		self.ChartAdd = "\n\n|| Day || ||\n| %s | 100 |" % MakeChartDate(datetime.date.today())
+
+	def collectStat(self, k, v):
+		self.stats[k] = v
+
+		#print "- %s = %s%%" % (k, v)
+		return ""
+
+	def FetchData(self):
+		self.stats = {}
+		columnsExpr = re.compile("<th>name</th><th>(" + NotEqualExpression("</tr>") + "+)</tr>", re.MULTILINE)
+		valuesExpr = re.compile("<td>all classes</td>([^\|]+)</tr></table><h3>Coverage Breakdown by Package", re.MULTILINE)
+		valueExpr = re.compile("data='([^']+)'")
+		
+		page = WgetPage(self.Url)
+		
+		names = [DeTag(n) for n in GetMatchGroup(page, columnsExpr, 1).split("<th>")]
+
+		text = GetMatchGroup(page, valuesExpr, 1)
+
+		values = ["%3.2f" % float(v.group(1)) for v in re.finditer(valueExpr, text)]
+
+		print names
+		print values
+
+		if len(names) == 0 or len(names) != len(values):
+			return False
+		
+		for i in range(len(names)):
+			self.collectStat(names[i], values[i])
+
 		return SaveUpdates(config["project_abbr"], self.CacheName, self.stats)
 
 
@@ -136,7 +179,7 @@ class FindBugsReport(HudsonReport):
 
 
 ######################################################################################
-# Code coverage w/ tests (Cobertura-based)
+# Code coverage w/ tests (Log-based)
 
 class TestsRunReport(ExternalData):
 	def Init(self):
