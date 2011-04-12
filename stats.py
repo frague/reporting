@@ -101,7 +101,7 @@ class CoberturaTestsCoverage(ExternalData):
 class EmmaTestsCoverage(ExternalData):
 	def Init(self):
 		self.Url = config["emma"]
-		self.Template = "coverage"
+		self.Template = "emma_coverage"
 		self.PageName = "Emma Code Coverage"
 		self.CacheName = "emma"
 		self.PostFix = "%"
