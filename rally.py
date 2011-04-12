@@ -256,10 +256,11 @@ class RallyRESTFacade(object):
 		result.Iteration = iteration
 		result.WorkProduct = parent
 
-		result.ToDo = "8"
-		result.Actuals = "0"
+		result.Estimate = str(jira_issue.original_estimate) or "8"
+		result.ToDo = str(jira_issue.remaining_estimate) or "8"
+		result.Actuals = str(jira_issue.time_spent) or "0"
 	
-		if result.Create(["Name", "Description", "Owner@ref", "Project@ref", "Iteration@ref", "WorkProduct@ref", "ToDo", "Actuals"], config["rally"]["rest"]):
+		if result.Create(["Name", "Description", "Owner@ref", "Project@ref", "Iteration@ref", "WorkProduct@ref", "Estimate", "ToDo", "Actuals"], config["rally"]["rest"]):
 			return result
 		return False
 
@@ -344,7 +345,8 @@ def UpdateProgressFor(task, task_history, reported_in_jira):
 		if task.ToDo < 0:
 			task.ToDo = 0
 		task.Notes = "Progress for %s (%s)" % (lastWorkingDay, datetime.datetime.now().strftime("%H:%M:%S"))
-		task.Save(["Actuals", "ToDo", "Notes"])
+		task.State = "In-Progress"
+		task.Save(["Actuals", "ToDo", "Notes", "State"])
 	else:
 		#print "      Reported times match."
 		pass
@@ -414,7 +416,6 @@ syncedIssues = {}
 print "--- Reading jira worklogs ----------------------------------"
 worklogs = GetWorkLogs(lastWorkday, today, WorklogForRally)
 
-
 print "\n--- Reading jira tasks -------------------------------------"
 
 soap = SOAPpy.WSDL.Proxy(config["jira_soap"])
@@ -456,6 +457,10 @@ for i in soap.getIssuesFromJqlSearch(jiraAuth, "project = \"%s\" AND ((issuetype
 				syncedIssues[key] = sub_issue
 
 
+print "\n--- Reading jira tasks estimations -------------------------"
+est = GetJiraIssuesEstimates(config["project_abbr"], config["current_version"])
+
+
 print "\n--- Reading rally tasks ------------------------------------"
 
 rf = RallyRESTFacade()
@@ -473,17 +478,10 @@ if not currentIteration:
 	exit(0);
 
 
-
-
-#rt = RallyObject()
-#rt.FillFromDict({"Type": "HierarchicalRequirement", "Name": "Test Story", "Description": "Test Description", "Owner": ur, "Project": currentIteration.Project, "Iteration": currentIteration.ref})
-#print rt.Create(["Name", "Description", "Owner@ref", "Project@ref", "Iteration@ref"], config["rally"]["rest"])
-
-
-
-
-
 stories = rf.AskForUserStories(currentIteration, "RAS", True)
+
+
+#---------------- Main logic -------------------------
 
 for us in stories:
 	story = stories[us]
@@ -502,6 +500,12 @@ for us in stories:
 			for st in subTasks[ji.key]:
 				key = GetMatchGroup(st.summary, rallyIssueExpr, 1)
 				if not key:
+					# Set original estimate
+					if est.has_key(st.key):
+						st.original_estimate = est[st.key]["Original"]
+						st.remaining_estimate = est[st.key]["Remaining"]
+						st.time_spent = est[st.key]["Spent"]
+
 					ri = rf.CreateRallyIssueFrom(st, currentIteration.Project, currentIteration, story.ref)
 					if ri and ri.Id:
 						st.Connect(soap, jiraAuth)

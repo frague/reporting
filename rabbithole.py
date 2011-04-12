@@ -258,7 +258,9 @@ def NonEmptyFrom(v1, v2):
 		return v1
 	return v2
 
-def CountJiraIssuesEstimates(project, version_name):
+
+
+def GetJiraXmlByVersion(project, version_name):
 	global config
 
 	url = config["jira"]["server"] + "/sr/jira.issueviews:searchrequest-xml/temp/SearchRequest.xml?jqlQuery=project+%3D+" + config["project_abbr"] + "+AND+fixVersion+%3D+%22" + urllib.quote(version_name) + "%22+ORDER+BY+updated+DESC%2C+priority+DESC%2C+created+ASC&tempMax=1000&os_username=" + config["jira"]["user"] + "&os_password=" + config["jira"]["password"]
@@ -268,7 +270,46 @@ def CountJiraIssuesEstimates(project, version_name):
 	response, content = http.request(url, 'GET', headers=headers)
 
 	doc = libxml2.parseDoc(content)
-	root = doc.getRootElement()
+	return doc.getRootElement()
+
+
+def GetJiraIssuesEstimates(project, version_name):
+	global config
+
+	root = GetJiraXmlByVersion(project, version_name)
+	result = {}
+
+	for item in root.xpathEval("//item"):
+		type = item.xpathEval("type")[0].content
+
+		key = item.xpathEval("key")[0].content
+		status = item.xpathEval("status")[0].content
+
+		original = NonEmptyFrom(GetChild(item, "aggregatetimeoriginalestimate", "seconds"), GetChild(item, "timeoriginalestimate", "seconds"))
+		remaining = NonEmptyFrom(GetChild(item, "aggregatetimeremainingestimate", "seconds"), GetChild(item, "timeestimate", "seconds"))
+		
+		if status == "Closed" or status == "Resolved":
+			remaining = "0"
+
+		totalOriginal = 0.0
+		totalRemaining = 0.0
+
+		try:
+			totalOriginal = float(original)
+			totalRemaining = float(remaining)
+		except:
+			pass
+
+		result[key] = {"Original": totalOriginal / 3600, "Remaining": totalRemaining / 3600, "Spent": (totalOriginal - totalRemaining) / 3600}
+
+	return result
+	
+
+
+def CountJiraIssuesEstimates(project, version_name):
+	global config
+
+	root = GetJiraXmlByVersion(project, version_name)
 
 	originalEstimate = {}
 	remainEstimate = {}
@@ -300,7 +341,7 @@ def CountJiraIssuesEstimates(project, version_name):
 
 #	print "[%s] Original=%s, Spent=%s, Remaining=%s" % (key, totalOriginal, totalSpent, totalRemaining)
 
-	doc.freeDoc()
+#	doc.freeDoc()
 
 	# Jira day = 8 hours (28800 seconds) !!!
 	return {"Original": totalOriginal / 28800, "Remaining": totalRemaining / 28800, "Spent": (totalOriginal - totalRemaining) / 28800}
@@ -634,6 +675,9 @@ class JiraIssue:
 		self.fixVersions = []
 		self.resolution = "-1"
 		self.parentIssueId = ""
+		self.original_estimate = "8"
+		self.remaining_estimate = "8"
+		self.time_spent = "0"
 
 	def IsNotEmpty(self):
 		return self.key and self.id
