@@ -18,13 +18,14 @@ print "-- Fetching git commits: -----------------------------------------------"
 # Fetch teammembers repositories
 rep_path = config["repository_path"]
 for team in config["teams"].keys():
-	[GetStdoutOf("fetchrep.bat", "%s %s" % (rep, rep_path)) for rep in config["teams"][team]]
+	[GetStdoutOf("git", "--git-dir=\"%s\" fetch %s" % (rep_path, rep)) for rep in config["teams"][team]]
 
 # Getting log
 lastWorkingDay = lastWorkday.strftime("%Y-%m-%d")
-text = GetStdoutOf("gitlog.bat", lastWorkingDay)
+text = GetStdoutOf("git", "--git-dir=\"%s\" log --after=\"%s 00:00:00\" --all --format=format:\"%%ci|%%ce|%%s|%%ai\"" % (rep_path, lastWorkingDay))
 
-# Split into lines and treat each
+
+#Split into lines and treat each
 [AddCommit(line, commits, lastWorkingDay) for line in text.split("\n")]
 
 ######################################################################################

@@ -170,8 +170,8 @@ def MakeParams(params):
 	return " ".join('--%s "%s"' % (key, FormatParam(params[key])) for key in params.keys())
 
 # Getting output of executable w/ parameters
-def GetStdoutOf(process, params):
-	p = subprocess.Popen("%s %s" % (process, params), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=False).stdout
+def GetStdoutOf(process, params=""):
+	p = subprocess.Popen("%s %s" % (process, params), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True).stdout
 	return p.read()
 
 # Getting single line from Jira or Wiki
