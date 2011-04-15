@@ -16,7 +16,7 @@ ignore = GetParameter("ignore").split(",")
 print "-- Fetching git commits: -----------------------------------------------"
 
 # Fetch teammembers repositories
-rep_path = config["repository_path"]
+rep_path = config["repository_path"] + ".git"
 for team in config["teams"].keys():
 	[GetStdoutOf("git", "--git-dir=\"%s\" fetch %s" % (rep_path, rep)) for rep in config["teams"][team]]
 
