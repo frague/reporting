@@ -15,6 +15,7 @@ class ExternalData:
 		self.PostFix = ""
 		self.ChartAdd = ""
 		self.Order = []
+		self.ShowPoints = 40;
 		self.Init()
 
 	def Init(self):
@@ -41,7 +42,7 @@ class ExternalData:
 
    	def MakeContent(self, data):
 		print "(!) Updating wiki %s report page (with no notification)" % self.PageName
-		return FillTemplate(GetTemplate(self.Template), {"##UPDATED##": datetime.datetime.today().strftime("%b %d, %Y (%H:%M)"), "##LASTVALUES##": self.BuildLastValuesTable(data), "##CHART##": MakeWikiProgressChart(data, self.ChartAdd, self.Order)})
+		return FillTemplate(GetTemplate(self.Template), {"##UPDATED##": datetime.datetime.today().strftime("%b %d, %Y (%H:%M)"), "##LASTVALUES##": self.BuildLastValuesTable(data), "##CHART##": MakeWikiProgressChart(data, self.ChartAdd, self.Order, self.ShowPoints)})
 
 	def UpdatePage(self, content):
 #		print "[x] Saving is disabled for now...\n"

@@ -462,7 +462,7 @@ def MakeWikiTimingChart(data, deadline, name=""):
 	return result
 	
 # Makes Wiki-progress chart
-def MakeWikiProgressChart(data, postfix="", order=[], maxPoints=40):
+def MakeWikiProgressChart(data, postfix="", order=[], maxPoints=0):
 	print " * Create progress chart (%s line(s))" % len(data)
 	dates = data.keys()
 	dates.sort()
