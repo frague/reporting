@@ -210,6 +210,9 @@ class RallyRESTFacade(object):
 	def AskForUserStoryDefects(self, user_story, fetch = False):
 		return self.AskFor("Defect", "Requirement = \"%s\"" % (user_story.ref), fetch)
 
+	def AskForStandaloneDefects(self, iteration, project, fetch = False):
+		return self.AskFor("Defect", "((Iteration = \"%s\") AND (Project.Name = \"%s\")) AND (Requirement = \"\")" % (iteration.ref, project), fetch)
+
 	def AskForUser(self, name, fetch = False):
 		text = self.BaseAsk("User", "DisplayName = \"%s\"" % name, fetch)
 		users = self.ParseObjectsBase("User", "//QueryResult/Results/Object[@type='User']", text)
@@ -354,12 +357,17 @@ def UpdateProgressFor(task, task_history, reported_in_jira):
 
 # Processes (progress/close) tasks and defects related to given user story
 def ProcessTasksFor(story, issue, kind):
-	global versionId, backlogVersionId, parentIssueId, syncedIssues, soap, jiraAuth, worklogs, rf
+	global versionId, backlogVersionId, parentIssueId, syncedIssues, soap, jiraAuth, worklogs, rf, currentIteration
 
-	if kind:
+	t = ""
+	if kind == 0:
+		t = "User Story Tasks"
 		tasks = rf.AskForUserStoryTasks(story, True)
-	else:
+	elif kind == 1:
+		t = "User Story Defects"
 		tasks = rf.AskForUserStoryDefects(story, True)
+
+	print "-- %s (%s):" % (t, len(tasks))
 
 	for t in tasks:
 		task = tasks[t]
@@ -371,9 +379,9 @@ def ProcessTasksFor(story, issue, kind):
 				action = "/"
 			else:
 				if kind:
-					i = CreateJiraIssueFrom(task, parentIssueId, None, [versionId, backlogVersionId])
-				else:
 					i = CreateJiraIssueFrom(task, "", "1", [backlogVersionId])
+				else:
+					i = CreateJiraIssueFrom(task, parentIssueId, None, [versionId, backlogVersionId])
 
 				if not i.key:
 					action = "!"
@@ -479,7 +487,7 @@ if not currentIteration:
 
 
 stories = rf.AskForUserStories(currentIteration, "RAS", True)
-
+stories.update(rf.AskForStandaloneDefects(currentIteration, "RAS", True))
 
 #---------------- Main logic -------------------------
 
@@ -526,10 +534,10 @@ for us in stories:
 	print "\n[%s] %s (%s) - %s" % (action, story, parentIssueId, story.Status)
 
 ###### Tasks ######################################################################################	
-	ProcessTasksFor(story, issue, 1)
+	ProcessTasksFor(story, issue, 0)
 
 ###### Defects ####################################################################################	
-	ProcessTasksFor(story, issue, 0)
+	ProcessTasksFor(story, issue, 1)
 
 
 print "\nDone!"
