@@ -8,3 +8,4 @@ queues.txt
 cache/*
 notify.bat
 jars/*
+_*.bat
