@@ -42,7 +42,7 @@ jiraAuth = None
 soap = None
 
 # Getting command-line parameters
-param_expr = re.compile("^--([a-z]+)(=(.*)){0,1}$", re.IGNORECASE)
+param_expr = re.compile("^--([a-z_]+)(=(.*)){0,1}$", re.IGNORECASE)
 parameters = {}
 for key in sys.argv:
 	result = param_expr.match(key)
@@ -55,11 +55,17 @@ def GetParameter(name):
 	else:
 		return ""
 
+def GetProfile(profile):
+	if profile != "":
+		return yaml.load(ReadFile("profiles/%s" % profile))
+	return {}
+
+
 
 # Load profile if passed as parameter
 profile = GetParameter("profile")
 if profile != "":
-	config.update(yaml.load(ReadFile("profiles/%s" % profile)))
+	config.update(GetProfile(profile))
 
 dayOffs = config["day_offs"]
 
@@ -82,8 +88,19 @@ today = datetime.date.today()
 yesterday = today - timedelta(days = 1)
 tomorrow = today + timedelta(days = 1)
 lastWorkday = yesterday
-while (weekends.match(lastWorkday.strftime("%a"))):
-	lastWorkday = lastWorkday - timedelta(days = 1)
+
+it = True
+while it:
+	it = False
+	while (weekends.match(lastWorkday.strftime("%a"))):
+		lastWorkday = lastWorkday - timedelta(days = 1)
+
+	for d in config["day_offs"]:
+		if d == lastWorkday:
+			it = True
+			lastWorkday = lastWorkday - timedelta(days = 1)
+			break
+	
 
 def deRegexp(text):
 	return regexpReserved.sub("\\\\\\1", text)
@@ -565,7 +582,7 @@ def WorklogForRally(collector, issueTitle, issue):
 		print " + %s (%s sec.)" % (issue["timeSpent"], issue["timeSpentInSeconds"])
 
 
-def GetWorkLogs(fromDate, tillDate, collectMethod = None):
+def GetWorkLogs(fromDate, tillDate, collectMethod = None, add_project = None):
 	global soap, jiraAuth
 
 	#found = {}
@@ -574,8 +591,12 @@ def GetWorkLogs(fromDate, tillDate, collectMethod = None):
 		InitJiraSOAP()
 
 	# Getting Issues by Jql filter
+	add = ""
+	if add_project:
+		add = " OR project = '%s'" % add_project
+
 	updatedIssues = {}
-	issues = soap.getIssuesFromJqlSearch(jiraAuth, "project = '%s' AND updatedDate >= '%s 00:00' ORDER BY updated DESC" % (config["project_abbr"], fromDate.strftime("%Y/%m/%d")), 100)
+	issues = soap.getIssuesFromJqlSearch(jiraAuth, "(project = '%s'%s) AND updatedDate >= '%s 00:00' ORDER BY updated DESC" % (config["project_abbr"], add, fromDate.strftime("%Y/%m/%d")), 100)
 	for i in issues:
 		updatedIssues[i["key"]] = i["summary"]
 
@@ -696,6 +717,11 @@ class JiraIssue:
 
 		self.description = re.sub("([^>])(\n<)", ("\\1{code%s}\\2" % type), self.description)
 		self.description = re.sub("(>\n)([ \t\n]*[^< \t\n])", "\\1{code}\\2", self.description)
+
+#		self.description = re.sub("(<\/[^>]+>)([^\n])", "\\1\n\\2", self.description)
+#		self.description = re.sub("(<[^>\/]+/>)([^\n])", "\\1\n\\2", self.description)
+#		self.description = re.sub("(<[^>\/]+>)(\s+)", "\\1\n\\2", self.description)
+
 		if self.description.count("{code") % 2 != 0:
 			self.description += "{code"
 	
