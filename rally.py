@@ -273,6 +273,7 @@ class RallyRESTFacade(object):
 replaces = {"&nbsp;": " ", "&lt;": "<", "&gt;": ">", "&amp;": "&"}
 def ReformatDescription(text):
 	text = re.sub("<br[^>]*>", "\n", text)
+	text = re.sub("</div>\s+<div>", "\n", text)
 
 	text = DeTag(text)
 	for needle in replaces:
@@ -342,7 +343,7 @@ def UpdateProgressFor(task, task_history, reported_in_jira):
 
 		print "   | Reported to Rally %s hrs., to jira %s hrs. Delta %s hrs." % (syncReported, jiraWork, delta)
 
-		print "   | Updating item %s: ACTUALS changed from [%s] to [%s], TODO changed from [%s] to [%s]" % (task.Id, task.Actuals, task.Actuals + delta, task.ToDo, task.ToDo - delta)
+		print "   | Updating item %s: ACTUALS changed from [%s] to [%s], TODO changed from [%s] to [%s]" % (task.Id, task.Actuals, float(task.Actuals) + float(delta), task.ToDo, float(task.ToDo) - float(delta))
 		task.Actuals += delta
 		task.ToDo -= delta
 		if task.ToDo < 0:
@@ -473,7 +474,7 @@ print "\n--- Reading rally tasks ------------------------------------"
 
 rf = RallyRESTFacade()
 
-iterations = rf.AskForIterations("RAS", True)
+iterations = rf.AskForIterations(config["rally_project"], True)
 
 currentIteration = None
 for ref in iterations:
@@ -486,8 +487,8 @@ if not currentIteration:
 	exit(0);
 
 
-stories = rf.AskForUserStories(currentIteration, "RAS", True)
-stories.update(rf.AskForStandaloneDefects(currentIteration, "RAS", True))
+stories = rf.AskForUserStories(currentIteration, config["rally_project"], True)
+stories.update(rf.AskForStandaloneDefects(currentIteration, config["rally_project"], True))
 
 #---------------- Main logic -------------------------
 
