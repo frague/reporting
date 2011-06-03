@@ -1,0 +1,78 @@
+---
+destination_space: "CLOUD"
+root_page: "Ras"
+pages: {
+  "H1 Stratus Specifications": {
+    "Use Case - Find IP": {},
+    "Use Case - Select LB VPool": {},
+    "Use Case - Select Compute ESX": {},
+    "Use Case - Select Compute VM": {},
+    "Use Case - Create Cluster": {},
+    "Use Case - List Available Assets": {},
+    "Use Case - Reserve Assets": {},
+    "Use Case - Assign IP Addresses": {},
+    "Use Case - Find Physical Instances": {},
+    "Use Case - Select Compute Instances": {},
+    "Use Case - Select Load Balancer for Virtual Pool": {}}, 
+  "H2 Newton Specifications": {
+    "Phase 2 RecommendResource API Calls": {}, 
+    "Use Case - Select VMs - App - Cache to Function": {}, 
+    "Use Case - Select VMs - App - Function to Cache": {}, 
+    "Use Case - Select VMs - Database - Cache to Function": {}, 
+    "Use Case - Select Load Balancers - App": {}, 
+    "Use Case - Select Load Balancers - Database": {}, 
+    "Use Case - Select Load Balancers - Web": {}, 
+    "Use Case - App VM Debug and Dry Run": {}, 
+    "Use Case - DB VM Debug and Dry Run": {}, 
+    "CLM State Specification": {}, 
+    "Phase 2 dBaaS Fake Data Model": {}, 
+    "Phase 2 Sequence Diagram": {} 
+   }, 
+  "Specification": {
+    "Production Rules": {},
+    "Domain Model": {},
+    "Error messages": {},
+    "Reservation": {},
+    "Failure Domain Check Specification": {},
+    "Page Specification - Header": {},
+    "Page Specification - Info Page": {},
+    "Page Specification - Data Management Page": {},
+    "Page Specification - Latency Tool": {},
+    "Page Specification - Log Entry": {},
+    "Page Specification - View Object": {},
+    "WISB State Specification": {},
+    "Declarative Validation Rules Syntax": {},
+    "Recommendation Service API": {},
+    "Domain Data Service API": {},
+    "Use Case - Allocate IPs": {}
+  },
+  "Design": {
+    "Data reloading": {},
+    "Multiplayer template strategy": {},
+    "Working with ODB 2": {},
+    "Conditional Rules Implementation": {},
+    "Failure Domain Check - Discussion": {},
+    "Finding Candidates": {},
+    "Graph Deltas and Reservations": {},
+    "Hierarchy of rules": {},
+    "Model Update Specification": {},
+    "ODB Loading": {},
+    "Persistence Implementation": {},
+    "Recommend Resource": {},
+    "Reservation Locking": {},
+    "System Data Flow": {},
+    "WISB Updates": {},
+    "Cassandra solution": {},
+    "Provider Rules Implementation": {}
+  }, 
+  "Testing": {
+    "Integration and blackbox testing process organization": {},
+    "Tests processing table": {}
+  }, 
+  "Documentation": {
+    "Deployment with JSW": {},
+    "RAS Production Handover Document": {},
+    "HA Configuration": {},
+    "Deploy RAS to single instance": {}
+  }}
+

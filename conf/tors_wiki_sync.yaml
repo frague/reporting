@@ -1,0 +1,34 @@
+---
+destination_space: "CLOUD"
+root_page: "Ras"
+pages: {
+  "Engineering Requirements Document": {
+    "Rule and Ruleset ODB Definition": {},
+    "Product Overview": {},
+    "Associated Documents": {},
+    "Definitions": {},
+    "Use Cases": {},
+    "Resource Allocation Architecture": {},
+    "Logical Model": {},
+    "Domain Model": {},
+    "ODB Cache": {},
+    "Persistence Specification": {},
+    "Domain Data Service": {},
+    "Resource Allocation Service": {},
+    "Rule Specification": {},
+    "Failure Domain Check Rules": {},
+    "EIL Rule Repository": {},
+    "EIL Rule CRUD": {},
+    "Domain Dependencies": {},
+    "Design Alternatives": {},
+    "Open Issues": {},
+    "Out of Scope Items": {},
+    "Assumptions": {},
+    "Specific Examples - User Interface Goals": {},
+    "External Values and Tags Definitions": {},
+    "Criteria and Attributes": {},
+    "Rule Examples": {},
+    "Collection Criteria": {},
+    "Model Update Specification": {}
+  }}
+
