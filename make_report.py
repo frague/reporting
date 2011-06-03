@@ -9,6 +9,13 @@ personTemplate = GetTemplate("person")
 notify = GetParameter("notify")
 ignore = GetParameter("ignore").split(",")
 
+add = GetParameter("add")
+add_project = None
+if add:
+	add_project = GetProfile(add)["project_abbr"]
+
+
+
 
 ######################################################################################
 # Git commits
@@ -32,7 +39,7 @@ text = GetStdoutOf("git", "--git-dir=\"%s\" log --after=\"%s 00:00:00\" --all --
 # Jira worklogs
 
 print "\n-- Fetching jira worklogs: ---------------------------------------------"
-workLogs = GetWorkLogs(lastWorkday, today) 
+workLogs = GetWorkLogs(lastWorkday, today, None, add_project) 
 
 if notify:
 	# Notify guys who forgot to fill worklog via give engine
