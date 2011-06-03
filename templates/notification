@@ -1,6 +1,6 @@
 Please do fill in jira worklog for ##DATE##.
 Just to remind, your commits were: ##COMMITS##
 
-Your jira issues can be found here: https://issues.griddynamics.net/secure/IssueNavigator!executeAdvanced.jspa?clear=true&runQuery=true&jqlQuery=project+%3D+RAS+AND+assignee+%3D+currentUser%28%29+AND+status+in+%28Open%2C+%22In+Progress%22%2C+Reopened%29+ORDER+BY+key+DESC
+Your jira issues can be found here: https://issues.griddynamics.net/secure/IssueNavigator!executeAdvanced.jspa?clear=true&runQuery=true&jqlQuery=(project+%3D+RAS+OR+project+%3D+PaaS)+AND+assignee+%3D+currentUser%28%29+AND+status+in+%28Open%2C+%22In+Progress%22%2C+Reopened%29+ORDER+BY+key+DESC
 
 Thanks.
