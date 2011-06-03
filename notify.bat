@@ -1,5 +1,9 @@
 @echo off
 
-cls
+rem cls
 
-make_report.py --profile=ras --notify --ignore=mscherbakov
+rem _local.bat
+
+make_report.py --profile=ras --add=paas --notify --ignore=oaravin,rpanov,vkatson
+
+rem _ibm.bat
