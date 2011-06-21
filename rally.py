@@ -270,14 +270,14 @@ class RallyRESTFacade(object):
 
 
 # Reformats issue description
-replaces = {"&nbsp;": " ", "&lt;": "<", "&gt;": ">", "&amp;": "&"}
+replaces = {"<b>": "*", "</b>": "*", "<br[^>]*>": "\n", "<div>": "\n"}
+not_tags = {"&nbsp;": " ", "&lt;": "<", "&gt;": ">", "&amp;": "&", "\n+": "\n", "\s+\n": "\s\n"}
 def ReformatDescription(text):
-	text = re.sub("<br[^>]*>", "\n", text)
-	text = re.sub("</div>\s+<div>", "\n", text)
-
-	text = DeTag(text)
 	for needle in replaces:
-		text = text.replace(needle, replaces[needle])
+		text = re.sub(r"(?i)%s" % needle, replaces[needle], text)
+	text = DeTag(text)
+	for needle in not_tags:
+		text = re.sub(r"(?i)%s" % needle, not_tags[needle], text)
 
 	return text
 
@@ -293,6 +293,7 @@ def CreateJiraIssueFrom(rally_issue, parentIssueKey = "", issueType = None, vers
 	i.summary = "(%s) %s" % (rally_issue.Id, rally_issue.Name)
 	i.description = rally_issue.Description
 	i.description = ReformatDescription(i.description)
+
 	i.MakeCodeSections("xml")
 
 	if re.search("^TA", rally_issue.Id):		# UserStory = Supertask
@@ -376,7 +377,8 @@ def ProcessTasksFor(story, issue, kind):
 		action = " "
 		if not syncedIssues.has_key(task.Id):
 			action = "+"
-			if issue.IsClosed() and kind:
+#			if issue.IsClosed() and kind:
+			if issue.IsClosed():
 				action = "/"
 			else:
 				if kind:
@@ -508,7 +510,7 @@ for us in stories:
 		if subTasks.has_key(ji.key):
 			for st in subTasks[ji.key]:
 				key = GetMatchGroup(st.summary, rallyIssueExpr, 1)
-				if not key:
+				if not key and not st.IsClosed():
 					# Set original estimate
 					if est.has_key(st.key):
 						st.original_estimate = est[st.key]["Original"]
