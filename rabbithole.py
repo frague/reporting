@@ -681,7 +681,18 @@ class JiraIssue:
 		if self.type:
 			self.issuetype = self.type
 
-	
+		# Custom fields
+		if self.customFieldValues and self.customFieldValues["data"]:
+			fields = {}
+			for line in self.customFieldValues["data"]:
+				fields[line["customfieldId"]] = line["values"]
+			self.customFieldValues = fields
+
+	def GetCustomField(self, id):
+		if self.customFieldValues:
+			return self.customFieldValues[id][0]
+		return ""
+			
 	def Clear(self):
 		self.id = 0
 		self.key = ""
@@ -692,6 +703,8 @@ class JiraIssue:
 		self.type = ""
 		self.issuetype = "3"
 		self.assignee = ""
+		self.environment = ""
+		self.component = ""
 		self.reporter = ""
 		self.fixVersions = []
 		self.resolution = "-1"
@@ -751,7 +764,7 @@ class JiraIssue:
 	def Create(self):
 		if self.IsConnected:
 #			newIssue = self.soap.createIssue(self.jiraAuth, {"project": self.project, "issuetype": self.issuetype, "priority": self.priority, "summary": self.summary, "description": self.description, "assignee": self.assignee, "reporter": self.reporter})
-			newIssue = self.soap.createIssue(self.jiraAuth, {"project": self.project, "type": self.issuetype, "priority": self.priority, "summary": self.summary, "description": self.description, "reporter": self.reporter, "assignee": self.assignee})
+			newIssue = self.soap.createIssue(self.jiraAuth, {"project": self.project, "type": self.issuetype, "priority": self.priority, "summary": self.summary, "description": self.description, "reporter": self.reporter, "assignee": self.assignee, "environment": self.environment})
 			self.key = newIssue.key
 			self.id = newIssue.id
 
@@ -779,6 +792,10 @@ class JiraIssue:
 	def SetVersion(self, version):
 		if self.IsNotEmpty() and self.IsConnected:
 			self.Update([{"id": "fixVersions", "values": version}])
+
+	def SetComponent(self, component):
+		if self.IsNotEmpty() and self.IsConnected:
+			self.Update([{"id": "components", "values": component}])
 
 	def Resolve(self):
 		if self.IsNotEmpty() and self.IsConnected:
@@ -839,4 +856,16 @@ def ParseHeadedTable(markup, de_tag = False):
 cellExpression = re.compile("(<t[rdh])[^>]*>", re.IGNORECASE)
 def CleanHtmlTable(markup):
 	return cellExpression.sub("\\1>", markup)
+
+# Reformats issue description
+replaces = {"<b>": "*", "</b>": "*", "<br[^>]*>": "\n", "<div>": "\n"}
+not_tags = {"&nbsp;": " ", "&lt;": "<", "&gt;": ">", "&amp;": "&", "\n+": "\n", "\s+\n": "\s\n"}
+def ReformatDescription(text):
+	for needle in replaces:
+		text = re.sub(r"(?i)%s" % needle, replaces[needle], text)
+	text = DeTag(text)
+	for needle in not_tags:
+		text = re.sub(r"(?i)%s" % needle, not_tags[needle], text)
+
+	return text
 

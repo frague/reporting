@@ -269,18 +269,6 @@ class RallyRESTFacade(object):
 
 
 
-# Reformats issue description
-replaces = {"<b>": "*", "</b>": "*", "<br[^>]*>": "\n", "<div>": "\n"}
-not_tags = {"&nbsp;": " ", "&lt;": "<", "&gt;": ">", "&amp;": "&", "\n+": "\n", "\s+\n": "\s\n"}
-def ReformatDescription(text):
-	for needle in replaces:
-		text = re.sub(r"(?i)%s" % needle, replaces[needle], text)
-	text = DeTag(text)
-	for needle in not_tags:
-		text = re.sub(r"(?i)%s" % needle, not_tags[needle], text)
-
-	return text
-
 # Creates jira issue from Rally issue
 def CreateJiraIssueFrom(rally_issue, parentIssueKey = "", issueType = None, versions = []):
 	global soap, jiraAuth, config
