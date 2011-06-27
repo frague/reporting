@@ -797,9 +797,13 @@ class JiraIssue:
 		if self.IsNotEmpty() and self.IsConnected:
 			self.Update([{"id": "components", "values": component}])
 
+	def DoAction(self, action, params = []):
+		if self.IsNotEmpty() and self.IsConnected:
+			self.soap.progressWorkflowAction(self.jiraAuth, self.key, action, params)
+
 	def Resolve(self):
 		if self.IsNotEmpty() and self.IsConnected:
-			self.soap.progressWorkflowAction(self.jiraAuth, self.key, '2', [{"id": "resolution", "values": "2"}])
+			self.DoAction("2", [{"id": "resolution", "values": "2"}])
 
 	def Close(self):
 		if self.IsNotEmpty() and self.IsConnected:
@@ -811,8 +815,8 @@ class JiraIssue:
 				if self.status == "10068":
 					# For "To Be Reviewed" and "To Be Accepted" statuses there is custom Close action
 					action = "721"
+			self.DoAction(action, [{"id": "resolution", "values": "1"}])
 
-			self.soap.progressWorkflowAction(self.jiraAuth, self.key, action, [{"id": "resolution", "values": "1"}])
 
 	def Delete(self):
 		if self.IsNotEmpty() and self.IsConnected:

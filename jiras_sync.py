@@ -47,6 +47,13 @@ print "\n--- Reading remote jira tasks ------------------------------"
 remoteSoap = SOAPpy.WSDL.Proxy(config["jira_remote"]["soap"])
 remoteJiraAuth = remoteSoap.login(config["jira_remote"]["user"], config["jira_remote"]["password"])
 
+def CheckAssignee(assignee):
+	global config
+
+	if assignee not in config["logins_names"].keys():
+		return config["QAAssignee"]
+	return assignee
+
 
 # Reading issues from remote jira
 for i in remoteSoap.getIssuesFromJqlSearch(remoteJiraAuth, config["jira_query"], 1000):
@@ -62,13 +69,42 @@ for i in remoteSoap.getIssuesFromJqlSearch(remoteJiraAuth, config["jira_query"],
 		
 	action = " "
 	if local.has_key(issue.key):
-		pass
+		localIssue = local[issue.key]
+
+		# Check whether issues are equal
+		if localIssue.IsClosed():
+			if not issue.IsClosed():
+#				print "    Closing remote (%s) - %s" % (issue.key, issue.assignee)
+				issue.Connect(remoteSoap, remoteJiraAuth)
+
+				if not issue.assignee:
+					# Assign first
+					issue.Update([{"id": "assignee", "values": [config["QAAssignee"]]}])
+
+				try:
+					# Custom action: resolve without build
+					issue.DoAction("41")
+				except:
+					# Custom action: build successful
+					issue.DoAction("61")
+					# Custom action: tests passed
+					issue.DoAction("101")
+				action = "X"
+		else:
+			if issue.IsClosed():
+#				print "    Closing local (%s)" % localIssue.key
+				localIssue.Connect(soap, jiraAuth)
+				localIssue.Close()
+				action = "x"
    	else:
+   		# Create new issue in local jira
    		issue.Connect(soap, jiraAuth)
    		issue.project = config["project_abbr"]
    		issue.type = "1"
    		issue.issuetype = "1"
-   		issue.assignee = config["QAAssignee"]
+
+   		issue.assignee = CheckAssignee(issue.assignee)
+	   		 
    		issue.reporter = "nbogdanov"
    		issue.environment = i.key
    		issue.key = ""
@@ -80,7 +116,7 @@ for i in remoteSoap.getIssuesFromJqlSearch(remoteJiraAuth, config["jira_query"],
 
 		action = "+"
 
-   	print "[%s] %s" % (action, issue.summary[0:80])
+   	print "[%s] (%s) %s" % (action, issue.key, issue.summary[0:80])
 
 
 
