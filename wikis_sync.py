@@ -22,19 +22,32 @@ pagesCache = {}
 
 # Updates wiki page or creates the new one
 def UpdateWikiPage(space, page_name, content, parent_page = ""):
-	global remoteWikiServer, remoteWikiToken, pagesCache
+	global indent, remoteWikiServer, remoteWikiToken, pagesCache
 
 	action = "+"
 
+	exists = False
 	try:
 		# Getting existing page for update
 		page = remoteWikiServer.confluence1.getPage(remoteWikiToken, space, page_name)
-		page["content"] = content
-		remoteWikiServer.confluence1.updatePage(remoteWikiToken, page, {"minorEdit": True, "versionComment": comment})
-		action = "@"
+		exists = True
 	except:
+		pass
+
+	if exists:
+		if page["creator"] != "nbogdanov" and page["creator"] != "tgautier":
+			# Page created by someone else
+			action = "!"
+		else:
+			if page["content"].replace("\n", "").replace("\r", "") != content.replace("\n", "").replace("\r", ""):
+				page["content"] = content
+				remoteWikiServer.confluence1.updatePage(remoteWikiToken, page, {"minorEdit": True, "versionComment": ""})
+				action = "@"
+			else:
+				action = " "
+	else:
 		# New page
-		page = {"title": page_name, "space": space, "content": content}
+		page = {"title": page_name, "space": space, "content": content, "creator": "nbogdanov"}
 		if parent_page:
 			if pagesCache.has_key(parent_page):
 				parent = pagesCache[parent_page]
@@ -49,7 +62,7 @@ def UpdateWikiPage(space, page_name, content, parent_page = ""):
 					return False
 		remoteWikiServer.confluence1.storePage(remoteWikiToken, page)
 
-	print "[%s] Updated \"%s\" (%s)" % (action, page["title"], parent_page)
+	print "[%s] %s \"%s\" /%s/" % (action, "  " * indent, page["title"], page["creator"])
 	return True
 
 
@@ -71,27 +84,44 @@ def SyncPage(page, parent_page):
 		print remotePage
 		exit(1)
 
-
+	commentsRendered = ""
 	img = ""
 	if localExists:
+
+		# Check comments
+		comments = localWikiServer.confluence1.getComments(localWikiToken, localPage["id"])
+		if comments:
+			commentsRendered = "\nh2. Page Comments\n"
+			for co in comments:
+				comment = WikiComment()
+				comment.Parse(co)
+				commentsRendered += str(comment)
+
+
+		# Check images & attachments references
 		if re.search("\![^\!]{0,100}\.[a-zA-Z]{2,4}\!", localPage["content"]):
 			img = " [IMG]"
 		if re.search("\[\^[^\]]{0,100}\.[a-zA-Z]{2,4}\]", localPage["content"]):
 			img += " [ATT]"
 
-	if not remoteExists and localExists:
-		UpdateWikiPage(conf["destination_space"], page, localPage["content"], parent_page)
+		# Updating
+		UpdateWikiPage(conf["destination_space"], page, localPage["content"] + commentsRendered, parent_page)
 	else:
 		print "[ ]%s \"%s\"" % (img, page)
 
 def SyncLayer(parent_page, pages):
+	global indent
+
 	if not pages:
 		return
 
-	print "\n--- Parent: \"%s\"" % parent_page
+	indent += 1
+
+#	print "\n--- Parent: \"%s\"" % parent_page
 	for page in pages.keys():
 		SyncPage(page, parent_page)
 		SyncLayer(page, pages[page])
+	indent -= 1
 
-
+indent = -1
 SyncLayer(conf["root_page"], conf["pages"])	

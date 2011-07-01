@@ -54,6 +54,20 @@ def CheckAssignee(assignee):
 		return config["QAAssignee"]
 	return assignee
 
+def TryWorkflowAction(issue, action, message):
+	global log
+
+	log += "      Action \"%s\" (%s): " % (message, action)
+	try:
+		issue.DoAction(action)
+		log += "Passed\n"
+		return True
+	except:
+		log += "Passed\n"
+	return False
+
+
+actions = {"11": "Assign to development", "41": "Resolve without build", "61": "Build successful", "101": "Tests passed"}
 
 # Reading issues from remote jira
 for i in remoteSoap.getIssuesFromJqlSearch(remoteJiraAuth, config["jira_query"], 1000):
@@ -81,21 +95,27 @@ for i in remoteSoap.getIssuesFromJqlSearch(remoteJiraAuth, config["jira_query"],
 					# Assign first
 					issue.Update([{"id": "assignee", "values": [config["QAAssignee"]]}])
 
-				try:
-					# Custom action: resolve without build
-					issue.DoAction("41")
-				except:
-					# Custom action: build successful
-					issue.DoAction("61")
-					# Custom action: tests passed
-					issue.DoAction("101")
-				action = "X"
+				log = ""
+				result = False
+				for a in sorted(actions.iterkeys()):
+					result = result or TryWorkflowAction(issue, a, actions[a])
+				if result:						
+					action = "X"
+				else:
+					print "    Error closing issue %s\n%s" % (issue.key, log)
+					action = "!"
 		else:
 			if issue.IsClosed():
 #				print "    Closing local (%s)" % localIssue.key
 				localIssue.Connect(soap, jiraAuth)
 				localIssue.Close()
 				action = "x"
+			else:
+				if issue.summary != localIssue.summary or issue.description != localIssue.description:
+					localIssue.Connect(soap, jiraAuth)
+					localIssue.Update([{"id": "summary", "values": [issue.summary]}, {"id": "description", "values": [issue.description]}])
+					action = "@"
+
    	else:
    		# Create new issue in local jira
    		issue.Connect(soap, jiraAuth)

@@ -12,6 +12,7 @@ import urllib
 import getpass
 import libxml2
 import urllib2
+import string
 import httplib2
 import datetime
 import xmlrpclib
@@ -20,6 +21,10 @@ from skype import *
 from jabber import *
 from datetime import timedelta
 
+
+# Remove unicode non-printable characters
+def RemoveControlChars(s):
+	return filter(lambda x: x in string.printable, s)
 
 # File operations
 def ReadFile(file_name):
@@ -660,7 +665,6 @@ class JiraIssue:
 	def __init__(self):
 		self.IsConnected = False
 		self.Clear()
-		pass
 
 	def Connect(self, soap, jiraAuth):
 		self.soap = soap
@@ -736,7 +740,7 @@ class JiraIssue:
 #		self.description = re.sub("(<[^>\/]+>)(\s+)", "\\1\n\\2", self.description)
 
 		if self.description.count("{code") % 2 != 0:
-			self.description += "{code"
+			self.description += "{code}"
 	
 	def Equals(self, issue):
 		result = True
@@ -822,6 +826,40 @@ class JiraIssue:
 		if self.IsNotEmpty() and self.IsConnected:
 			self.soap.deleteIssue(self.jiraAuth, self.key)
 
+
+class WikiComment:
+	global config
+
+	def __init__(self):
+		self.IsConnected = False
+		self.Clear()
+
+	def Clear(self):
+		self.pageId = ""
+		self.title = ""
+		self.url = ""
+		self.creator = ""
+		self.modified = ""
+		self.created = ""
+		self.content = ""
+
+	def _parseDate(self, d):
+		try:
+			return datetime.datetime.strptime(str(d), "%Y%m%dT%H:%M:%S")
+		except:
+			return ""
+	
+	def Parse(self, line):
+		self.Clear()
+		for key in line.keys():
+			setattr(self, key, line[key] or "")
+		self.created = self._parseDate(self.created)
+		self.modified = self._parseDate(self.modified)
+
+
+	def __repr__(self):
+		return "{quote}^%s, [~%s]^\nh6. %s\n%s{quote}\n\n" % (MakeChartDate(self.modified), self.creator, RemoveControlChars(self.title), RemoveControlChars(self.content))
+
 ######################################################################################
 # Text transforming methods
 
@@ -863,7 +901,7 @@ def CleanHtmlTable(markup):
 
 # Reformats issue description
 replaces = {"<b>": "*", "</b>": "*", "<br[^>]*>": "\n", "<div>": "\n"}
-not_tags = {"&nbsp;": " ", "&lt;": "<", "&gt;": ">", "&amp;": "&", "\n+": "\n", "\s+\n": "\s\n"}
+not_tags = {"&nbsp;": " ", "&lt;": "<", "&gt;": ">", "&amp;": "&", "\n+": "\n", "\s+\n": "\n"}
 def ReformatDescription(text):
 	for needle in replaces:
 		text = re.sub(r"(?i)%s" % needle, replaces[needle], text)
