@@ -59,7 +59,7 @@ def TryWorkflowAction(issue, action, message):
 
 	log += "      Action \"%s\" (%s): " % (message, action)
 	try:
-		issue.DoAction(action)
+		issue.DoAction(str(int(action)))
 		log += "Passed\n"
 		return True
 	except:
@@ -67,7 +67,7 @@ def TryWorkflowAction(issue, action, message):
 	return False
 
 
-actions = {"11": "Assign to development", "41": "Resolve without build", "61": "Build successful", "101": "Tests passed"}
+actions = {"011": "Assign to development", "041": "Resolve without build", "061": "Build successful", "101": "Tests passed"}
 
 # Reading issues from remote jira
 for i in remoteSoap.getIssuesFromJqlSearch(remoteJiraAuth, config["jira_query"], 1000):
