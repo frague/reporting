@@ -17,19 +17,27 @@ if not len(conf):
 	print "[!] No config found!"
 	exit(1)
 
+links1 = re.compile("\[(([a-zA-Z]+)[\|:])([^\]]+)\]")
+links2 = re.compile("\[([^~\]\|\:]+)\]")
+def UpdateLinksIn(content, space):
+	result = links2.sub("[%s \\1]" % space, content)
+	return links1.sub("[\\2 \\3]", result)
 
 pagesCache = {}
 
 # Updates wiki page or creates the new one
-def UpdateWikiPage(space, page_name, content, parent_page = ""):
-	global indent, remoteWikiServer, remoteWikiToken, pagesCache
+def UpdateWikiPage(remote_space, page_name, content, parent_page = ""):
+	global indent, remoteWikiServer, remoteWikiToken, pagesCache, space, conf
 
 	action = "+"
+
+	if parent_page and parent_page != conf["root_page"]:
+		parent_page = space + " " + parent_page
 
 	exists = False
 	try:
 		# Getting existing page for update
-		page = remoteWikiServer.confluence1.getPage(remoteWikiToken, space, page_name)
+		page = remoteWikiServer.confluence1.getPage(remoteWikiToken, remote_space, space + " " + page_name)
 		exists = True
 	except:
 		pass
@@ -37,32 +45,39 @@ def UpdateWikiPage(space, page_name, content, parent_page = ""):
 	if exists:
 		if page["creator"] != "nbogdanov" and page["creator"] != "tgautier":
 			# Page created by someone else
-			action = "!"
+			action = "^"
+			UpdateWikiPage(remote_space, space + " " + page_name, UpdateLinksIn(content, space), parent_page)
 		else:
 			if page["content"].replace("\n", "").replace("\r", "") != content.replace("\n", "").replace("\r", ""):
-				page["content"] = content
+				page["content"] = UpdateLinksIn(content, space)
 				remoteWikiServer.confluence1.updatePage(remoteWikiToken, page, {"minorEdit": True, "versionComment": ""})
 				action = "@"
 			else:
 				action = " "
 	else:
 		# New page
-		page = {"title": page_name, "space": space, "content": content, "creator": "nbogdanov"}
+		page = {"title": space + " " + page_name, "space": remote_space, "content": UpdateLinksIn(content, space), "creator": "nbogdanov"}
 		if parent_page:
 			if pagesCache.has_key(parent_page):
 				parent = pagesCache[parent_page]
 				page["parentId"] = parent["id"]
 			else:
 				try:
-					parent = remoteWikiServer.confluence1.getPage(remoteWikiToken, space, parent_page)
+					parent = remoteWikiServer.confluence1.getPage(remoteWikiToken, remote_space, parent_page)
 					pagesCache[parent_page] = parent
 					page["parentId"] = parent["id"]
 				except:
-					print "[!] Error getting parent page \"%s\" in space \"%s\"" % (parent_page, space)
+					print "[!] Error getting parent page \"%s\" in space \"%s\"" % (parent_page, remote_space)
 					return False
 		remoteWikiServer.confluence1.storePage(remoteWikiToken, page)
 
-	print "[%s] %s \"%s\" /%s/" % (action, "  " * indent, page["title"], page["creator"])
+	# Check images & attachments references
+	if re.search("\![^\!]{0,100}\.[a-zA-Z]{2,4}\!", page["content"]):
+		img = " [IMG]"
+	if re.search("\[\^[^\]]{0,100}\.[a-zA-Z]{2,4}\]", page["content"]):
+		img += " [ATT]"
+
+	print "[%s] %s \s \"%s\" /%s/" % (action, "  " * indent, img, page["title"], page["creator"])
 	return True
 
 
@@ -98,16 +113,8 @@ def SyncPage(page, parent_page):
 				commentsRendered += str(comment)
 
 
-		# Check images & attachments references
-		if re.search("\![^\!]{0,100}\.[a-zA-Z]{2,4}\!", localPage["content"]):
-			img = " [IMG]"
-		if re.search("\[\^[^\]]{0,100}\.[a-zA-Z]{2,4}\]", localPage["content"]):
-			img += " [ATT]"
-
 		# Updating
 		UpdateWikiPage(conf["destination_space"], page, localPage["content"] + commentsRendered, parent_page)
-	else:
-		print "[ ]%s \"%s\"" % (img, page)
 
 def SyncLayer(parent_page, pages):
 	global indent

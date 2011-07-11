@@ -279,7 +279,7 @@ def CreateJiraIssueFrom(rally_issue, parentIssueKey = "", issueType = None, vers
 	i.assignee = rally_issue.Owner
 
 	i.summary = "(%s) %s" % (rally_issue.Id, rally_issue.Name)
-	i.description = rally_issue.Description
+	i.description = MakePrintable(rally_issue.Description)
 	i.description = ReformatDescription(i.description)
 
 	i.MakeCodeSections("xml")

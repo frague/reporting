@@ -1,0 +1,116 @@
+---
+destination_space: "CLOUD"
+root_page: "Image Management"
+pages: {
+  "Project Management": {
+    "Action Items": {},
+    "Client Notes": {},
+    "Events": {},
+    "Vacations 2011": {}},
+  "Resources": {},
+  "Space pages": {},
+  "Team": {},
+  "Timeline": {
+    "Sprint 6": {},
+    "Sprint 7": {},
+    "Sprint 8": {},
+    "Sprint 9": {},
+    "Sprint 10": {}},
+  "Project Documentation": {
+    "Documentation": {
+      "Deployment configuration": {},
+      "Install Review Board post-review tool in windows": {},
+      "Production deployment configuration": {}},
+    "Documentation from eBay": {
+      "SOA eBox Plugin - Tutorials": {
+        "Create Service From Existing SOA Types": {
+          "Service Creation from Existing Types": {},
+          "Service Use": {
+            "Implementing The Service": {}},
+          "Testing The Service": {}},
+        "Pre SOA 2.4 Services Tutorial": {
+          "Add a New Operation to the Interface Project": {},
+          "Create a New SOA Service from Template WSDL": {},
+          "Create a SOA Consumer Project to Consume the Service": {},
+          "Deploy the SOA Service to a Web Container": {},
+          "Get Ready": {},
+          "Implement the Service - SimpleGlobalIDRegistryService": {}},
+        "SOA Error Library Tutorial": {},
+        "SOA Services Tutorial": {
+          "Create SOA eBox Consumer": {
+            "Consume Services from Existing WSDL": {}},
+          "Create SOA eBox Service": {},
+          "Creating a Consumer for an existing Pre 2.4 Service using WSDL": {},
+          "Implement the eBox Service": {},
+          "Invoke an eBox Service": {},
+          "PreRequisites for eBox Service Tutorial": {},
+          "Test the eBox Service": {}},
+        "SOA Services Tutorial-2": {
+          "Consume the New Version of eBox Service": {},
+          "Create a New Version of eBox Service": {},
+          "Invoke the New Version of eBox Service": {},
+          "SOA TypeLibrary Tutorial - eBox": {},
+          "Create TypeLibrary - eBox": {},
+          "Create Types - eBox": {},
+          "Delete Type - eBox": {},
+          "Export Types to TypeLibrary": {},
+          "Import Types - eBox": {},
+          "Import Types to Type Library": {},
+          "Remove Type - eBox": {}}}},
+    "Research": {
+      "rPath API Documentation": {},
+      "rPath Documentation": {},
+      "rPath Evaluation": {
+        "rPath Description": {},
+        "rPath Evaluation Questions": {},
+        "rPath Feature Evaluation Matrix": {}},
+      "rPath Use Cases": {
+        "Use Case - API Investigation": {},
+        "Use Case - Incremental Update": {},
+        "Use Case - Linux Dependency Analysis": {},
+        "Use Case - Linux System Blueprint": {},
+        "Use Case - Out-of-band Changes": {},
+        "Use Case - Physical System Deployment": {},
+        "Use Case - Release Management": {},
+        "Use Case - Roll Back": {},
+        "Use Case - System Inventory": {},
+        "Use Case - Version Control Repository": {},
+        "Use Case - Virtual System Deployment": {},
+        "Use Case - Windows Application Deployment": {},
+        "Use Case - Windows Custom Platform": {},
+        "Use Case - Windows Dependency Resolution": {},
+        "Use Case - Windows Software Packaging": {},
+        "Use Case - Windows System Blueprint": {}}},
+    "Definitions": {
+      "Definition of Done": {}},
+    "Development Resources": {
+      "Lab": {},
+      "Continuous Integration": {},
+      "Issue Tracking": {},
+      "Live Demo": {},
+      "Source Control": {},
+        "Git repos under the hood": {}}},
+    "Planning": {
+      "Sprints": {
+        "Sprint 1": {},
+        "Sprint 2": {},
+        "Sprint 3": {},
+        "Sprint 4": {},
+        "Sprint 5": {}},
+      "Requirements": {},
+      "Product Backlog": {}},
+    "Design": {
+      "Install Service": {},
+      "System Architecture": {}},
+    "Testing": {
+      "Testing environment creation": {},
+      "Smoketest": {},
+      "Functional Tests": {},
+      "Acceptance Tests": {
+        "JBehave stories": {},
+        "JBehave stories suggestions": {}}},
+  "Project Description": {},
+  "Quick Links": {
+    "Deployments": {},
+    "eBay Quick Links": {}}
+}

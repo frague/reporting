@@ -911,3 +911,5 @@ def ReformatDescription(text):
 
 	return text
 
+def MakePrintable(text):
+	return "".join(filter(lambda x:x in string.printable, text))

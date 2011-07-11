@@ -88,6 +88,7 @@ for i in remoteSoap.getIssuesFromJqlSearch(remoteJiraAuth, config["jira_query"],
 		# Check whether issues are equal
 		if localIssue.IsClosed():
 			if not issue.IsClosed():
+
 #				print "    Closing remote (%s) - %s" % (issue.key, issue.assignee)
 				issue.Connect(remoteSoap, remoteJiraAuth)
 
