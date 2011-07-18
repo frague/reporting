@@ -19,9 +19,14 @@ if not len(conf):
 
 links1 = re.compile("\[(([a-zA-Z]+)[\|:])([^\]]+)\]")
 links2 = re.compile("\[([^~\]\|\:]+)\]")
+links3 = re.compile("\{include:(([a-zA-Z]+)[\|])([^\}]+)\}")
+links4 = re.compile("\{include:([^~\}\|\:]+)\}")
 def UpdateLinksIn(content, space):
 	result = links2.sub("[%s \\1]" % space, content)
-	return links1.sub("[\\2 \\3]", result)
+	result = links4.sub("{include:%s \\1}" % space, result)
+	result = links1.sub("[\\2 \\3]", result)
+	result = links3.sub("{include:\\2 \\3}", result)
+	return result.replace("http //", "http://")
 
 pagesCache = {}
 
@@ -48,7 +53,7 @@ def UpdateWikiPage(remote_space, page_name, content, parent_page = ""):
 			action = "^"
 			UpdateWikiPage(remote_space, space + " " + page_name, UpdateLinksIn(content, space), parent_page)
 		else:
-			if page["content"].replace("\n", "").replace("\r", "") != content.replace("\n", "").replace("\r", ""):
+			if page["content"].replace("\n", "").replace("\r", "") != content.replace("\n", "").replace("\r", ""):	# TODO: Remove this!
 				page["content"] = UpdateLinksIn(content, space)
 				remoteWikiServer.confluence1.updatePage(remoteWikiToken, page, {"minorEdit": True, "versionComment": ""})
 				action = "@"
@@ -72,12 +77,13 @@ def UpdateWikiPage(remote_space, page_name, content, parent_page = ""):
 		remoteWikiServer.confluence1.storePage(remoteWikiToken, page)
 
 	# Check images & attachments references
+	img = ""
 	if re.search("\![^\!]{0,100}\.[a-zA-Z]{2,4}\!", page["content"]):
 		img = " [IMG]"
 	if re.search("\[\^[^\]]{0,100}\.[a-zA-Z]{2,4}\]", page["content"]):
 		img += " [ATT]"
 
-	print "[%s] %s \s \"%s\" /%s/" % (action, "  " * indent, img, page["title"], page["creator"])
+	print "[%s] %s%s \"%s\" /%s/" % (action, "  " * indent, img, page["title"], page["creator"])
 	return True
 
 
@@ -100,7 +106,6 @@ def SyncPage(page, parent_page):
 		exit(1)
 
 	commentsRendered = ""
-	img = ""
 	if localExists:
 
 		# Check comments

@@ -864,8 +864,9 @@ class WikiComment:
 # Text transforming methods
 
 tagExpr = re.compile("<[^<]+>")
+styleExpr = re.compile("<style[^>]*>[^<]*</style>")
 def DeTag(text):
-	return tagExpr.sub("", text)
+	return tagExpr.sub("", styleExpr.sub("", text))
 
 # Parses table with header into a set of dectionaries, one per each row
 def ParseHeadedTable(markup, de_tag = False):
