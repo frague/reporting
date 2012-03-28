@@ -67,7 +67,8 @@ def TryWorkflowAction(issue, action, message):
 	return False
 
 
-actions = {"011": "Assign to development", "041": "Resolve without build", "061": "Build successful", "101": "Tests passed"}
+#actions = {"011": "Assign to development", "041": "Resolve without build", "061": "Build successful", "101": "Tests passed"}
+actions = {"011": "Assign to development", "041": "Resolve without build", "061": "Build successful"}
 
 # Reading issues from remote jira
 for i in remoteSoap.getIssuesFromJqlSearch(remoteJiraAuth, config["jira_query"], 1000):
